@@ -1,0 +1,88 @@
+.fieldsets_wrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cit_fieldset{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+// когда чекбокс выпадает под лейбл
+.label_width_outside_input{
+  position: relative;
+  margin-bottom: 75px;
+
+  input, // temporary
+  .pseudo_checkbox
+  {
+    position: absolute;
+    top: calc(100% + 25px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  input{
+    margin-left: -40px;
+    opacity: 0;
+  }
+}
+
+/***** псевдо чекбокс и псевдо радио *****/
+.pseudo_checkbox{
+  display: inline-flex;
+  width: 25px;
+  height: 25px;
+  border: 1px solid $color_border;
+  &::before{
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin: auto;
+    background-color: $color_group_2;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.15s cubic-bezier(0.5, -0.35, 0.5, 1.5);
+  }
+}
+input:checked ~ .pseudo_checkbox{
+  &::before{
+    width: 15px;
+    height: 15px;
+    opacity: 1;
+  }
+}
+
+.application_date{
+  margin-bottom: 15px;
+}
+
+/***** кнопки в формах *****/
+.cit_btn{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $color_group_1;
+  border: 1px solid $color_group_1;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 10px 25px;
+  line-height: 1;
+  transition: background-color 0.15s linear;
+  margin-bottom: 15px;
+  &.btn_cancel{
+    background-color: transparent;
+  }
+  &:hover{
+    background-color: lighten($color_group_1, 30%);
+  }
+
+  &.btn_add{
+    background-color: $color_group_3;
+    &:hover{
+      background-color: transparent;
+    }
+  }
+
+}

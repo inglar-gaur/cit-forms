@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Отправление</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <link rel="stylesheet" href="css2/main.css">
+</head>
+<body>
+<header></header>
+
+<div class="container">
+    <h1>Отправление</h1>
+    <form class="cit_form departure_form">
+        <div class="application_wrap">
+            <fieldset class="application">
+                <h2>Заявка на отправление <span class="application_number">№77</span></h2>
+                <div class="application_date">
+                    <span>Дата подачи заявки: </span>
+                    <input type="text" value="21.06.2019" placeholder="21.06.2019" disabled>
+                </div>
+
+                <div class="form_row">
+                    <fieldset class="departure_period">
+                        <h4 class="subset_title">Период отправления</h4>
+                        <div class="labels">
+                            <label>
+                                <span class="title">с</span>
+<!-- // todo тут должен быть датапикер"       -->
+                                <input name="departure_period_from" type="text">
+                            </label>
+                            <label>
+                                <span class="title">до</span>
+<!-- // todo тут должен быть датапикер"       -->
+                                <input name="departure_period_to" type="text">
+                            </label>
+                        </div>
+                    </fieldset>
+                    <div class="filled_or_empty_container">
+                        <label class="label_width_outside_input">
+                            <input name="filled_or_empty_container" value="filled" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Порожний</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="filled_or_empty_container" value="empty" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Груженный</span>
+                        </label>
+                    </div>
+                    <div class="departure_container_info">
+                        <label>
+<!-- // todo тут должен быть выпадающий список"       -->
+                            <span class="title">Типоразмер</span>
+                            <input type="text" name="departure_container_info__type">
+                        </label>
+                        <label>
+                            <span class="title">Номер контейнера</span>
+                            <input type="text" name="departure_container_info__number">
+                        </label>
+                        <label>
+                            <span class="title">Собственник контейнера</span>
+                            <input type="text" name="departure_container_info__owner">
+                        </label>
+                    </div>
+                    <fieldset class="departure_message_type">
+                        <label class="label_width_outside_input">
+                            <input name="departure_message_type" value="straight" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Прямой</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="departure_message_type" value="mixed" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">ПСЖВС</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="departure_message_type" value="export" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Экспорт</span>
+                        </label>
+                    </fieldset>
+                </div>
+
+                <div class="form_row">
+                    <button class="cit_btn btn_add departure_add_container">+ Добавить порожний</button>
+                    <div class="departure_address">
+                        <label>
+<!-- // todo тут должен быть выпадающий список"       -->
+                            <span class="title">Страна назначения</span>
+                            <input type="text" name="departure_address__country">
+                        </label>
+                        <label>
+<!-- // todo тут должен быть выпадающий список"       -->
+                            <span class="title">Порт/станция назначения</span>
+                            <input type="text" name="departure_address__station">
+                        </label>
+                        <label>
+<!-- // todo тут должен быть выпадающий список"       -->
+                            <span class="title">Код станции</span>
+                            <input type="text" name="departure_address__code">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="department_vgm">
+                        <label>
+                            <span class="title">Масса груженного, брутто</span>
+                            <input type="text" name="department_vgm__weight">
+                        </label>
+                        <label>
+                            <span class="title">VGM</span>
+                            <input type="text" name="department_vgm__vgm_certificate">
+                        </label>
+                    </div>
+
+                    <div class="department_options">
+
+                        <fieldset>
+                            <h4>Отправка</h4>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__department" value="rail" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Поездная</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__department" value="once" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Одиночная</span>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <h4>Необходими предоставить</h4>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__provide" value="zpu" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">ЗПУ</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__provide" value="danger_sign" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Знак опасн.</span>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <h4>Необходимо оформить</h4>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__formalize" value="security" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Охрана</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__formalize" value="insurance" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Страхование</span>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <h4>Плательщик ж.д. тарифа</h4>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__railway" value="customer" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Исполнитель</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="department_options__railway" value="worker" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказчик</span>
+                            </label>
+                            <label class="department_options__payer">
+                                <span class="title">Наименование плательщика</span>
+                                <input type="text" name="department_options__payer">
+                            </label>
+                        </fieldset>
+
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <table class="full_table departure_cargo_information">
+
+                        <tr><th colspan="7">Сведения о грузе</th></tr>
+                        <tr>
+                            <th>Код ЕТСГН ГНГ</th>
+                            <th class="wide">Наименование груза (место)</th>
+                            <th>Кол-во мест</th>
+                            <th>Масса места, брутто (кг)</th>
+                            <th>Габарит места Д/Ш/В, (мм)</th>
+                            <th>Упаковка места (описание)</th>
+                            <th>Класс опасности</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="departure_cargo_information__code"></td>
+                            <td><input type="text" name="departure_cargo_information__name"></td>
+                            <td><input type="text" name="departure_cargo_information__amount"></td>
+                            <td><input type="text" name="departure_cargo_information__weight"></td>
+                            <td><input type="text" name="departure_cargo_information__size"></td>
+                            <td><input type="text" name="departure_cargo_information__pack"></td>
+                            <td><input type="text" name="departure_cargo_information__danger_class"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="departure_cargo_information__code"></td>
+                            <td><input type="text" name="departure_cargo_information__name"></td>
+                            <td><input type="text" name="departure_cargo_information__amount"></td>
+                            <td><input type="text" name="departure_cargo_information__weight"></td>
+                            <td><input type="text" name="departure_cargo_information__size"></td>
+                            <td><input type="text" name="departure_cargo_information__pack"></td>
+                            <td><input type="text" name="departure_cargo_information__danger_class"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="departure_cargo_information__code"></td>
+                            <td><input type="text" name="departure_cargo_information__name"></td>
+                            <td><input type="text" name="departure_cargo_information__amount"></td>
+                            <td><input type="text" name="departure_cargo_information__weight"></td>
+                            <td><input type="text" name="departure_cargo_information__size"></td>
+                            <td><input type="text" name="departure_cargo_information__pack"></td>
+                            <td><input type="text" name="departure_cargo_information__danger_class"></td>
+                        </tr>
+                        <tr>
+                            <td><button class="cit_btn btn_add">+ Добавить строку</button></td>
+                            <td><div class="sum">Итого:</div></td>
+                            <td><input type="text" name="cargo_information__amount_sum" disabled></td>
+                            <td><input type="text" name="cargo_information__weight_sum" disabled></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="form_row">
+                    <div class="recipient_information row_1">
+                        <h4>Сведения о грузополучателе</h4>
+                        <label>
+                            <span class="title">Наименование</span>
+                            <input type="text" name="recipient_information__title">
+                        </label>
+                        <label>
+                            <span class="title">Адрес</span>
+                            <input type="text" name="recipient_information__address">
+                        </label>
+                        <label>
+                            <span class="title">ОКПО</span>
+                            <input type="text" name="recipient_information__okpo">
+                        </label>
+                        <label>
+                            <span class="title">Ж.д. код</span>
+                            <input type="text" name="recipient_information__railway_code">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="recipient_information row_2">
+                        <label>
+                            <span class="title">Контактное лицо грузополучателя</span>
+                            <input type="text" name="recipient_information__person">
+                        </label>
+                        <label>
+                            <span class="title">Телефон контактного лица</span>
+                            <input type="text" name="recipient_information__tel">
+                        </label>
+                        <label>
+                            <span class="title">Дополнительная информация</span>
+                            <input type="text" name="recipient_information__other_info">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="return_empty_container row_1">
+                        <h4>Инструкция по сдаче порожнего контейнера</h4>
+                        <div class="labels">
+                            <label>
+                                <span class="title">Наименование организации</span>
+                                <input type="text" name="return_empty_container__org_name">
+                            </label>
+                            <label>
+                                <span class="title">Адрес доставки порожнего контейнера</span>
+                                <input type="text" name="return_empty_container__address">
+                            </label>
+                            <label>
+                                <span class="title">Контактное лицо</span>
+                                <input type="text" name="return_empty_container__contact_person">
+                            </label>
+                            <label>
+                                <span class="title">Телефон / Электронная почта</span>
+                                <input type="text" name="return_empty_container__tel_or_mail">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <div class="return_empty_container row_2">
+                        <h5>Плательщик автоперевозки</h5>
+                        <div class="labels">
+                            <label>
+                                <span class="title">Наименование плательщика</span>
+                                <input type="text" name="return_empty_container__payer_name">
+                            </label>
+                            <div>
+                                <label class="label_width_outside_input">
+                                    <input name="return_empty_container__payer" value="executor" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Исполнитель</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="return_empty_container__payer" value="customer" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Заказчик</span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </fieldset>
+        </div>
+
+        <button class="cit_btn btn_add">+ Добавить контейнер</button>
+        <br>
+        <button class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+        <button class="cit_btn btn_cancel">Отменить</button>
+
+    </form>
+</div>
+
+<footer></footer>
+</body>
+</html>

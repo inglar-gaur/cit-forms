@@ -1,0 +1,190 @@
+.cit_form{
+  margin-top: 45px;
+  //width: 1140px; // temporary. Needs site container width
+}
+
+.application_wrap{
+  width: 100%;
+  overflow-x: auto;
+
+  box-shadow: $shadow_big;
+  margin: 0 0 30px;
+
+  // for chrome
+  &::-webkit-scrollbar { height: 8px;}
+  &::-webkit-scrollbar-button { width: 0;  background-color: lightgray; }
+  &::-webkit-scrollbar-track {  background-color: transparent; border: 1px solid lightgray; border-radius: 4px;}
+  &::-webkit-scrollbar-track-piece { background-color: transparent;}
+  &::-webkit-scrollbar-thumb { background-color: lightgray; border-radius: 5px;}
+  &::-webkit-scrollbar-corner { background-color: transparent;}
+  &::-webkit-resizer { background-color: transparent;}
+  // for ff
+  scrollbar-color: lightgray transparent;
+  scrollbar-width: thin;
+}
+.application{
+  padding: 40px 35px;
+  //margin: 0 0 30px;
+  //box-shadow: $shadow_big;
+
+  background-color: white;
+
+  width: 1140px; // temporary. Needs site container width
+
+}
+
+.fieldsets_wrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+
+
+/***** псевдо чекбокс и псевдо радио *****/
+.label_width_outside_input{
+  position: relative;
+  display: flex;
+  align-items: center;
+  .pseudo_checkbox{
+    margin-right: 10px;
+  }
+  input{
+    position: absolute;
+    left: -40px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.pseudo_checkbox{
+  display: inline-flex;
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  border: 2px solid lightgray;
+  position: relative;
+  transition: border-color 0.15s cubic-bezier(0.5, -0.35, 0.5, 1.5);
+  &::before{
+    content: '';
+    width: 4px;
+    height: 6px;
+    margin: auto;
+    opacity: 0;
+    border: 2px solid $color_group_1;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    //border-left: none;
+    //border-top: none;
+    transform: rotate(45deg);
+    transition: all 0.15s cubic-bezier(0.5, -0.35, 0.5, 1.5);
+
+    position: absolute;
+    bottom: 70%;
+    left: 0;
+    transform-origin: left bottom;
+  }
+}
+input:checked ~ .pseudo_checkbox{
+  border: 2px solid $color_group_1;
+  &::before{
+    opacity: 1;
+  }
+}
+//input:checked:disabled ~ .pseudo_checkbox{
+//  background-color: $color_bg_disabled;
+//}
+input:disabled ~ .pseudo_checkbox{
+  background-color: $color_bg_disabled;
+}
+
+.application_date{
+  margin-bottom: 15px;
+}
+
+/***** кнопки в формах *****/
+.cit_btn{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $color_group_1;
+  border: 2px solid $color_group_1;
+  text-transform: uppercase;
+  padding: 10px 25px;
+  height: 40px;
+  line-height: 1;
+  transition: background-color 0.15s linear;
+  margin-bottom: 15px;
+  white-space: nowrap;
+
+  &.btn_submit{
+    color: white;
+  }
+
+  &:hover{
+    background-color: lighten($color_group_1, 30%);
+  }
+
+  &.btn_add{
+    border: 2px solid $color_group_4;
+    background-color: white;
+    &:hover{
+      border: 2px solid $color_group_2;
+    }
+  }
+
+  &.btn_cancel{
+    background-color: transparent;
+    border-color: transparent;
+    position: relative;
+    margin-left: 30px;
+    &::before,
+    &::after{
+      content: '';
+      position: absolute;
+      top:-1px;
+      height: calc(100% - 2px);
+      width: 7px;
+      border: 2px solid $color_group_1;
+      transition: all 0.1s ease-in-out;
+    }
+    &::before{
+      left: 0;
+      border-right: none;
+    }
+    &::after{
+      right: 0;
+      border-left: none;
+    }
+    &:hover{
+      &::before{
+        left: -3px;
+      }
+      &::after{
+        right: -3px;
+      }
+    }
+  }
+}
+
+/***** временные периоды *****/
+.departure_period,
+.movement_period,
+.load_period{
+  input{
+    width: 100px;
+  }
+  .labels{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+/* ***** для прикрепления файлов ***** */
+.cit__form_attachment{
+  cursor: pointer;
+  font-size: 14px;
+}
+

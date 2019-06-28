@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Перемещение СВХ</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <link rel="stylesheet" href="css2/main.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Перемещение СВХ</h1>
+    <form class="cit_form movement_form">
+        <div class="application_wrap">
+            <fieldset class="application">
+
+                <h2>Заявка на перемещение контейнера из СВХ/ЗТК <span class="application_number">№563</span></h2>
+                <div class="application_date">
+                    <span>Дата подачи заявки: </span>
+                    <input type="text" value="21.06.2019" placeholder="21.06.2019" disabled>
+                </div>
+
+                <div class="form_row">
+
+                    <fieldset class="movement_period">
+<!--                        <h4 class="subset_title">Период выполнения</h4>-->
+                        <div class="title">Период выполнения</div>
+                        <div class="labels">
+                            <label>
+                                <span class="title">с</span>
+<!-- // todo тут должен быть датапикер"       -->
+                                <input name="movement_period_from" type="text">
+                            </label>
+                            <label>
+                                <span class="title">до</span>
+<!-- // todo тут должен быть датапикер"       -->
+                                <input name="movement_period_to" type="text">
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <div class="movement_addable_area_wrap">
+
+                        <div class="movement_addable_area">
+                            <div class="truck_parameters">
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">20 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">40 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Порожний</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Груженый</span>
+                                </label>
+                            </div>
+                            <div class="labels">
+                                <label>
+                                    <span class="title">Номер контейнера</span>
+                                    <input type="text" name="movement__container_number">
+                                </label>
+                                <label>
+                                    <span class="title">Собственник контейнера</span>
+                                    <input type="text" name="movement__container_owner">
+                                </label>
+                            </div>
+                            <!-- // todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА  -->
+                            <input class="cit__form_attachment movement_declaration_file" type="text" name="movement_declaration_file" placeholder="Приложить декларацию">
+                        </div>
+
+                        <div class="movement_addable_area">
+                            <div class="truck_parameters">
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">20 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">40 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Порожний</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Груженый</span>
+                                </label>
+                            </div>
+                            <div class="labels">
+                                <label>
+                                    <span class="title">Номер контейнера</span>
+                                    <input type="text" name="movement__container_number">
+                                </label>
+                                <label>
+                                    <span class="title">Собственник контейнера</span>
+                                    <input type="text" name="movement__container_owner">
+                                </label>
+                            </div>
+                            <!-- // todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА  -->
+                            <input class="cit__form_attachment movement_declaration_file" type="text" name="movement_declaration_file" placeholder="Приложить декларацию">
+                        </div>
+
+                        <div class="movement_addable_area">
+                            <div class="truck_parameters">
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">20 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_size" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">40 фут</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Порожний</span>
+                                </label>
+                                <label class="label_width_outside_input">
+                                    <input name="movement_truck_parameters_state" type="radio">
+                                    <span class="pseudo_checkbox"></span>
+                                    <span class="title">Груженый</span>
+                                </label>
+                            </div>
+                            <div class="labels">
+                                <label>
+                                    <span class="title">Номер контейнера</span>
+                                    <input type="text" name="movement__container_number">
+                                </label>
+                                <label>
+                                    <span class="title">Собственник контейнера</span>
+                                    <input type="text" name="movement__container_owner">
+                                </label>
+                            </div>
+                            <!-- // todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА  -->
+                            <input class="cit__form_attachment movement_declaration_file" type="text" name="movement_declaration_file" placeholder="Приложить декларацию">
+                        </div>
+
+                        <button class="cit_btn btn_add">+ Добавить контейнер</button>
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+        </div>
+
+
+<!--        <br>-->
+        <button class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+        <button class="cit_btn btn_cancel">Отменить</button>
+    </form>
+</div>
+
+</body>
+</html>

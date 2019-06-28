@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="RU">
+<head>
+    <title>Автоперевозка</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <link rel="stylesheet" href="css2/main.css">
+</head>
+<body>
+<header></header>
+
+
+<div class="container">
+    <h1>Автоперевозка</h1>
+
+    <form class="cit_form trucking_form">
+
+        <div class="application_wrap">
+            <fieldset class="application">
+
+                <h2>Заявка на автоперевозку</h2>
+
+                <div class="fieldsets_wrapper">
+
+                    <div class="cit_fieldset trucking_start_fieldset_1">
+
+                        <div class="subset one_way_delivery">
+                            <h4 class="subset_title">Доставка в одну сторону</h4>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_1" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Доставить на терминал</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_1" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Вывести с терминала</span>
+                            </label>
+                        </div>
+
+                        <div class="subset double_operation">
+                            <h4 class="subset_title">Сдвоенная операция</h4>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_1" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Вывести с терминала под разгрузку - обратная доставка</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_1" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Вывести с терминала под загрузку - обратная доставка</span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="cit_fieldset trucking_start_fieldset_2">
+
+                        <div class="subset special_delivery">
+                            <h4 class="subset_title">Особый режим перевозки</h4>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_2" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Опасный груз</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="trucking_start_fieldset_2" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Режим таможенного транзита</span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+        </div>
+
+        <button class="cit_btn btn_submit" type="submit">Создать заявку</button>
+
+    </form>
+
+
+    <form class="cit_form trucking_form">
+
+        <div class="application_wrap">
+            <fieldset class="application">
+                <h2>Заявка на автоперевозку <span class="application_number">№5454</span></h2>
+                <div class="application_date"><span>Дата подачи заявки: </span><input class="height_1" type="text" value="21.06.2019" placeholder="21.06.2019" disabled></div>
+
+                <div class="form_row">
+
+                    <fieldset class="chosen_parameters">
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="trucking_start_fieldset_1" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Доставить на терминал</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="trucking_start_fieldset_2" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Опасный груз</span>
+                        </label>
+                        <!-- // todo если выбран "режим таможенного транзита, то должно появиться поле загрузки, которое еще не сверстано."       -->
+                    </fieldset>
+
+                    <div class="truck_parameters">
+                        <label class="label_width_outside_input">
+                            <input name="trucking_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">20 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="trucking_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">40 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="trucking_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Порожний</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="trucking_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Груженый</span>
+                        </label>
+                    </div>
+
+                    <div class="cargo_parameters">
+                        <label>
+                            <span class="title">Масса груза, кг</span>
+                            <input type="text" name="cargo_parameters_weight">
+                            <span class="or">или</span>
+                        </label>
+                        <label>
+                            <span class="title">Брутто контейнера, кг</span>
+                            <input type="text" name="cargo_parameters_gross_weight">
+                        </label>
+                        <label>
+                            <span class="title">VGM, кг</span>
+                            <input type="text" name="cargo_parameters_vgm">
+                        </label>
+                        <label>
+                            <span class="title">Класс опасности</span>
+                            <input type="text" name="cargo_parameters_danger_class">
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="form_row">
+
+                    <label class="service_date">
+                        <span class="title">Дата услуги</span>
+                        <input type="text" name="application_date">
+                    </label>
+                    <label class="container_number">
+                        <span class="title">Номер контейнера</span>
+                        <input type="text" name="container_number">
+                    </label>
+
+                    <div class="time_interval">
+                        <div class="title">Интервал времени прибытия</div>
+                        <div class="labels">
+                            <label>
+                                <span class="label_title title">с</span>
+                                <input name="arrive_time_less" type="text">
+                                <span class="hours title">час.</span>
+                            </label>
+                            <label>
+                                <span class="label_title title">до</span>
+                                <input name="arrive_time_up" type="text" value="12:00" disabled>
+                                <span class="hours title">час.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <label class="special_demand">
+                        <span class="title">Особые требования</span>
+                        <textarea name="special_demand" type="text"></textarea>
+                    </label>
+                </div>
+
+                <div class="form_row">
+                    <label class="arrive_address">
+                        <span class="title">Адрес места прибытия</span>
+                        <input type="text">
+                    </label>
+                    <label class="contact_person">
+                        <span class="title">Контактное лицо в месте прибытия</span>
+                        <input type="text">
+                    </label>
+                    <label class="phone_number">
+                        <span class="title">Телефон</span>
+                        <input type="text">
+                    </label>
+                    <label class="waiting_time">
+                        <span class="title">Время ожидания в месте прибытия</span>
+                        <input type="text" value="180" placeholder="180" disabled>
+                        <span class="minutes title">мин</span>
+                    </label>
+                </div>
+
+            </fieldset>
+        </div>
+
+        <button class="cit_btn btn_add">+ Добавить контейнер</button>
+        <br>
+        <button class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+        <button class="cit_btn btn_cancel">Отменить</button>
+    </form>
+
+</div>
+
+
+<footer></footer>
+<!--    <script src="dist/build.js"></script>-->
+</body>
+</html>

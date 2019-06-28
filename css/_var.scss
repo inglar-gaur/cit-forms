@@ -1,0 +1,78 @@
+$color_group_1: #DA2341;
+$color_group_2: #6DA2C9;
+$color_group_3: #EDAB6F;
+$color_group_4: #9D9496;
+$color_group_5: #E20117;
+$color_group_6: #FFBB0E;
+$color_border:  black;
+
+$color_bg_gray: lightgray;
+
+//@import "normalize";
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700,900&display=swap&subset=cyrillic');
+
+.height_1{
+  height: 25px;
+}
+.height_2{
+  height: 50px;
+}
+.height_1,
+.height_2{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg_gray{
+  background-color: $color_bg_gray;
+}
+
+fieldset{
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+.cit_form{
+  [type="text"]{
+    padding: 0 10px;
+    max-width: 100%;
+  }
+  h2, h3, h4, h5, h6{
+    margin: 15px 0;
+  }
+  label{
+    cursor: pointer;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+
+    &.bg_gray{
+      &:hover{
+        background-color: lighten($color_bg_gray, 5%);
+      }
+    }
+  }
+  .subset,
+  label{
+    text-align: center;
+  }
+  input[type=text],
+  input[type=date],
+  input[type=number],
+  textarea{
+    border: 1px solid $color_border;
+  }
+}
+
+
+// temporary
+.container{
+  margin: 0 auto;
+  width: 1140px;
+  @media screen and (max-width: 1199px){width: 960px;}
+  @media screen and (max-width: 991px){width: 720px;}
+  @media screen and (max-width: 767px){width: 540px;}
+  @media screen and (max-width: 575px){width: 100%;}
+}

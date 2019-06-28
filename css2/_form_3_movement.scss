@@ -1,0 +1,57 @@
+
+.movement_period{
+  width: 235px;
+  min-width: 235px;
+  .title{
+    margin-bottom: 10px;
+  }
+}
+
+
+.movement_addable_area_wrap{
+  width: calc(100% - 35px - 30px);
+  margin-left: 30px;
+
+
+
+  .movement_addable_area{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    width: 100%;
+
+    &:not(:last-child){
+      margin-bottom: 30px;
+    }
+
+    .truck_parameters{
+      width: 220px;
+      margin-bottom: -5px;
+    }
+
+    .labels{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: calc(100% - 220px - 30px);
+      margin-left: 30px;
+      label{
+        width: calc((100% - 20px)/2);
+        .title{
+          display: block;
+          margin-bottom: 10px;
+        }
+        input{
+          width: 100%;
+        }
+      }
+    }
+
+    .movement_declaration_file{
+      margin-top: 20px;
+      margin-left: auto;
+      width: calc((100% - 220px - 30px - 20px)/2);
+    }
+  }
+}

@@ -1,0 +1,75 @@
+.receiving_form_starting{
+  column-count: 3;
+  column-gap: 30px;
+  width: 100%;
+  .labels{
+    -webkit-column-break-inside: avoid; /* Chrome, Safari */
+    page-break-inside: avoid;           /* Theoretically FF 20+ */
+    break-inside: avoid-column;         /* IE 11 */
+    display:table;
+    margin-bottom: 15px;
+  }
+  label{
+    padding: 5px 0;
+  }
+}
+
+.receiving_form{
+  .cargo_parameters{
+    > label{
+      position: relative;
+    }
+  }
+  .is_cargo_danger{
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    margin-left: 0;
+    .title{
+      margin-bottom: 0;
+    }
+  }
+
+  label.container_number{
+    margin-left: 30px;
+  }
+
+  .time_interval{
+    margin-left: 30px;
+  }
+}
+
+.receiving_add_file{
+  align-self: flex-end;
+  margin-left: 20px;
+  width: 200px;
+
+  //&:nth-of-type(1):nth-last-of-type(1){
+  //  margin-right: auto;
+  //}
+  &:nth-of-type(1){
+    margin-left: 30px;
+  }
+
+  &:nth-last-of-type(1){
+    margin-right: auto;
+  }
+}
+
+.receiving_form__autotransportation_cost{
+  margin-left: 30px;
+  .title{
+    margin-bottom: 10px;
+  }
+}
+
+.receiving__time_interval_and_special_demand{
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+
+  .time_interval{
+    margin-left: 0;
+    margin-right: 30px;
+  }
+}

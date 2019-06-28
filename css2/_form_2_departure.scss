@@ -1,0 +1,203 @@
+
+.departure_form{
+
+  .filled_or_empty_container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    label{
+      padding: 5px 0;
+    }
+  }
+
+  .departure_container_info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 540px;
+    label{
+      width: calc((100% - 40px)/3);
+      .title{
+        white-space: nowrap;
+        display: inline-block;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .departure_message_type{
+    label{
+      padding: 5px 0;
+    }
+  }
+
+  /* **********************  line 2  */
+  .departure_add_container{
+    margin-bottom: 0;
+    align-self: flex-end;
+  }
+
+  .departure__message_address{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .departure_address{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 30px;
+    width: 100%;
+
+    label{
+      width: calc((100% - 40px)/3);
+      .title{
+        display: block;
+        margin-bottom: 10px;
+      }
+      input{
+        width: 100%;
+      }
+    }
+  }
+
+  /* **********************  line 3  */
+
+  .department_vgm{
+    display: flex;
+    flex-direction: column;
+    label{
+      &:not(:first-child){
+        margin-top: 15px;
+      }
+    }
+    .title{
+      display: block;
+      margin-bottom: 10px;
+    }
+  }
+
+  .department_options{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-left: 30px;
+
+    fieldset{
+      width: calc((100% - 60px)/4);
+      h4{
+        white-space: nowrap;
+      }
+      label{
+        padding: 5px 0;
+      }
+    }
+    .department_options__payer{
+      .title{
+        display: inline-block;
+        margin: 10px 0;
+      }
+    }
+  }
+
+  /* **********************  line 4 (table)  */
+  .departure_cargo_information{
+    //.wide{
+    //  width: 400px;
+    //}
+  }
+
+  /* **********************  line 5 - 6 (recipient)  */
+  .recipient_information{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+
+    h4{
+      width: 100%;
+    }
+
+    label{
+      .title{
+        display: block;
+        margin-bottom: 10px;
+      }
+      input{
+        width: 100%;
+      }
+    }
+
+    &.row_1{
+      label{
+        width: calc((100% - 60px)/4);
+      }
+    }
+
+    &.row_2{
+      label{
+        width: calc((100% - 40px)/3);
+      }
+    }
+  }
+
+  .return_empty_container{
+    width: 100%;
+    h4{
+      width: 100%;
+    }
+    &.row_1{
+      .labels{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      label{
+        &:nth-of-type(1),
+        &:nth-of-type(2){
+          width: calc(((100% - 60px)/4) + 20px);
+        }
+        &:nth-of-type(3),
+        &:nth-of-type(4){
+          width: calc(((100% - 60px)/4) - 20px);
+        }
+      }
+    }
+    &.row_2{
+      .labels{
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        > label{
+          width: 100%;
+        }
+        > div{
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          margin-left: 30px;
+          label{
+            padding: 5px 0;
+            &:last-child{
+              padding-bottom: 0;
+            }
+          }
+          .title{
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+    label{
+      .title{
+        display: block;
+        margin-bottom: 10px;
+      }
+      input{
+        width: 100%;
+      }
+    }
+  }
+}

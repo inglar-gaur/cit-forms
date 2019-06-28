@@ -1,0 +1,168 @@
+// trucking
+.subset{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  .subset_title{
+    width: 100%;
+  }
+  label{
+    width: 50%;
+  }
+  &.special_delivery{
+    display: block;
+    label{
+      width: 100%;
+      margin-bottom: 15px;
+    }
+  }
+}
+.trucking_form{
+  .trucking_start_fieldset_1{
+    width: calc(60% - 20px);
+  }
+  .trucking_start_fieldset_2{
+    width: calc(40% - 20px);
+  }
+}
+
+
+// ///////////////////////////////////////// trucking after creating
+
+
+// *************************************** line 1
+.chosen_parameters{
+  label{
+    padding: 5px 0;
+  }
+}
+.truck_parameters{
+  column-count: 2;
+  label{
+    width: 90px;
+    padding: 5px 0;
+  }
+}
+
+.cargo_parameters{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  label{
+    width: 150px;
+    padding: 0;
+    margin: 0 10px;
+    position: relative;
+    .or{
+      position: absolute;
+      font-size: 10px;
+      left: calc(100% + 1px);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .title{
+      width: 100%;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    &:focus{
+      background-color: #6DA2C9;
+    }
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+}
+
+// *************************************** line 2
+
+.service_date,
+.container_number{
+  width: 150px;
+  .title{
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 11px;
+  }
+}
+
+.time_interval{
+  //width: 300px;
+  > .title{
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .labels{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  label{
+    position: relative;
+    margin-right: 10px;
+    &:last-of-type{
+      margin-right: 0;
+    }
+    input{
+      width: 65px;
+    }
+  }
+}
+
+.special_demand{
+  .title{
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  textarea{
+    display: block;
+    font-size: 11px;
+    resize: none;
+    width: 400px;
+  }
+}
+
+// *************************************** line 3
+.arrive_address,
+.contact_person,
+.phone_number,
+.waiting_time{
+  width: calc((100% - 90px)/4);
+  .title{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+.arrive_address,
+.contact_person,
+.phone_number{
+  .title{
+    border-bottom: none;
+  }
+  input{
+    width: 100%;
+  }
+}
+.waiting_time{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  input{
+    width: 50%;
+    text-align: center;
+  }
+  .minutes{
+    padding-left: 15px;
+    width: 50%;
+    margin-bottom: 0;
+  }
+}
+
+
+
+
+
+
+

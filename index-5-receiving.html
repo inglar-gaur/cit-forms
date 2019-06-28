@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Погрузо-разгрузочные работы</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <link rel="stylesheet" href="css2/main.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Прием, выдача</h1>
+
+    <form class="cit_form receiving_form">
+        <div class="application_wrap">
+            <div class="application">
+                <h2>Заявка на прием/выдачу контейнера</h2>
+                <div class="form_row">
+                    <div class="receiving_form_starting">
+
+                        <!-- //todo проставить names в зависимости от того чекбоксы это или радио батоны -->
+                        <div class="labels">
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять на терминал</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Выдать с терминала</span>
+                            </label>
+                        </div>
+
+                        <div class="labels">
+                            <label class="label_width_outside_input">
+                                <input name="receiving_form__danger_cargo" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Опасный груз</span>
+                            </label>
+                        </div>
+
+                        <div class="labels">
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать автоперевозку</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать погрузо-разгрузочные работы</span>
+                            </label>
+                        </div>
+
+                        <div class="labels">
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать перемещение из СВХ</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input name="" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Переместить в СВХ</span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="cit_btn btn_submit" type="submit">Создать заявку</button>
+    </form>
+
+    <form class="cit_form receiving_form">
+        <div class="application_wrap">
+            <div class="application">
+                <h2>Заявка на прием/выдачу контейнера <span class="application_number">№69</span></h2>
+                <div class="application_date">
+                    <span>Дата подачи заявки: </span>
+                    <input type="text" value="21.06.2019" placeholder="21.06.2019" disabled>
+                </div>
+
+                <div class="form_row">
+
+                    <fieldset class="chosen_parameters">
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Принять на терминал</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Выдать с терминала</span>
+                        </label>
+                    </fieldset>
+
+                    <div class="truck_parameters">
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">20 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">40 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Порожний</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Груженый</span>
+                        </label>
+                    </div>
+
+                    <div class="cargo_parameters">
+                        <label>
+                            <span class="title">Масса груза, кг</span>
+                            <input type="text" name="receiving_form__cargo_parameters__weight">
+                            <span class="or">или</span>
+                        </label>
+                        <label>
+                            <span class="title">Брутто контейнера, кг</span>
+                            <input type="text" name="receiving_form__cargo_parameters__gross_weight">
+                        </label>
+                        <label>
+                            <span class="title">Класс опасности</span>
+                            <input type="text" name="receiving_form__cargo_parameters__danger_class">
+
+<!--                            <label class="is_cargo_danger label_width_outside_input">-->
+<!--                                <input name="receiving_form__danger_cargo" type="checkbox">-->
+<!--                                <span class="pseudo_checkbox"></span>-->
+<!--                                <span class="title">Опасный груз</span>-->
+<!--                            </label>-->
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="form_row">
+
+                    <label class="service_date">
+                        <span class="title">Дата услуги</span>
+                        <input type="text" name="application_date">
+                    </label>
+                    <label class="container_number">
+                        <span class="title">Номер контейнера</span>
+                        <input type="text" name="container_number">
+                    </label>
+
+                    <div class="time_interval">
+                        <div class="title">Время прибытия</div>
+                        <div class="labels">
+                            <label>
+<!--                                <span class="label_title title">с</span>-->
+                                <input name="arrive_time_less" type="text">
+                                <span class="hours title">час.</span>
+                            </label>
+                            <label>
+<!--                                <span class="label_title title">до</span>-->
+                                <input name="arrive_time_up" type="text">
+                                <span class="hours title">мин.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА, name будет меняться в зависимости о выбранных условий погрузки-разгрузки  -->
+                    <input class="cit__form_attachment receiving_add_file" type="text" name="receiving_proxy_file" placeholder="Приложить доверенность">
+                    <input class="cit__form_attachment receiving_add_file" type="text" name="receiving_declaration_file" placeholder="Приложить декларацию">
+
+                </div>
+
+            </div>
+        </div>
+
+        <button class="cit_btn btn_add">+ Добавить контейнер</button>
+        <br>
+        <button class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+        <button class="cit_btn btn_cancel">Отменить</button>
+    </form>
+
+
+
+
+    <form class="cit_form receiving_form">
+        <div class="application_wrap">
+            <div class="application">
+                <h2>Заявка на прием/выдачу контейнера <span class="application_number">№69</span></h2>
+                <div class="application_date">
+                    <span>Дата подачи заявки: </span>
+                    <input type="text" value="21.06.2019" placeholder="21.06.2019" disabled>
+                </div>
+
+                <div class="form_row">
+
+                    <fieldset class="chosen_parameters">
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Принять на терминал</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <!-- // todo here inputs should be always checked and disabled       -->
+                            <input name="" type="radio" checked disabled>
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Выдать с терминала</span>
+                        </label>
+                    </fieldset>
+
+                    <div class="truck_parameters">
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">20 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_size" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">40 фут</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Порожний</span>
+                        </label>
+                        <label class="label_width_outside_input">
+                            <input name="receiving_form__truck_parameters_state" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                            <span class="title">Груженый</span>
+                        </label>
+                    </div>
+
+                    <div class="cargo_parameters">
+                        <label>
+                            <span class="title">Масса груза, кг</span>
+                            <input type="text" name="receiving_form__cargo_parameters__weight">
+                            <span class="or">или</span>
+                        </label>
+                        <label>
+                            <span class="title">Брутто контейнера, кг</span>
+                            <input type="text" name="receiving_form__cargo_parameters__gross_weight">
+                        </label>
+                        <label>
+                            <span class="title">Класс опасности</span>
+                            <input type="text" name="receiving_form__cargo_parameters__danger_class">
+
+                            <!--                            <label class="is_cargo_danger label_width_outside_input">-->
+                            <!--                                <input name="receiving_form__danger_cargo" type="checkbox">-->
+                            <!--                                <span class="pseudo_checkbox"></span>-->
+                            <!--                                <span class="title">Опасный груз</span>-->
+                            <!--                            </label>-->
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="form_row">
+                    <label class="service_date">
+                        <span class="title">Дата услуги</span>
+                        <input type="text" name="application_date">
+                    </label>
+                    <label class="container_number">
+                        <span class="title">Номер контейнера</span>
+                        <input type="text" name="container_number">
+                    </label>
+
+                    <div class="receiving_form__autotransportation_cost">
+                        <div class="title">Стоимость автоперевозки</div>
+                        <label>
+                            <input name="arrive_time_up" type="text">
+                            <span class="hours title">руб.</span>
+                        </label>
+                    </div>
+                    <!-- todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА, name будет меняться в зависимости о выбранных условий погрузки-разгрузки  -->
+                    <input class="cit__form_attachment receiving_add_file" type="text" name="receiving_proxy_file" placeholder="Приложить доверенность">
+                </div>
+
+                <div class="form_row">
+                    <label class="arrive_address">
+                        <span class="title">Адрес места прибытия</span>
+                        <input type="text">
+                    </label>
+                    <label class="contact_person">
+                        <span class="title">Контактное лицо в месте прибытия</span>
+                        <input type="text">
+                    </label>
+                    <label class="phone_number">
+                        <span class="title">Телефон</span>
+                        <input type="text">
+                    </label>
+                    <label class="waiting_time">
+                        <span class="title">Время ожидания в месте прибытия</span>
+                        <input type="text">
+                        <span class="minutes title">мин</span>
+                    </label>
+                </div>
+
+                <div class="form_row">
+                    <div class="receiving__time_interval_and_special_demand">
+                        <div class="time_interval">
+                            <div class="title">Интервал времени прибытия</div>
+                            <div class="labels">
+                                <label>
+                                    <span class="label_title title">с</span>
+                                    <input name="arrive_time_less" type="text">
+                                    <span class="hours title">час.</span>
+                                </label>
+                                <label>
+                                    <span class="label_title title">до</span>
+                                    <input name="arrive_time_up" type="text" value="12:00" disabled>
+                                    <span class="hours title">час.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <label class="special_demand">
+                            <span class="title">Особые требования</span>
+                            <textarea name="special_demand" type="text"></textarea>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form_row">
+                    <table class="full_table receiving_cargo_information">
+                        <tr><th colspan="9">Сведения о грузе</th></tr>
+                        <tr>
+                            <th class="wide" colspan="3">Наименование груза (место)</th>
+                            <th>Кол-во мест</th>
+                            <th>Масса места, брутто (кг)</th>
+                            <th>Габарит места Д/Ш/В, (мм)</th>
+                            <th>Упаковка места (описание)</th>
+                            <th>Класс опасности</th>
+                            <th>Особые требования к обращению с грузом</th>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><input type="text" name="receiving_cargo_information__name"></td>
+                            <td><input type="text" name="receiving_cargo_information__amount"></td>
+                            <td><input type="text" name="receiving_cargo_information__weight"></td>
+                            <td><input type="text" name="receiving_cargo_information__size"></td>
+                            <td><input type="text" name="receiving_cargo_information__pack"></td>
+                            <td><input type="text" name="receiving_cargo_information__danger_class"></td>
+                            <td><input type="text" name="receiving_cargo_information__special_demand"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><input type="text" name="receiving_cargo_information__name"></td>
+                            <td><input type="text" name="receiving_cargo_information__amount"></td>
+                            <td><input type="text" name="receiving_cargo_information__weight"></td>
+                            <td><input type="text" name="receiving_cargo_information__size"></td>
+                            <td><input type="text" name="receiving_cargo_information__pack"></td>
+                            <td><input type="text" name="receiving_cargo_information__danger_class"></td>
+                            <td><input type="text" name="receiving_cargo_information__special_demand"></td>
+                        </tr>
+                        <tr>
+                            <td><button class="cit_btn btn_add">+ Добавить строку</button></td>
+                            <td colspan="2"><div class="sum">Итого:</div></td>
+                            <td><input type="text" name="receiving_information__amount_sum" disabled></td>
+                            <td><input type="text" name="receiving_information__weight_sum" disabled></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="cit_btn btn_add">+ Добавить контейнер</button>
+        <br>
+        <button class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+        <button class="cit_btn btn_cancel">Отменить</button>
+    </form>
+
+
+</div>
+
+</body>
+</html>

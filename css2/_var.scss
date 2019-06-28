@@ -1,0 +1,175 @@
+$color_group_1: #DA2341;
+$color_group_2: #6DA2C9;
+$color_group_3: #EDAB6F;
+$color_group_4: #9D9496;
+$color_group_5: #E20117;
+$color_group_6: #FFBB0E;
+$color_border:  black;
+
+$color_text_brown: #7a7a7a;
+
+$color_bg_gray: lightgray;
+$color_bg_table_head: black;
+
+$color_bg_disabled: rgb(235, 235, 228);
+
+$shadow_big: 0 1px 98px rgba(0,0,0,0.08);
+
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700,900&display=swap&subset=cyrillic');
+body{
+  font-family: Roboto, sans-serif;
+}
+// temporary
+.container{
+  margin: 0 auto;
+  width: 1140px;
+  @media screen and (max-width: 1199px){width: 960px;}
+  @media screen and (max-width: 991px){width: 720px;}
+  @media screen and (max-width: 767px){width: 540px;}
+  @media screen and (max-width: 575px){width: 100%;}
+}
+
+.form_row{
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+  &:last-of-type{
+    margin-bottom: 0;
+  }
+}
+
+.height_1{
+  height: 25px;
+}
+.height_2{
+  height: 50px;
+}
+.height_1,
+.height_2{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+fieldset{
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+
+.cit_form{
+  margin-bottom: 50px;
+  //background-color: white;
+
+  [type="text"]{
+    padding: 0 10px;
+    max-width: 100%;
+  }
+  h2, h3, h4, h5, h6{
+    margin: 0 0 1em;
+  }
+  h2, h3{
+    font-weight: 500;
+  }
+  h2{
+    font-size: 34px;
+  }
+  h3{
+    font-size: 22px;
+  }
+  h4{
+    font-size: 16px;
+  }
+  .title{
+    font-size: 14px;
+    color: #494949;
+  }
+
+  label{
+    cursor: pointer;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .application_number{
+    color: $color_group_1;
+  }
+
+  input[type=text],
+  input[type=date],
+  input[type=number],
+  textarea{
+    color: $color_text_brown;
+    background-color: #f5f5f5;
+    border: 2px solid #f5f5f5;
+    //border: none;
+    height: 40px;
+    transition: all 0.1s linear;
+    &:not(:disabled){
+      &:hover{
+        background-color: #e5e5e5;
+        border: 2px solid #e5e5e5;
+      }
+    }
+    &:focus,
+    &:focus:hover{
+      background-color: white;
+      border: 2px solid $color_group_1;
+    }
+    &:disabled{
+      background-color: $color_bg_disabled;
+      border: 2px solid $color_bg_disabled;
+    }
+  }
+
+  table{
+    border-collapse: collapse;
+    th, td{
+      border: 1px solid $color_bg_disabled;
+    }
+    th{
+      background-color: black;
+      color: white;
+      font-size: 13px;
+      font-weight: normal;
+      padding: 10px 5px;
+    }
+  }
+
+  // таблица на всю ширину формы
+  .full_table{
+    max-width: 100%;
+    margin-bottom: 30px;
+
+    td, th{
+      input{
+        width: 100%;
+      }
+    }
+
+    .cit_btn{
+      max-width: 100%;
+      width: 100%;
+      font-size: 13px;
+      padding: 10px;
+      margin-bottom: 0;
+    }
+
+    .sum{
+      padding: 0 15px;
+      text-align: right;
+    }
+
+    .wide{
+      width: 350px;
+      min-width: 350px;
+    }
+  }
+
+
+}
+
+
