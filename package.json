@@ -1,0 +1,20 @@
+{
+  "name": "cit_forms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://inglar_gaur@bitbucket.org/Kolibri66/cit_forms.git"
+  },
+  "author": "Kolibri",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/Kolibri66/cit_forms#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "vue-cli": "^2.9.6"
+  }
+}
