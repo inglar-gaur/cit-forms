@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home      from '../components/home';
-import takeGet  from '../components/take-get';
+import receiving  from '../components/receiving/receiving-main';
 
 Vue.use(Router);
 
@@ -19,9 +19,9 @@ export default new Router({
         },
 
         {
-            path: '/take-get',
-            name: 'Контакты',
-            component: takeGet
+            path: '/receiving',
+            name: 'Погрузо-разгрузочные работы',
+            component: receiving
         },
     ]
 })
