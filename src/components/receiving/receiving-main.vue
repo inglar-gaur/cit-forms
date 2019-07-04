@@ -138,6 +138,52 @@
 
                     </div>
 
+                    <div class="form_row" v-if="bid.WebInlandTransportation">
+                        <label class="arrive_address">
+                            <span v-if="bid.bidType === 'WebGateIn'" class="title">Адрес места подачи а/м под погрузку</span>
+                            <span v-if="bid.bidType === 'WebGateOut'" class="title">Адрес места прибытия</span>
+                            <input type="text" v-model="bid.placeInput">
+                        </label>
+                        <label class="contact_person">
+                            <span class="title">Контактное лицо в месте {{ bid.bidType === 'WebGateIn' ? 'подачи' : 'прибытия' }}</span>
+                            <input type="text" v-model="bid.contactPerson">
+                        </label>
+                        <label class="phone_number">
+                            <span class="title">Телефон</span>
+                            <input type="text" v-model="bid.contactPhone">
+                        </label>
+                        <label class="waiting_time">
+                            <span class="title">Время ожидания в месте {{ bid.bidType === 'WebGateIn' ? 'подачи' : 'прибытия' }}</span>
+                            <input type="text" v-model="bid.waitingTime">
+                            <span class="minutes title">мин</span>
+                        </label>
+                    </div>
+
+                    <div class="form_row" v-if="bid.WebInlandTransportation">
+                        <div class="receiving__time_interval_and_special_demand">
+                            <div class="time_interval">
+                                <div class="title">Интервал времени прибытия</div>
+                                <div class="labels">
+                                    <label>
+                                        <span class="label_title title">с</span>
+                                        <input name="arrive_time_less" type="text">
+                                        <span class="hours title">час.</span>
+                                    </label>
+                                    <label>
+                                        <span class="label_title title">до</span>
+                                        <input name="arrive_time_up" type="text" value="12:00" disabled>
+                                        <span class="hours title">час.</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <label class="special_demand">
+                                <span class="title">Особые требования</span>
+                                <textarea v-model="bid.specialDemand" type="text"></textarea>
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -148,7 +194,8 @@
         </form>
 
         <receivingCreateForm
-            v-show="showCreateForm"
+            v-if="showCreateForm"
+            :mess="mess"
         >
         </receivingCreateForm>
     </div>
@@ -183,7 +230,8 @@
                                 (bid.bidEmpty === true || bid.bidEmpty === false) &&
                                 (bid.size === 20 || bid.size === 40) &&
                                 bid.container &&
-                                (bid.bidEmpty || (bid.massa && bid.brutto))
+                                (bid.bidEmpty || (bid.massa && bid.brutto)) &&
+                                (!bid.WebInlandTransportation || (bid.placeInput && bid.contactPerson && bid.contactPhone && bid.waitingTime))
                                 // bid.bidDate
                         });
                         this.canAddContainer = this.bids[0] &&
@@ -204,7 +252,7 @@
                 return (+date.getDate() < 10 ? "0"+date.getDate() : date.getDate())+'.'+
                     ((+date.getMonth() + 1) < 10 ? "0"+(+date.getMonth() + 1) : (+date.getMonth() + 1))+'.'+
                     date.getFullYear()
-            }
+            },
         },
 
         methods: {
@@ -244,6 +292,7 @@
                 this.mess = "Заявка отправлена";
                 this.bids = [];
                 this.showCreateForm = true;
+                setTimeout(() => this.mess = "", 5000);
 
             }
         }

@@ -1,8 +1,8 @@
 <template>
     <form class="cit_form receiving_form">
 
-        <div class="form_message success">
-            Это успех!
+        <div v-show="mess" class="form_message success">
+            {{ mess }}
         </div>
 
         <div class="application_wrap">
@@ -73,6 +73,10 @@
     export default {
         name: "receiving-create-form",
 
+        props: [
+            "mess"
+        ],
+
         data: function () {
             return {
                 bidType: "",
@@ -103,6 +107,11 @@
                 bidObject.container = "";
                 bidObject.massa = null;
                 bidObject.brutto = null;
+                bidObject.placeInput = "";
+                bidObject.contactPerson = "";
+                bidObject.contactPhone = "";
+                bidObject.waitingTime = "";
+                bidObject.specialDemand = "";
                 this.$parent.createBid(bidObject);
             }
         }
