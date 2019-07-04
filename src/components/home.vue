@@ -12,7 +12,7 @@
         data: function () {
             return {
                 menuItems: [
-                    {text: "Приём / выдача", link: "/take-get"}
+                    {text: "Приём / выдача", link: "/receiving"}
                 ]
             }
         }

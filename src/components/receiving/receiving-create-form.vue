@@ -66,7 +66,7 @@
 
 <script>
     export default {
-        name: "receiving-create",
+        name: "receiving-create-form",
 
         data: function () {
             return {
@@ -86,7 +86,19 @@
 
         methods: {
             createBid: function () {
-                this.$parent.createBid(Object.assign(this.$data));
+                let bidObject = {};
+                for (let propName in this.$data){
+                    if(this.$data.hasOwnProperty(propName)){
+                        bidObject[propName] = this.$data[propName];
+                    }
+                }
+                bidObject.bidEmpty = null;
+                bidObject.size = null;
+                bidObject.bidDate = null;
+                bidObject.container = "";
+                bidObject.massa = null;
+                bidObject.brutto = null;
+                this.$parent.createBid(bidObject);
             }
         }
     }

@@ -1,29 +1,250 @@
 <template>
-    <div class="container">
+    <div>
         <h1>Прием, выдача</h1>
-        <receivingCreate
-                v-show="showCreateForm"
+
+        <form v-if="bids.length > 0" class="cit_form receiving_form">
+            <div class="application_wrap">
+                <div v-for="(bid, index) in bids" class="application">
+                    <h2>Заявка на {{ getTextType(bid.bidType) }} контейнера <span class="application_number">№{{ index + 1 }}</span><small v-if="bid.WebInlandTransportation"> + автоперевозка</small></h2>
+                    <div class="application_date">
+                        <span>Дата подачи заявки: </span>
+                        <input type="text" :value="nowDate" :placeholder="nowDate" disabled>
+                    </div>
+
+                    <div class="form_row">
+
+                        <fieldset class="chosen_parameters">
+                            <label class="label_width_outside_input" v-if="bid.bidType === 'WebGateIn'">
+                                <!-- // todo here inputs should be always checked and disabled       -->
+                                <input name="" type="radio" checked disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять на терминал</span>
+                            </label>
+                            <label class="label_width_outside_input" v-if="bid.bidType === 'WebGateOut'">
+                                <!-- // todo here inputs should be always checked and disabled       -->
+                                <input name="" type="radio" checked disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Выдать с терминала</span>
+                            </label>
+                            <label class="label_width_outside_input" v-if="bid.WebInlandTransportation">
+                                <!-- // todo here inputs should be always checked and disabled       -->
+                                <input name="" type="radio" checked disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать автоперевозку</span>
+                            </label>
+                            <label class="label_width_outside_input" v-if="bid.WebStaffingStripping">
+                                <!-- // todo here inputs should be always checked and disabled       -->
+                                <input name="" type="radio" checked disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать погрузо-разгрузочные работы</span>
+                            </label>
+                        </fieldset>
+
+                        <div class="truck_parameters">
+                            <label class="label_width_outside_input" @click.prevent="setSize(index, 20)">
+                                <input name="receiving_form__truck_parameters_size" :checked="bid.size === 20" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">20 фут</span>
+                            </label>
+                            <label class="label_width_outside_input" @click.prevent="setSize(index, 40)">
+                                <input name="receiving_form__truck_parameters_size" :checked="bid.size === 40" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">40 фут</span>
+                            </label>
+                            <label class="label_width_outside_input" @click.prevent="setEmpty(index)">
+                                <input name="receiving_form__truck_parameters_state" :checked="bid.bidEmpty === true" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Порожний</span>
+                            </label>
+                            <label class="label_width_outside_input" @click.prevent="setEmpty(index, false)">
+                                <input name="receiving_form__truck_parameters_state" :checked="bid.bidEmpty === false" type="checkbox">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Груженый</span>
+                            </label>
+                        </div>
+
+                        <div class="cargo_parameters">
+                            <label v-if="!bid.bidEmpty">
+                                <span class="title">Масса груза, кг</span>
+                                <input type="number" v-model="bid.massa">
+                                <span class="or">или</span>
+                            </label>
+                            <label v-if="!bid.bidEmpty">
+                                <span class="title">Брутто контейнера, кг</span>
+                                <input type="number" v-model="bid.brutto">
+                            </label>
+                            <label v-if="bid.dangerCargo">
+                                <span class="title">Класс опасности</span>
+                                <input type="text" name="receiving_form__cargo_parameters__danger_class">
+
+                                <!--                            <label class="is_cargo_danger label_width_outside_input">-->
+                                <!--                                <input name="receiving_form__danger_cargo" type="checkbox">-->
+                                <!--                                <span class="pseudo_checkbox"></span>-->
+                                <!--                                <span class="title">Опасный груз</span>-->
+                                <!--                            </label>-->
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="form_row">
+
+                        <label class="service_date">
+                            <span class="title">Дата услуги</span>
+<!--                            <input type="text" name="application_date">-->
+<!--                            <v-date-picker v-model="bid.bidDate"></v-date-picker>-->
+                            <datepicker
+                                v-model="bid.bidDate"
+                                name="bid_date"
+                                lang="ru"
+                                format="DD.MM.YYYY"
+                                valueType="format"
+                                :first-day-of-week="1"
+                                width="150px"
+                            ></datepicker>
+                        </label>
+                        <label class="container_number">
+                            <span class="title">Номер контейнера</span>
+                            <input type="text" v-model="bid.container">
+                        </label>
+
+                        <div class="time_interval">
+                            <div class="title">Время прибытия</div>
+                            <div class="labels">
+                                <label>
+                                    <!--                                <span class="label_title title">с</span>-->
+<!--                                    <input name="arrive_time_less" type="text">-->
+                                    <select>
+                                        <option>--</option>
+                                        <option v-for="hour in hours">{{ hour }}</option>
+                                    </select>
+                                    <span class="hours title">час.</span>
+                                </label>
+                                <label>
+                                    <!--                                <span class="label_title title">до</span>-->
+<!--                                    <input name="arrive_time_up" type="text">-->
+                                    <select>
+                                        <option>--</option>
+                                        <option v-for="minute in minutes">{{ minute }}</option>
+                                    </select>
+                                    <span class="hours title">мин.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА, name будет меняться в зависимости о выбранных условий погрузки-разгрузки  -->
+                        <input v-if="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_proxy_file" placeholder="Приложить доверенность">
+                        <input v-if="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_declaration_file" placeholder="Приложить декларацию">
+
+                    </div>
+
+                </div>
+            </div>
+
+            <button v-show="canAddContainer" @click.prevent="addContainer" class="cit_btn btn_add">+ Добавить контейнер</button>
+            <br>
+            <button :disabled="!activeSubmitButton" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>
+            <button class="cit_btn btn_cancel">Отменить</button>
+        </form>
+
+        <receivingCreateForm
+            v-show="showCreateForm"
         >
-        </receivingCreate>
+        </receivingCreateForm>
     </div>
 </template>
 
 <script>
-    import receivingCreate from "./receiving-create"
+    import receivingCreateForm from "./receiving-create-form"
+    import Datepicker from 'vue2-datepicker';
 
     export default {
         name: "receiving-main",
-        components: {receivingCreate},
+        components: {receivingCreateForm, Datepicker},
 
         data: function () {
             return {
                 showCreateForm: true,
+                bids: [],
+                activeSubmitButton: false,
+                canAddContainer: false,
+                hours: [10, 12, 14],
+                minutes: [10, 30, 45, 50],
+                mess: ''
+            }
+        },
+
+        watch: {
+            "bids": {
+                handler: function () {
+                    if(this.bids.length > 0){
+                        this.activeSubmitButton = this.bids.every(bid => {
+                            return (bid.bidType === "WebGateIn" || bid.bidType === "WebGateOut") &&
+                                (bid.bidEmpty === true || bid.bidEmpty === false) &&
+                                (bid.size === 20 || bid.size === 40) &&
+                                bid.container &&
+                                (bid.bidEmpty || (bid.massa && bid.brutto))
+                                // bid.bidDate
+                        });
+                        this.canAddContainer = this.bids[0] &&
+                            (this.bids[0].bidType === "WebGateIn" || (this.bids[0].bidType === "WebGateOut" && this.bids[0].bidEmpty))  &&
+                            !this.bids[0].WebInlandTransportation && !this.bids[0].WebStaffingStripping;
+                    }else{
+                        this.activeSubmitButton = false;
+                        this.canAddContainer = false;
+                    }
+                },
+                deep: true
+            }
+        },
+
+        computed: {
+            nowDate: function () {
+                let date = new Date();
+                return (+date.getDate() < 10 ? "0"+date.getDate() : date.getDate())+'.'+
+                    ((+date.getMonth() + 1) < 10 ? "0"+(+date.getMonth() + 1) : (+date.getMonth() + 1))+'.'+
+                    date.getFullYear()
             }
         },
 
         methods: {
             createBid: function (bidObject) {
-                console.log(bidObject);
+                this.bids.push(bidObject);
+                this.showCreateForm = false;
+            },
+
+            setEmpty: function (index, empty = true) {
+                if(this.bids[index]){
+                    this.bids[index]["bidEmpty"] = !!empty;
+                }
+            },
+
+            setSize: function (index, size) {
+                if(this.bids[index]){
+                    this.bids[index]["size"] = +size;
+                }
+            },
+
+            getTextType: function (type) {
+                switch (type) {
+                    case "WebGateIn":
+                        return "прием";
+                    case "WebGateOut":
+                        return "выдачу";
+                    default:
+                        return "";
+                }
+            },
+
+            addContainer: function () {
+
+            },
+
+            sendBid: function () {
+                this.mess = "Заявка отправлена";
+                this.bids = [];
+                this.showCreateForm = true;
+
             }
         }
     }
