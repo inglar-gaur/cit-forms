@@ -16,7 +16,11 @@ export default {
 
   @import "../css2/var";
 
-  /***** кнопки в формах *****/
+  .cit_form .application{
+    position: relative;
+  }
+
+    /***** кнопки в формах *****/
   .cit_btn{
     display: inline-flex;
     justify-content: center;
@@ -89,5 +93,21 @@ export default {
         }
       }
     }
+  }
+  .form_message{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100px;
+    background-color: #00b159;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%, -50%);
+    z-index: 1;
+    font-weight: bold;
+    font-size: 22px;
   }
 </style>

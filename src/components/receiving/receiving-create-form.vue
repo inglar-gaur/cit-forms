@@ -1,5 +1,10 @@
 <template>
     <form class="cit_form receiving_form">
+
+        <div class="form_message success">
+            Это успех!
+        </div>
+
         <div class="application_wrap">
             <div class="application">
                 <h2>Заявка на прием/выдачу контейнера</h2>
