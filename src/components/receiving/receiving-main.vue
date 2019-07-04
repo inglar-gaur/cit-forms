@@ -184,6 +184,116 @@
                         </div>
                     </div>
 
+                    <div class="form_row" v-if="bid.WebStaffingStripping">
+                        <table class="load_unload_table">
+                            <tr>
+                                <th></th>
+                                <th>Вагон</th>
+                                <th>Контейнер</th>
+                                <th>Автотранспорт</th>
+                                <th>Склад</th>
+                                <th>Площадка</th>
+                            </tr>
+                            <tr>
+                                <th>Разгрузка из</th>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_out" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_out" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_out" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_out" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_out" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Погрузка в</th>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_in" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_in" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_in" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_in" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="label_width_outside_input">
+                                        <input name="loading_in" type="radio">
+                                        <span class="pseudo_checkbox"></span>
+                                    </label>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    <div class="form_row" v-if="bid.WebStaffingStripping">
+                        <table class="full_table receiving_cargo_information">
+                            <tr><th colspan="9">Сведения о грузе</th></tr>
+                            <tr>
+                                <th class="wide" colspan="3">Наименование груза (место)</th>
+                                <th>Кол-во мест</th>
+                                <th>Масса места, брутто (кг)</th>
+                                <th>Габарит места Д/Ш/В, (мм)</th>
+                                <th>Упаковка места (описание)</th>
+                                <th>Класс опасности</th>
+                                <th>Особые требования к обращению с грузом</th>
+                            </tr>
+                            <tr v-for="goods in bid.goods">
+                                <td colspan="3"><input type="text" v-model="goods.name"></td>
+                                <td><input type="text" v-model="goods.amount"></td>
+                                <td><input type="number" v-model="goods.weight"></td>
+                                <td><input type="number" v-model="goods.size"></td>
+                                <td><input type="text" v-model="goods.pack"></td>
+                                <td><input type="text" v-model="goods.dangerClass"></td>
+                                <td><input type="text" v-model="goods.specialDemand"></td>
+                            </tr>
+                            <tr>
+                                <td><button @click.prevent="addGood(index)" class="cit_btn btn_add">+ Добавить строку</button></td>
+                                <td colspan="2"><div class="sum">Итого:</div></td>
+                                <td><input type="text" :value="bid.goods.reduce((sum, elem) => sum + (+elem.amount), 0)" disabled></td>
+                                <td><input type="text" :value="bid.goods.reduce((sum, elem) => sum + (+elem.weight), 0)" disabled></td>
+                            </tr>
+                        </table>
+                    </div>
+
                 </div>
             </div>
 
@@ -294,6 +404,20 @@
                 this.showCreateForm = true;
                 setTimeout(() => this.mess = "", 5000);
 
+            },
+
+            addGood: function (index) {
+                if(this.bids[index] && this.bids[index].goods){
+                    this.bids[index].goods.push({
+                        name: "",
+                        amount: 0,
+                        weight: 0,
+                        size: "",
+                        pack: "",
+                        dangerClass: "",
+                        specialDemand: "",
+                    });
+                }
             }
         }
     }

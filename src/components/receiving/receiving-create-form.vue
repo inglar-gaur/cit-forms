@@ -112,6 +112,18 @@
                 bidObject.contactPhone = "";
                 bidObject.waitingTime = "";
                 bidObject.specialDemand = "";
+
+                if(this.WebStaffingStripping){
+                    bidObject.goods = [{
+                        name: "",
+                        amount: 0,
+                        weight: 0,
+                        size: "",
+                        pack: "",
+                        dangerClass: "",
+                        specialDemand: "",
+                    }];
+                }
                 this.$parent.createBid(bidObject);
             }
         }
