@@ -133,9 +133,19 @@
                         </div>
 
                         <!-- todo ЭТО БУДЕТ КНОПКА ЗАГРУЗКИ ФАЙЛА, name будет меняться в зависимости о выбранных условий погрузки-разгрузки  -->
-                        <input v-if="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_proxy_file" placeholder="Приложить доверенность">
-                        <input v-if="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_declaration_file" placeholder="Приложить декларацию">
 
+<!--                        <input v-if="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_proxy_file" placeholder="Приложить доверенность">-->
+<!--                        <input v-if="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_declaration_file" placeholder="Приложить декларацию">-->
+
+                        <label v-show="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file">
+                            <input type="file" name="receiving_proxy_file" placeholder="Приложить доверенность" @change="changeInputFileTitle">
+                            <span class="cit__form_attachment__title">Приложить доверенность</span>
+                        </label>
+
+                        <label v-show="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file">
+                            <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию" @change="changeInputFileTitle">
+                            <span class="cit__form_attachment__title">Приложить декларацию</span>
+                        </label>
                     </div>
 
                     <div class="form_row" v-if="bid.WebInlandTransportation">
@@ -418,8 +428,23 @@
                         specialDemand: "",
                     });
                 }
+            },
+            changeInputFileTitle: function(e){
+                // console.dir(e.target);
+                // e.target.files[0];
+                e.target.parentElement.children[1].innerHTML = e.target.files[0].name;
+
             }
-        }
+        },
+        // mounted: function() {
+        //    let fileInputs = document.querySelectorAll('.cit__form_attachment');
+        //    console.log(fileInputs);
+        //
+        //    for(let i=0; i<fileInputs.length; i++){
+        //        console.log(fileInputs[i].querySelector('input'));
+        //        fileInputs[i].querySelector('input').addEventListener('change', e => console.log(e, i));
+        //    }
+        // }
     }
 </script>
 

@@ -122,6 +122,22 @@ input:disabled ~ .pseudo_checkbox{
 .cit__form_attachment{
   cursor: pointer;
   font-size: 14px;
+
+  .cit__form_attachment__title{
+    line-height: 36px;
+    padding: 0 10px;
+  }
+
+  [type=file]{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border:0;
+    padding: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+  }
 }
 
 
