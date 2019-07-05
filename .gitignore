@@ -2,3 +2,6 @@
 .idea
 dist
 node_modules
+css2/*.css
+css2/*.map
+css2/.sass-cache

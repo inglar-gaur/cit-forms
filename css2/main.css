@@ -396,6 +396,7 @@ fieldset {
   .cit_form input[type=text],
   .cit_form input[type=date],
   .cit_form input[type=number],
+  .cit_form .cit__form_attachment,
   .cit_form textarea {
     color: #7a7a7a;
     background-color: #f5f5f5;
@@ -405,6 +406,7 @@ fieldset {
     .cit_form input[type=text]:not(:disabled):hover,
     .cit_form input[type=date]:not(:disabled):hover,
     .cit_form input[type=number]:not(:disabled):hover,
+    .cit_form .cit__form_attachment:not(:disabled):hover,
     .cit_form textarea:not(:disabled):hover {
       background-color: #e5e5e5;
       border: 2px solid #e5e5e5; }
@@ -413,6 +415,8 @@ fieldset {
     .cit_form input[type=date]:focus:hover,
     .cit_form input[type=number]:focus,
     .cit_form input[type=number]:focus:hover,
+    .cit_form .cit__form_attachment:focus,
+    .cit_form .cit__form_attachment:focus:hover,
     .cit_form textarea:focus,
     .cit_form textarea:focus:hover {
       background-color: white;
@@ -420,6 +424,7 @@ fieldset {
     .cit_form input[type=text]:disabled,
     .cit_form input[type=date]:disabled,
     .cit_form input[type=number]:disabled,
+    .cit_form .cit__form_attachment:disabled,
     .cit_form textarea:disabled {
       background-color: #ebebe4;
       border: 2px solid #ebebe4; }
@@ -555,6 +560,18 @@ input:disabled ~ .pseudo_checkbox {
 .cit__form_attachment {
   cursor: pointer;
   font-size: 14px; }
+  .cit__form_attachment .cit__form_attachment__title {
+    line-height: 36px;
+    padding: 0 10px; }
+  .cit__form_attachment [type=file] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden; }
 
 .subset {
   display: flex;

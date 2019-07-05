@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h1>Прием, выдача</h1>
 
         <form v-if="bids.length > 0" class="cit_form receiving_form">
             <div class="application_wrap">
