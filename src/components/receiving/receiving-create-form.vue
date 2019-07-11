@@ -14,26 +14,26 @@
                         <!-- //todo проставить names в зависимости от того чекбоксы это или радио батоны -->
                         <div class="labels">
                             <label class="label_width_outside_input">
-                                <input type="radio" v-model="bidType" value="WebGateIn">
+                                <input type="checkbox" v-model="WebGateIn" @click="changeMainOperation">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Принять на терминал</span>
                             </label>
                             <label class="label_width_outside_input">
-                                <input type="radio" v-model="bidType" value="WebGateOut">
+                                <input type="checkbox" v-model="WebGateOut" @click="changeMainOperation">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Выдать с терминала</span>
                             </label>
                         </div>
 
-                        <div class="labels" v-if="selectedBidType">
+                        <div class="labels" v-if="selectedMainOperation">
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="dangerCargo">
+                                <input type="checkbox" v-model="DangerousGoods">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз</span>
                             </label>
                         </div>
 
-                        <div class="labels"  v-if="selectedBidType">
+                        <div class="labels"  v-if="selectedMainOperation">
                             <label class="label_width_outside_input">
                                 <input v-model="WebInlandTransportation" type="checkbox">
                                 <span class="pseudo_checkbox"></span>
@@ -46,31 +46,31 @@
                             </label>
                         </div>
 
-                        <div class="labels" v-if="selectedBidType">
+                        <div class="labels" v-if="selectedMainOperation">
                             <label class="label_width_outside_input">
                                 <input v-model="WebCustomsRelease" type="checkbox">
                                 <span class="pseudo_checkbox"></span>
-                                <span v-if="bidType === 'WebGateIn'" class="title">Заказать перемещение из СВХ</span>
-                                <span v-if="bidType === 'WebGateOut'" class="title">Переместить в СВХ</span>
+<!--                                <span v-if="bidType === 'WebGateIn'" class="title">Заказать перемещение из СВХ</span>-->
+<!--                                <span v-if="bidType === 'WebGateOut'" class="title">Переместить в СВХ</span>-->
                             </label>
-
-<!--                            <label class="label_width_outside_input">-->
-<!--                                <input v-if="" v-model="WebCustomsRelease" type="radio" value="to">-->
-<!--                                <span class="pseudo_checkbox"></span>-->
-<!--                                <span class="title">Переместить в СВХ</span>-->
-<!--                            </label>-->
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
-        <button @click.prevent="createBid" :disabled="!selectedBidType" class="cit_btn btn_submit" type="submit">Создать заявку</button>
+        <button @click.prevent="createBid" :disabled="!selectedMainOperation" class="cit_btn btn_submit" type="submit">Создать заявку</button>
     </form>
 </template>
 
 <script>
     export default {
+
+        /**
+         * @typedef bid - Заявка
+         * @property
+         */
+
         name: "receiving-create-form",
 
         props: [
@@ -79,52 +79,37 @@
 
         data: function () {
             return {
-                bidType: "",
-                dangerCargo: false,
-                WebInlandTransportation: false,
-                WebCustomsRelease: false,
-                WebStaffingStripping: false,
+                WebGateIn: false,                   // Операция подачи контейнера
+                WebGateOut: false,                  // Операция вывоза контейнера
+                DangerousGoods: false,              // Опция опасный груз
+                WebInlandTransportation: false,     // Доставка автотранспортом
+                WebCustomsRelease: false,           // Перемещение из зоны СВХ
+                WebStaffingStripping: false,        // Погрузочно-разгрузочные работы
             }
         },
 
         computed: {
-            selectedBidType: function(){
-                return this.bidType === "WebGateIn" || this.bidType === "WebGateOut"
+            selectedMainOperation: function(){
+                return this.WebGateIn || this.WebGateOut;
             },
         },
 
         methods: {
+            changeMainOperation: function(){
+                this.WebGateIn = !this.WebGateIn;
+                this.WebGateOut = !this.WebGateIn;
+            },
+
             createBid: function () {
-                let bidObject = {};
-                for (let propName in this.$data){
-                    if(this.$data.hasOwnProperty(propName)){
-                        bidObject[propName] = this.$data[propName];
+
+                let operations = [];
+                for (let operation in this.$data){
+                    if(this.$data.hasOwnProperty(operation) && this[operation]){
+                        operations.push(operation);
                     }
                 }
-                bidObject.bidEmpty = null;
-                bidObject.size = null;
-                bidObject.bidDate = null;
-                bidObject.container = "";
-                bidObject.massa = null;
-                bidObject.brutto = null;
-                bidObject.placeInput = "";
-                bidObject.contactPerson = "";
-                bidObject.contactPhone = "";
-                bidObject.waitingTime = "";
-                bidObject.specialDemand = "";
 
-                if(this.WebStaffingStripping){
-                    bidObject.goods = [{
-                        name: "",
-                        amount: 0,
-                        weight: 0,
-                        size: "",
-                        pack: "",
-                        dangerClass: "",
-                        specialDemand: "",
-                    }];
-                }
-                this.$parent.createBid(bidObject);
+                this.$parent.createBid(operations);
             }
         }
     }

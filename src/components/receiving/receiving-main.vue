@@ -321,6 +321,7 @@
 </template>
 
 <script>
+
     import receivingCreateForm from "./receiving-create-form"
     import Datepicker from 'vue2-datepicker';
 
@@ -330,6 +331,7 @@
 
         data: function () {
             return {
+                bid: {},
                 showCreateForm: true,
                 bids: [],
                 activeSubmitButton: false,
@@ -375,9 +377,12 @@
         },
 
         methods: {
-            createBid: function (bidObject) {
-                this.bids.push(bidObject);
-                this.showCreateForm = false;
+            createBid: function (operations) {
+                // this.bids.push(bidObject);
+                // this.showCreateForm = false;
+                if(Array.isArray(operations)){
+                    operations.forEach(operation => console.log(operation));
+                }
             },
 
             setEmpty: function (index, empty = true) {
