@@ -1,10 +1,6 @@
 <template>
     <form class="cit_form receiving_form">
 
-        <div v-show="mess" class="form_message success">
-            {{ mess }}
-        </div>
-
         <div class="application_wrap">
             <div class="application">
                 <h2>Заявка на <span v-show="notSelectOut">прием</span><span v-show="notSelectIn && notSelectOut">/</span><span v-show="notSelectIn">выдачу</span> контейнера</h2>
@@ -82,7 +78,7 @@
             </div>
         </div>
 
-        <button @click.prevent="createBid" :disabled="notSelectedMainParams" class="cit_btn btn_submit" type="submit">Создать заявку</button>
+        <button @click.prevent="createBid" class="cit_btn btn_submit" type="submit">Создать заявку</button>
     </form>
 </template>
 
@@ -96,37 +92,49 @@
 
         name: "receiving-create-form",
 
-        props: [
-            "mess"
-        ],
-
         data: function () {
             return {
-                webGate: null,                   // Операция подачи контейнера
-                bidEmpty: null,                   // Операция подачи контейнера
+                webGate: null,                      // Операция подачи контейнера
+                bidEmpty: null,                     // Опция порожний контейнер
                 DangerousGoods: false,              // Опция опасный груз
                 WebInlandTransportation: false,     // Доставка автотранспортом
                 WebCustomsRelease: false,           // Перемещение из зоны СВХ
                 WebStaffingStripping: false,        // Погрузочно-разгрузочные работы
-                ReturnContainer: false,
-                RepairContainer: false
+                ReturnContainer: false,             // Возврат контейнера
+                RepairContainer: false              // Ремонт контейнера
             }
         },
 
         computed: {
 
+            /**
+             * Не выбрана операция приема контейнера
+             * @returns {boolean}
+             */
             notSelectIn: function(){
               return this.webGate !== "WebGateIn";
             },
 
+            /**
+             * Не выбрана операция выдачи контейнера
+             * @returns {boolean}
+             */
             notSelectOut: function(){
                 return this.webGate !== "WebGateOut";
             },
 
+            /**
+             * Не выбрана операция приема/выдачи контейнера
+             * @returns {boolean}
+             */
             notSelectedMainOperation: function(){
                 return this.notSelectIn && this.notSelectOut;
             },
 
+            /**
+             * Не выбрана операция приема/выдачи контейнера или опция груженый/порожний
+             * @returns {boolean}
+             */
             notSelectedMainParams: function(){
                 return this.notSelectedMainOperation || (this.bidEmpty !== true && this.bidEmpty !== false);
             },
@@ -134,6 +142,9 @@
 
         watch: {
 
+            /**
+             * Сбрасываем все опции из правого списка при смене операции приема/выдачи контейнера
+             */
             webGate: function(){
                 this.WebInlandTransportation = false;
                 this.WebCustomsRelease = false;
@@ -142,12 +153,18 @@
                 this.RepairContainer = false;
             },
 
+            /**
+             * Сбрасываем опцию "опасный груз" при выборе порожнего контейнера
+             */
             bidEmpty: function () {
                 if(this.bidEmpty){
                     this.DangerousGoods = null;
                 }
             },
 
+            /**
+             * Сбрасываем опцию "Возврат контейнера" при отмене опции "Доставка автотранспортом"
+             */
             WebInlandTransportation: function () {
                 if(!this.WebInlandTransportation){
                     this.ReturnContainer = false;
@@ -156,21 +173,35 @@
         },
 
         methods: {
-            changeMainOperation: function(){
-                this.WebGateIn = !this.WebGateIn;
-                this.WebGateOut = !this.WebGateIn;
-            },
 
+            /**
+             * Создание объекта заявки и передача его родительскому компоненту
+             */
             createBid: function () {
 
-                let operations = [];
-                for (let operation in this.$data){
-                    if(this.$data.hasOwnProperty(operation) && this[operation]){
-                        operations.push(operation);
+                // Если не выбраны все необходимые опции передаем родительскому компоненту сообщение об этом
+                if(this.notSelectedMainParams){
+                    if(this.notSelectedMainOperation){
+                        this.$parent.addMess('Выберите прием или получение контейнера');
+                    }else if(this.bidEmpty !== true && this.bidEmpty !== false){
+                        this.$parent.addMess('Выберите пустой или порожний контейнер');
                     }
-                }
 
-                this.$parent.createBid(operations);
+                // Иначе формируем и передаем объект заявки
+                }else{
+                    let operations = [];
+                    for (let operation in this.$data){
+                        if(this.$data.hasOwnProperty(operation) && this[operation]){
+                            if(operation === 'webGate'){
+                                operations.push(this[operation]);
+                            }else{
+                                operations.push(operation);
+                            }
+                        }
+                    }
+
+                    this.$parent.createBid(operations);
+                }
             }
         }
     }
