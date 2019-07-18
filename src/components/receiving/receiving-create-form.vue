@@ -14,12 +14,12 @@
                         <!-- //todo проставить names в зависимости от того чекбоксы это или радио батоны -->
                         <div class="labels">
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebGateIn" @click="changeMainOperation">
+                                <input type="checkbox" v-model="WebGateIn" @click="setMainOperationIn(true)">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Принять на терминал</span>
                             </label>
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebGateOut" @click="changeMainOperation">
+                                <input type="checkbox" v-model="WebGateOut" @click="setMainOperationIn(true)">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Выдать с терминала</span>
                             </label>
