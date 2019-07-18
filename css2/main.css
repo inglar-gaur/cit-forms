@@ -540,6 +540,8 @@ input:checked ~ .pseudo_checkbox {
 
 input:disabled ~ .pseudo_checkbox {
   background-color: #ebebe4; }
+input:disabled ~ .title {
+  opacity: 0.5; }
 
 .application_date {
   margin-bottom: 15px; }
