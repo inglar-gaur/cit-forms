@@ -94,8 +94,13 @@ input:checked ~ .pseudo_checkbox{
 //input:checked:disabled ~ .pseudo_checkbox{
 //  background-color: $color_bg_disabled;
 //}
-input:disabled ~ .pseudo_checkbox{
-  background-color: $color_bg_disabled;
+input:disabled {
+  &~ .pseudo_checkbox{
+    background-color: $color_bg_disabled;
+  }
+  &~ .title{
+    opacity: 0.5;
+  }
 }
 
 .application_date{

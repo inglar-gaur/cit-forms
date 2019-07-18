@@ -11,6 +11,85 @@
                 <div class="form_row">
                     <div class="receiving_form_starting">
 
+                        <div class="labels">
+
+                            <label class="label_width_outside_input">
+                                <input type="radio" name="take_gave" v-model="WebGateIn" @click="setMainOperationIn(true)">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять на терминал</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="radio" name="take_gave" v-model="WebGateOut" @click="setMainOperationIn(true)">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Выдать с терминала</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input name="trucking_parameters_state" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Порожний</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input name="trucking_parameters_state" type="radio">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Груженый</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" v-model="DangerousGoods">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Опасный груз</span>
+                            </label>
+
+                        </div>
+
+                        <div class="labels">
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать перемещение на/с СВХ</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать автоперевозку до/от терминала</span>
+                            </label>
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать погрузку/разгрузку груза</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать ремонт контейнера</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" disabled>
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать обратную доставку контейнера</span>
+                            </label>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="application_wrap">
+            <div class="application">
+                <h2>Заявка на прием/выдачу контейнера</h2>
+                <div class="form_row">
+                    <div class="receiving_form_starting">
+
                         <!-- //todo проставить names в зависимости от того чекбоксы это или радио батоны -->
                         <div class="labels">
                             <label class="label_width_outside_input">
