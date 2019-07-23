@@ -433,7 +433,7 @@ fieldset {
     .cit_form table th, .cit_form table td {
       border: 1px solid #ebebe4; }
     .cit_form table th {
-      background-color: black;
+      background-color: #007073;
       color: white;
       font-size: 13px;
       font-weight: normal;

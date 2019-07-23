@@ -9,7 +9,7 @@ $color_border:  black;
 $color_text_brown: #7a7a7a;
 
 $color_bg_gray: lightgray;
-$color_bg_table_head: black;
+$color_bg_table_head: #007073;
 
 $color_bg_disabled: rgb(235, 235, 228);
 
@@ -132,7 +132,7 @@ fieldset{
       border: 1px solid $color_bg_disabled;
     }
     th{
-      background-color: black;
+      background-color: $color_bg_table_head;
       color: white;
       font-size: 13px;
       font-weight: normal;

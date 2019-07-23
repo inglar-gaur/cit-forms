@@ -64,19 +64,19 @@
                             </label>
 
                             <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" value="one" :disabled="bidEmpty !== 'full' && !WebStaffingStripping">
+                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoods" :disabled="bidEmpty !== 'full' && !WebStaffingStripping">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз</span>
                             </label>
 
                             <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" value="in" :disabled="bidEmpty !== 'full-empty' && bidEmpty !== 'full-full'">
+                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoodsIn" :disabled="bidEmpty !== 'full-empty' && bidEmpty !== 'full-full'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз принять</span>
                             </label>
 
                             <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" value="out" :disabled="bidEmpty !== 'full-full' && bidEmpty !== 'empty-full'">
+                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoodsOut" :disabled="bidEmpty !== 'full-full' && bidEmpty !== 'empty-full'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз выдать</span>
                             </label>
@@ -261,7 +261,7 @@
                 if(this.notSelectedMainParams){
                     if(this.notSelectedMainOperation){
                         this.$parent.addMess('Выберите прием или получение контейнера');
-                    }else if(this.bidEmpty !== true && this.bidEmpty !== false){
+                    }else if(!this.bidEmpty){
                         this.$parent.addMess('Выберите порожний или груженый контейнер');
                     }
 
@@ -269,9 +269,19 @@
                 }else{
                     let operations = [];
                     for (let operation in this.$data){
+
+                        // Перебор данных.
                         if(this.$data.hasOwnProperty(operation) && this[operation]){
-                            if(operation === 'webGate'){
+
+                            // Перебор массива
+                            if(operation === 'DangerousGoods' && this[operation].length > 0 && this[operation].forEach){
+                                this[operation].forEach(emptyValue => operations.push(emptyValue));
+
+                            // Нужны значения объекта data
+                            }else if(operation === 'webGate' || operation === 'bidEmpty'){
                                 operations.push(this[operation]);
+
+                            // Нужны ключи объекта data
                             }else{
                                 operations.push(operation);
                             }
@@ -311,16 +321,16 @@
                     this.ReturnContainer = false;
                 }
 
-                let DangerousGoodsIndex = this.DangerousGoods.indexOf('one');
+                let DangerousGoodsIndex = this.DangerousGoods.indexOf('DangerousGoods');
                 if(this.bidEmpty !== 'full' && !this.WebStaffingStripping && ~DangerousGoodsIndex){
                     this.DangerousGoods.splice(DangerousGoodsIndex, 1);
                 }
-                DangerousGoodsIndex = this.DangerousGoods.indexOf('in');
+                DangerousGoodsIndex = this.DangerousGoods.indexOf('DangerousGoodsIn');
                 if(this.bidEmpty !== 'full-empty' && this.bidEmpty !== 'full-full' && ~DangerousGoodsIndex){
                     this.DangerousGoods.splice(DangerousGoodsIndex, 1);
                 }
-                DangerousGoodsIndex = this.DangerousGoods.indexOf('in');
-                if(bidEmpty !== 'full-full' && bidEmpty !== 'empty-full' && ~DangerousGoodsIndex){
+                DangerousGoodsIndex = this.DangerousGoods.indexOf('DangerousGoodsOut');
+                if(this.bidEmpty !== 'full-full' && this.bidEmpty !== 'empty-full' && ~DangerousGoodsIndex){
                     this.DangerousGoods.splice(DangerousGoodsIndex, 1);
                 }
             },
