@@ -22,21 +22,63 @@
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input name="trucking_parameters_state" :value="true" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                                <input type="radio" name="take_gave" value="WebGateInOut" v-model="webGate">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять/выдать</span>
+                            </label>
+
+                            <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="empty" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Порожний</span>
                             </label>
 
-                            <label class="label_width_outside_input">
-                                <input name="trucking_parameters_state" :value="false" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                            <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="full" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Груженый</span>
                             </label>
 
-                            <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" :disabled="notSelectedMainParams || bidEmpty !== false">
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="empty-empty" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять порожний – выдать порожний</span>
+                            </label>
+
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="empty-full" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять порожний – выдать груженый</span>
+                            </label>
+
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="full-empty" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять груженый – выдать порожний</span>
+                            </label>
+
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input name="trucking_parameters_state" value="full-full" v-model="bidEmpty" type="radio" :disabled="notSelectedMainOperation">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Принять груженый – выдать груженый</span>
+                            </label>
+
+                            <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
+                                <input type="checkbox" v-model="DangerousGoods" value="one" :disabled="bidEmpty !== 'full' && !WebStaffingStripping">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз</span>
+                            </label>
+
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input type="checkbox" v-model="DangerousGoods" value="in" :disabled="bidEmpty !== 'full-empty' && bidEmpty !== 'full-full'">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Опасный груз принять</span>
+                            </label>
+
+                            <label v-if="webGate === 'WebGateInOut'" class="label_width_outside_input">
+                                <input type="checkbox" v-model="DangerousGoods" value="out" :disabled="bidEmpty !== 'full-full' && bidEmpty !== 'empty-full'">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Опасный груз выдать</span>
                             </label>
 
                         </div>
@@ -44,7 +86,7 @@
                         <div class="labels">
 
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebCustomsRelease" :disabled="notSelectedMainParams">
+                                <input type="checkbox" v-model="WebCustomsRelease" :disabled="notCanSelectCustomsRelease">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать перемещение <span v-show="notSelectOut">на</span><span v-show="notSelectIn && notSelectOut">/</span><span v-show="notSelectIn">с</span> СВХ</span>
                             </label>
@@ -55,19 +97,19 @@
                                 <span class="title">заказать автоперевозку <span v-show="notSelectOut">до</span><span v-show="notSelectIn && notSelectOut">/</span><span v-show="notSelectIn">с</span> терминала</span>
                             </label>
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebStaffingStripping" :disabled="notSelectedMainParams || notSelectIn">
+                                <input type="checkbox" v-model="WebStaffingStripping" :disabled="notCanSelectWebStaffingStripping">
                                 <span class="pseudo_checkbox"></span>
-                                <span class="title">заказать <span v-show="bidEmpty !== false">погрузку</span><span v-show="bidEmpty !== true && bidEmpty !== false">/</span><span v-show="bidEmpty !== true">разгрузку</span> контейнера</span>
+                                <span class="title">заказать <span v-show="bidEmpty !== 'full'">погрузку</span><span v-show="bidEmpty !== 'full' && bidEmpty !== 'empty'">/</span><span v-show="bidEmpty !== 'empty'">разгрузку</span> контейнера</span>
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="RepairContainer" :disabled="notSelectedMainParams || notSelectIn">
+                                <input type="checkbox" v-model="RepairContainer" :disabled="notCanSelectRepair">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать ремонт контейнера</span>
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="ReturnContainer" :disabled="notSelectedMainParams || !WebInlandTransportation">
+                                <input type="checkbox" v-model="ReturnContainer" :disabled="notCanSelectReturnContainer">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать обратную доставку контейнера</span>
                             </label>
@@ -79,6 +121,7 @@
         </div>
 
         <button @click.prevent="createBid" class="cit_btn btn_submit" type="submit">Создать заявку</button>
+        <button @click.prevent="webGate = null" class="cit_btn btn_submit" :disabled="!webGate">Отменить</button>
     </form>
 </template>
 
@@ -96,7 +139,7 @@
             return {
                 webGate: null,                      // Операция подачи контейнера
                 bidEmpty: null,                     // Опция порожний контейнер
-                DangerousGoods: false,              // Опция опасный груз
+                DangerousGoods: [],                 // Опция опасный груз
                 WebInlandTransportation: false,     // Доставка автотранспортом
                 WebCustomsRelease: false,           // Перемещение из зоны СВХ
                 WebStaffingStripping: false,        // Погрузочно-разгрузочные работы
@@ -128,7 +171,7 @@
              * @returns {boolean}
              */
             notSelectedMainOperation: function(){
-                return this.notSelectIn && this.notSelectOut;
+                return this.webGate !== "WebGateIn" && this.webGate !== "WebGateOut" && this.webGate !== "WebGateInOut";
             },
 
             /**
@@ -136,7 +179,45 @@
              * @returns {boolean}
              */
             notSelectedMainParams: function(){
-                return this.notSelectedMainOperation || (this.bidEmpty !== true && this.bidEmpty !== false);
+                return this.notSelectedMainOperation || !this.bidEmpty;
+            },
+
+            /**
+             * Возможность выбрать СВХ
+             * Не выбирается если не выбраны основные параметры, выбрано приём/выдача, ремонт или погрузочно-разгрузочные работы
+             * @returns {boolean}
+             */
+            notCanSelectCustomsRelease: function () {
+                return this.notSelectedMainParams || this.webGate === "WebGateInOut" || this.RepairContainer || this.WebStaffingStripping;
+            },
+
+            /**
+             * Возможность выбрать погрузочно разгрузочные работы
+             * Не выбирается если не выбраны основные параметры, выбрано приём/выдача, выбрана выдача, либо с получением выбраны СВХ или починка + пустой контейнер
+             * @returns {boolean}
+             */
+            notCanSelectWebStaffingStripping: function () {
+                return this.notSelectedMainParams || this.webGate === "WebGateInOut" || this.webGate === "WebGateOut" ||
+                    (this.webGate === "WebGateIn" && (this.WebCustomsRelease || (this.bidEmpty === "empty" && this.RepairContainer)));
+            },
+
+            /**
+             * Возможность выбрать ремонт
+             * @returns {boolean}
+             */
+            notCanSelectRepair: function () {
+                return this.notSelectedMainParams || this.webGate === "WebGateInOut" || this.webGate === "WebGateOut" ||
+                (this.webGate === "WebGateIn" && (this.WebCustomsRelease || (this.bidEmpty === "empty" && this.WebStaffingStripping)));
+            },
+
+            /**
+             * Возможность выбрать возврат контейнера
+             * @returns {boolean}
+             */
+            notCanSelectReturnContainer: function () {
+                return this.notSelectedMainParams ||
+                    this.webGate === "WebGateInOut" || this.webGate === "WebGateIn" ||
+                    (this.webGate === "WebGateOut" && !this.WebInlandTransportation);
             },
         },
 
@@ -145,31 +226,28 @@
             /**
              * Сбрасываем все опции из правого списка при смене операции приема/выдачи контейнера
              */
-            webGate: function(){
-                this.WebInlandTransportation = false;
-                this.WebCustomsRelease = false;
-                this.WebStaffingStripping = false;
-                this.ReturnContainer = false;
-                this.RepairContainer = false;
+            webGate: function () {
+                this.bidEmpty = null;
             },
 
             /**
-             * Сбрасываем опцию "опасный груз" при выборе порожнего контейнера
+             * Сбрасываем опцию "опасный груз" и пункты правой части при выборе порожнего контейнера
              */
             bidEmpty: function () {
                 if(this.bidEmpty){
-                    this.DangerousGoods = null;
+                    this.DangerousGoods = [];
                 }
+
+                this.clearRightHalf();
             },
 
             /**
-             * Сбрасываем опцию "Возврат контейнера" при отмене опции "Доставка автотранспортом"
+             * Вызоы проверок полей правой стороны на disabled
              */
-            WebInlandTransportation: function () {
-                if(!this.WebInlandTransportation){
-                    this.ReturnContainer = false;
-                }
-            }
+            WebInlandTransportation: 'checkDisabledRightHalf',
+            WebCustomsRelease: 'checkDisabledRightHalf',
+            WebStaffingStripping: 'checkDisabledRightHalf',
+            RepairContainer: 'checkDisabledRightHalf',
         },
 
         methods: {
@@ -184,7 +262,7 @@
                     if(this.notSelectedMainOperation){
                         this.$parent.addMess('Выберите прием или получение контейнера');
                     }else if(this.bidEmpty !== true && this.bidEmpty !== false){
-                        this.$parent.addMess('Выберите пустой или порожний контейнер');
+                        this.$parent.addMess('Выберите порожний или груженый контейнер');
                     }
 
                 // Иначе формируем и передаем объект заявки
@@ -202,7 +280,50 @@
 
                     this.$parent.createBid(operations);
                 }
-            }
+            },
+
+            /**
+             * Очистка полей правой стороны
+             */
+            clearRightHalf: function () {
+                this.WebInlandTransportation = false;
+                this.WebCustomsRelease = false;
+                this.WebStaffingStripping = false;
+                this.ReturnContainer = false;
+                this.RepairContainer = false;
+            },
+
+            /**
+             * Проверка полей правой стороны и параметра опасный груз на disabled с последующей деактивацией
+             */
+            checkDisabledRightHalf: function () {
+
+                if(this.notCanSelectCustomsRelease){
+                    this.WebCustomsRelease = false;
+                }
+                if(this.notCanSelectWebStaffingStripping){
+                    this.WebStaffingStripping = false;
+                }
+                if(this.notCanSelectRepair){
+                    this.RepairContainer = false;
+                }
+                if(this.notCanSelectReturnContainer){
+                    this.ReturnContainer = false;
+                }
+
+                let DangerousGoodsIndex = this.DangerousGoods.indexOf('one');
+                if(this.bidEmpty !== 'full' && !this.WebStaffingStripping && ~DangerousGoodsIndex){
+                    this.DangerousGoods.splice(DangerousGoodsIndex, 1);
+                }
+                DangerousGoodsIndex = this.DangerousGoods.indexOf('in');
+                if(this.bidEmpty !== 'full-empty' && this.bidEmpty !== 'full-full' && ~DangerousGoodsIndex){
+                    this.DangerousGoods.splice(DangerousGoodsIndex, 1);
+                }
+                DangerousGoodsIndex = this.DangerousGoods.indexOf('in');
+                if(bidEmpty !== 'full-full' && bidEmpty !== 'empty-full' && ~DangerousGoodsIndex){
+                    this.DangerousGoods.splice(DangerousGoodsIndex, 1);
+                }
+            },
         }
     }
 </script>

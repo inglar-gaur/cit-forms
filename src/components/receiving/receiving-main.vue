@@ -241,7 +241,7 @@
              * @param {string} mess
              */
             addMess: function (mess) {
-                if(mess){
+                if(mess && !this.mess.includes(mess)){
 
                     // Если сообщение есть, добавляем его список
                     this.mess.push(mess);
@@ -252,7 +252,7 @@
                     }
 
                     // Устанавливаем интервал чистки сообщений заново
-                    this.clearMessTimer = setTimeout(() => this.mess = [], 5000);
+                    this.clearMessTimer = setTimeout(() => this.mess = [], 4000);
                 }
             }
         },
