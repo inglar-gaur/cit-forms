@@ -289,6 +289,7 @@
                     }
 
                     this.$parent.createBid(operations);
+                    this.$parent.setEmpty(this.bidEmpty);
                 }
             },
 

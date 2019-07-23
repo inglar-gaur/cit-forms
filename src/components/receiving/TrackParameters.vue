@@ -11,14 +11,10 @@
             <span class="title">40 фут</span>
         </label>
         <label class="label_width_outside_input">
-            <input name="receiving_form__truck_parameters_state" :checked="bidEmpty" type="radio" @input="$parent.setBidProp('bidEmpty', true)">
+            <input name="receiving_form__truck_parameters_state" checked type="radio" readonly>
             <span class="pseudo_checkbox"></span>
-            <span class="title">Порожний</span>
-        </label>
-        <label class="label_width_outside_input">
-            <input name="receiving_form__truck_parameters_state" :checked="!bidEmpty" type="radio" @input="$parent.setBidProp('bidEmpty', false)">
-            <span class="pseudo_checkbox"></span>
-            <span class="title">Груженый</span>
+            <span class="title" v-if="bidEmpty === 'empty'">Порожний</span>
+            <span class="title" v-if="bidEmpty === 'full'">Груженый</span>
         </label>
     </div>
 </template>

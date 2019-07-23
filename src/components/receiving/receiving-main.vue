@@ -19,8 +19,8 @@
                     <div class="form_row">
                         <OperationsList :operations="operations"></OperationsList>
                         <TrackParameters
-                            :size="bid.size"
-                            :bidEmpty="bid.bidEmpty"
+                            :size="bidSize"
+                            :bidEmpty="bidEmpty"
                         ></TrackParameters>
                         <CargoParameters
                             :dangerCargo="bid.dangerCargo"
@@ -31,6 +31,7 @@
                     </div>
 
                     <BidDateAndFiles
+                        :operations="operations"
                         :canLoadVicarious="bid.bidEmpty === true || operations.includes('WebGateOut')"
                         :canLoadDeclaration="operations.includes('WebGateIn')"
                         :hours="hours"
@@ -105,7 +106,9 @@
                 hours: [10, 12, 14],
                 minutes: [10, 30, 45, 50],
                 mess: [],
-                clearMessTimer: null
+                clearMessTimer: null,
+                bidEmpty: '',
+                bidSize: null,
             }
         },
 
@@ -159,9 +162,9 @@
                 }
             },
 
-            setEmpty: function (index, empty = true) {
-                if(this.bids[index]){
-                    this.bids[index]["bidEmpty"] = !!empty;
+            setEmpty: function (empty) {
+                if(empty){
+                    this.bidEmpty = empty;
                 }
             },
 

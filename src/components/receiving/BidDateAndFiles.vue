@@ -2,7 +2,7 @@
     <div class="form_row">
 
         <label class="service_date">
-            <span class="title">Дата услуги</span>
+            <span class="title">{{ tableTitle }}</span>
             <!--                            <input type="text" name="application_date">-->
             <!--                            <v-date-picker v-model="bid.bidDate"></v-date-picker>-->
             <datepicker
@@ -66,12 +66,29 @@
         name: "BidDateAndFiles",
 
         props: {
+            operations:         {type: Array, default: []},
             bidDate:            {type: String,  default: ""},
             container:          {type: Number,  default: null},
             hours:              {type: Array,   default: []},
             minutes:            {type: Array,   default: []},
             canLoadVicarious:   {type: Boolean, default: false},
             canLoadDeclaration: {type: Boolean, default: false},
+        },
+
+        computed:{
+            tableTitle: function () {
+                let tableTitle = 'Дата ';
+
+                if(this.operations.includes('WebGateIn')){
+                    tableTitle += 'приема ктк на терминал';
+                }else if(this.operations.includes('WebGateOut')){
+                    tableTitle += 'выдачи ктк с терминала';
+                }else if(this.operations.includes('WebGateInOut')){
+                    tableTitle += 'приема/выдачи ктк';
+                }
+
+                return tableTitle;
+            }
         },
         
         methods: {
