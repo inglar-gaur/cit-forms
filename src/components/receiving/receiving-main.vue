@@ -16,13 +16,14 @@
                         <input type="text" :value="nowDate" :placeholder="nowDate" readonly>
                     </div>
 
-                    <div class="form_row">
+                    <div class="form_row flex-start left-margin-30">
                         <OperationsList :operations="operations"></OperationsList>
                         <TrackParameters
                             :size="bidSize"
                             :bidEmpty="bidEmpty"
                         ></TrackParameters>
                         <CargoParameters
+                            v-if="bidEmpty === 'full'"
                             :dangerCargo="bid.dangerCargo"
                             :bidEmpty="bid.bidEmpty"
                             :mass="bid.mass"
@@ -39,15 +40,21 @@
                         :bidDate="bid.bidDate"
                     ></BidDateAndFiles>
 
+                    <CustomRelease
+                        v-if="operations.includes('WebCustomsRelease')"
+                        :operations="operations"
+                    ></CustomRelease>
 
                     <WebInlandTransportation
                         v-if="operations.includes('WebInlandTransportation')"
+                        :operations="operations"
                         :specialDemand="bid.specialDemand"
                     ></WebInlandTransportation>
 
                     <WebStaffingStripping
                         v-if="operations.includes('WebStaffingStripping')"
-                        :bidGoods="bid.goods"
+                        :operations="operations"
+                        :bidGoods="goods"
                     ></WebStaffingStripping>
                 </div>
 
@@ -55,7 +62,7 @@
 
             <button v-show="canAddContainer" @click.prevent="addContainer" class="cit_btn btn_add">+ Добавить контейнер</button>
             <br>
-            <button :disabled="!activeSubmitButton" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>
+            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>
             <button class="cit_btn btn_cancel">Отменить</button>
         </form>
 
@@ -76,6 +83,7 @@
     import TrackParameters from "./TrackParameters";
     import CargoParameters from "./CargoParameters";
     import BidDateAndFiles from "./BidDateAndFiles";
+    import CustomRelease from "./CustomRelease";
 
     export default {
         name: "receiving-main",
@@ -83,7 +91,12 @@
             BidDateAndFiles,
             CargoParameters,
             TrackParameters,
-            OperationsList, receivingCreateForm, WebInlandTransportation, WebStaffingStripping},
+            OperationsList,
+            receivingCreateForm,
+            WebInlandTransportation,
+            WebStaffingStripping,
+            CustomRelease
+        },
 
         data: function () {
             return {
@@ -98,6 +111,7 @@
                     specialDemand: '',
                     goods: []
                 },
+                goods: [],
                 operations: [],
                 showCreateForm: true,
                 bids: [],
@@ -168,9 +182,9 @@
                 }
             },
 
-            setSize: function (index, size) {
-                if(this.bids[index]){
-                    this.bids[index]["size"] = +size;
+            setBidSize: function (size) {
+                if(size){
+                    this.bidSize = size;
                 }
             },
 
@@ -180,25 +194,10 @@
 
             sendBid: function () {
                 this.addMess("Заявка отправлена");
-                this.bids = [];
-                this.showCreateForm = true;
-                setTimeout(() => this.mess = "", 5000);
+                this.operations = [];
 
             },
 
-            addGood: function (index) {
-                if(this.bids[index] && this.bids[index].goods){
-                    this.bids[index].goods.push({
-                        name: "",
-                        amount: 0,
-                        weight: 0,
-                        size: "",
-                        pack: "",
-                        dangerClass: "",
-                        specialDemand: "",
-                    });
-                }
-            },
             changeInputFileTitle: function(e){
                 // console.dir(e.target);
                 // e.target.files[0];
@@ -214,19 +213,18 @@
 
             setBidGoods: function (index, prop, value) {
                 if(
-                    this.bid &&
-                    this.bid.goods &&
-                    this.bid.goods[index] &&
-                    this.bid.goods[index].hasOwnProperty(prop)
+                    this.goods[index] &&
+                    this.goods[index].hasOwnProperty(prop)
                 ){
-                    this.bid.goods[index][prop] = value;
+                    this.goods[index][prop] = value;
+                    if(prop === 'weight' && +value > 1500){
+                        this.addMess('При дальнейшей отправке контейнера по ж/д со ст. Кольцово с заданными параметрами одного грузового места могут потребоваться особые условия перевозки.');
+                    }
                 }
             },
 
             addBidGoods: function () {
-                if(this.bid && Array.isArray(this.bid.goods)){
-                    this.bid.goods.push(
-                        {
+                this.goods.push({
                             name: null,
                             amount: null,
                             weight: null,
@@ -234,9 +232,7 @@
                             pack: null,
                             dangerClass: null,
                             specialDemand: "",
-                        }
-                    );
-                }
+                        });
             },
 
             /**

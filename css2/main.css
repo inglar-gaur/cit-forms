@@ -575,6 +575,15 @@ input:disabled ~ .title {
     clip: rect(0 0 0 0);
     overflow: hidden; }
 
+.flex-start {
+  justify-content: flex-start; }
+
+.left-margin-30 > * {
+  margin-right: 30px; }
+
+.form_row input {
+  margin-top: auto; }
+
 .subset {
   display: flex;
   justify-content: space-between;

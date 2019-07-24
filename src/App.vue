@@ -100,7 +100,7 @@ export default {
     align-items: center;
     justify-content: center;
     width: 50%;
-    height: 100px;
+    padding: 30px;
     background-color: #00b159;
     border-radius: 10px;
     position: absolute;

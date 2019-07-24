@@ -145,5 +145,19 @@ input:disabled {
   }
 }
 
+.flex-start{
+  justify-content: flex-start;
+}
+
+.left-margin-30{
+  >*{
+    margin-right: 30px;
+  }
+}
+
+.form_row input{
+  margin-top: auto;
+}
+
 
 

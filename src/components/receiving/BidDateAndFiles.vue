@@ -51,12 +51,12 @@
 
         <label v-show="canLoadVicarious" class="cit__form_attachment receiving_add_file">
             <input type="file" name="receiving_proxy_file" placeholder="Приложить доверенность" @change="changeInputFileTitle">
-            <span class="cit__form_attachment__title">Приложить доверенность</span>
+            <span class="cit__form_attachment__title">Приложить декларацию</span>
         </label>
 
         <label v-show="canLoadDeclaration" class="cit__form_attachment receiving_add_file">
             <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию" @change="changeInputFileTitle">
-            <span class="cit__form_attachment__title">Приложить декларацию</span>
+            <span class="cit__form_attachment__title">Приложить доверенность</span>
         </label>
     </div>
 </template>
