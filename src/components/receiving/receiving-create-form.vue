@@ -282,7 +282,7 @@
                                 operations.push(this[operation]);
 
                             // Нужны ключи объекта data
-                            }else{
+                            }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
                                 operations.push(operation);
                             }
                         }

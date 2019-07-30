@@ -400,7 +400,7 @@ fieldset {
   .cit_form textarea {
     color: #7a7a7a;
     background-color: #f5f5f5;
-    border: 2px solid #f5f5f5;
+    border: 2px solid lightgrey;
     height: 40px;
     transition: all 0.1s linear; }
     .cit_form input[type=text]:not(:disabled):hover,
@@ -561,10 +561,12 @@ input:disabled ~ .title {
 /* ***** для прикрепления файлов ***** */
 .cit__form_attachment {
   cursor: pointer;
-  font-size: 14px; }
+  font-size: 14px;
+  background-color: lightcoral !important; }
   .cit__form_attachment .cit__form_attachment__title {
     line-height: 36px;
-    padding: 0 10px; }
+    padding: 0 10px;
+    color: white; }
   .cit__form_attachment [type=file] {
     position: absolute;
     width: 1px;
@@ -578,11 +580,22 @@ input:disabled ~ .title {
 .flex-start {
   justify-content: flex-start; }
 
-.left-margin-30 > * {
-  margin-right: 30px; }
+.left-margin-label-30 > label + label {
+  margin-left: 30px; }
 
 .form_row input {
   margin-top: auto; }
+
+.input_in_bottom label {
+  position: relative; }
+  .input_in_bottom label input:nth-child(2) {
+    position: absolute;
+    bottom: 0; }
+
+.input_in_bottom.all-inputs-absolute label {
+  position: relative; }
+  .input_in_bottom.all-inputs-absolute label *:nth-child(1) {
+    margin-bottom: 51px; }
 
 .subset {
   display: flex;
@@ -604,11 +617,16 @@ input:disabled ~ .title {
 .trucking_form .trucking_start_fieldset_2 {
   width: calc(40% - 20px); }
 
-.chosen_parameters label {
-  padding: 5px 0; }
+.chosen_parameters {
+  margin-bottom: 18px; }
+  .chosen_parameters label {
+    padding: 5px 0;
+    float: left; }
+  .chosen_parameters label + label {
+    margin-left: 10px; }
 
 .truck_parameters {
-  column-count: 2; }
+  column-count: 1; }
   .truck_parameters label {
     width: 90px;
     padding: 5px 0; }
@@ -925,17 +943,12 @@ input:disabled ~ .title {
   margin-left: 0; }
   .receiving_form .is_cargo_danger .title {
     margin-bottom: 0; }
-.receiving_form label.container_number {
-  margin-left: 30px; }
 .receiving_form .time_interval {
   margin-left: 30px; }
 
 .receiving_add_file {
   align-self: flex-end;
-  margin-left: 20px;
   width: 200px; }
-  .receiving_add_file:nth-of-type(1) {
-    margin-left: 30px; }
   .receiving_add_file:nth-last-of-type(1) {
     margin-right: auto; }
 

@@ -15,8 +15,8 @@
         WebGateIn:          'принять на терминал',
         webGateOut:         'выдать с терминала',
         webGateInOut:       'принять/выдать',
-        // full:               'груженый',
-        // empty:              'порожний',
+        full:               'груженый',
+        empty:              'порожний',
         RepairContainer:    'заказать ремонт контейнера',
         ReturnContainer:    'заказать обратную доставку контейнера',
     };
@@ -39,7 +39,7 @@
                  * @type {Array.<string>}
                  */
                 let operations = [];
-                
+
                 for(let i = 0; i < this.operations.length; i++){
 
                     // Если есть в списке с названиями

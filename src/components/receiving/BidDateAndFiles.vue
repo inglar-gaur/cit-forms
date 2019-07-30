@@ -1,5 +1,10 @@
 <template>
-    <div class="form_row">
+    <div class="form_row input_in_bottom left-margin-label-30 flex-start">
+
+      <label class="container_number">
+        <span class="title">Номер контейнера</span>
+        <input placeholder="AAAA9999999" type="text" :value="container" @input="$parent.setContainerNumber($event.target.value)" pattern="[A-Z]{4}[0-9]{7}" required>
+      </label>
 
         <label class="service_date">
             <span class="title">{{ tableTitle }}</span>
@@ -15,13 +20,9 @@
                     width="150px"
             ></datepicker>
         </label>
-        <label class="container_number">
-            <span class="title">Номер контейнера</span>
-            <input type="text" :value="container" @input="$parent.setBidProp('container', $event.target.value)">
-        </label>
 
         <div class="time_interval">
-            <div class="title">Время прибытия</div>
+            <div class="title">{{timeIntervalTitle}}</div>
             <div class="labels">
                 <label>
                     <!--                                <span class="label_title title">с</span>-->
@@ -54,10 +55,6 @@
             <span class="cit__form_attachment__title">Приложить декларацию</span>
         </label>
 
-        <label v-show="canLoadDeclaration" class="cit__form_attachment receiving_add_file">
-            <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию" @change="changeInputFileTitle">
-            <span class="cit__form_attachment__title">Приложить доверенность</span>
-        </label>
     </div>
 </template>
 
@@ -88,12 +85,26 @@
                 }
 
                 return tableTitle;
+            },
+
+            timeIntervalTitle: function () {
+                let timeIntervalTitle = 'Время прибытия';
+
+                if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateIn')){
+                    timeIntervalTitle += ' в место погрузки';
+                }else if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateOut')){
+                    timeIntervalTitle += ' в место разггрузки';
+                }else if(this.operations.includes('WebStaffingStripping') && this.operations.includes('WebGateIn')){
+                    timeIntervalTitle += ' на терминал';
+                }
+
+                return timeIntervalTitle;
             }
         },
-        
+
         methods: {
             changeInputFileTitle: function () {
-                
+
             }
         }
     }

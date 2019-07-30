@@ -6,7 +6,7 @@
             <p v-for="message in mess">{{ message }}</p>
         </div>
 
-        <form v-if="operations.length > 0" class="cit_form receiving_form">
+        <form v-if="operations.length > 0" class="cit_form receiving_form" @submit="sendBid">
             <div class="application_wrap">
                 <div class="application">
                     <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span><small v-if="bid.WebInlandTransportation"> + автоперевозка</small></h2>
@@ -16,7 +16,7 @@
                         <input type="text" :value="nowDate" :placeholder="nowDate" readonly>
                     </div>
 
-                    <div class="form_row flex-start left-margin-30">
+                    <div>
                         <OperationsList :operations="operations"></OperationsList>
                         <TrackParameters
                             :size="bidSize"
@@ -38,12 +38,13 @@
                         :hours="hours"
                         :minutes="minutes"
                         :bidDate="bid.bidDate"
+                        :container="containerNumber"
                     ></BidDateAndFiles>
 
-                    <CustomRelease
-                        v-if="operations.includes('WebCustomsRelease')"
-                        :operations="operations"
-                    ></CustomRelease>
+<!--                    <CustomRelease-->
+<!--                        v-if="operations.includes('WebCustomsRelease')"-->
+<!--                        :operations="operations"-->
+<!--                    ></CustomRelease>-->
 
                     <WebInlandTransportation
                         v-if="operations.includes('WebInlandTransportation')"
@@ -56,14 +57,43 @@
                         :operations="operations"
                         :bidGoods="goods"
                     ></WebStaffingStripping>
+
+                  <div class="form_row">
+                    <label  @click="openPriceSelect">
+                      <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
+                    </label>
+                  </div>
+
+                  <div class="form_row flex-start">
+                    <label>
+                      <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text" value="Итого стоимость услуг:" disabled><span>руб.</span>
+                    </label>
+                    <label>
+                      <select class="price-select" style="border: 2px solid lightgray; margin-left: 100px; width: 300px" type="text">
+                        <option disabled selected>раскрыть список заказанных услуг</option>
+                        <option>Услуга 1</option>
+                        <option>Услуга 2</option>
+                        <option>Услуга 3</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="form_row">
+                    <label v-show="true" class="cit__form_attachment receiving_add_file">
+                      <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию" @change="changeInputFileTitle">
+                      <span class="cit__form_attachment__title">Приложить доверенность</span>
+                    </label>
+                  </div>
+
                 </div>
 
             </div>
 
             <button v-show="canAddContainer" @click.prevent="addContainer" class="cit_btn btn_add">+ Добавить контейнер</button>
             <br>
-            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>
-            <button class="cit_btn btn_cancel">Отменить</button>
+<!--            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>-->
+            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+            <button @click="clearForm" class="cit_btn btn_cancel">Отменить</button>
         </form>
 
         <receivingCreateForm
@@ -123,6 +153,7 @@
                 clearMessTimer: null,
                 bidEmpty: '',
                 bidSize: null,
+                containerNumber: null,
             }
         },
 
@@ -188,6 +219,12 @@
                 }
             },
 
+            setContainerNumber: function(containerNumber){
+                if(+containerNumber > 0){
+                    this.containerNumber = +containerNumber;
+                }
+            },
+
             addContainer: function () {
 
             },
@@ -202,7 +239,6 @@
                 // console.dir(e.target);
                 // e.target.files[0];
                 e.target.parentElement.children[1].innerHTML = e.target.files[0].name;
-
             },
 
             setBidProp: function (prop, value) {
@@ -253,6 +289,14 @@
                     // Устанавливаем интервал чистки сообщений заново
                     this.clearMessTimer = setTimeout(() => this.mess = [], 4000);
                 }
+            },
+
+            openPriceSelect: function () {
+
+            },
+
+            clearForm: function () {
+                this.webGate = null;
             }
         },
         // mounted: function() {

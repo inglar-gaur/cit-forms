@@ -33,12 +33,20 @@
 
 // *************************************** line 1
 .chosen_parameters{
+
+  margin-bottom: 18px;
+
   label{
     padding: 5px 0;
+    float: left;
+  }
+
+  label+label{
+    margin-left: 10px;
   }
 }
 .truck_parameters{
-  column-count: 2;
+  column-count: 1;
   label{
     width: 90px;
     padding: 5px 0;

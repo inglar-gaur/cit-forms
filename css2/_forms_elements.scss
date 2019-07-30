@@ -1,9 +1,9 @@
-.cit_form{
+.cit_form {
   margin-top: 45px;
   //width: 1140px; // temporary. Needs site container width
 }
 
-.application_wrap{
+.application_wrap {
   width: 100%;
   overflow-x: auto;
 
@@ -11,18 +11,44 @@
   margin: 0 0 30px;
 
   // for chrome
-  &::-webkit-scrollbar { height: 8px;}
-  &::-webkit-scrollbar-button { width: 0;  background-color: lightgray; }
-  &::-webkit-scrollbar-track {  background-color: transparent; border: 1px solid lightgray; border-radius: 4px;}
-  &::-webkit-scrollbar-track-piece { background-color: transparent;}
-  &::-webkit-scrollbar-thumb { background-color: lightgray; border-radius: 5px;}
-  &::-webkit-scrollbar-corner { background-color: transparent;}
-  &::-webkit-resizer { background-color: transparent;}
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-button {
+    width: 0;
+    background-color: lightgray;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: lightgray;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  &::-webkit-resizer {
+    background-color: transparent;
+  }
+
   // for ff
   scrollbar-color: lightgray transparent;
   scrollbar-width: thin;
 }
-.application{
+
+.application {
   padding: 40px 35px;
   //margin: 0 0 30px;
   //box-shadow: $shadow_big;
@@ -33,7 +59,7 @@
 
 }
 
-.fieldsets_wrapper{
+.fieldsets_wrapper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -41,14 +67,16 @@
 
 
 /***** псевдо чекбокс и псевдо радио *****/
-.label_width_outside_input{
+.label_width_outside_input {
   position: relative;
   display: flex;
   align-items: center;
-  .pseudo_checkbox{
+
+  .pseudo_checkbox {
     margin-right: 10px;
   }
-  input{
+
+  input {
     position: absolute;
     left: -40px;
     opacity: 0;
@@ -57,7 +85,7 @@
   }
 }
 
-.pseudo_checkbox{
+.pseudo_checkbox {
   display: inline-flex;
   width: 16px;
   min-width: 16px;
@@ -65,7 +93,8 @@
   border: 2px solid lightgray;
   position: relative;
   transition: border-color 0.15s cubic-bezier(0.5, -0.35, 0.5, 1.5);
-  &::before{
+
+  &::before {
     content: '';
     width: 4px;
     height: 6px;
@@ -85,38 +114,42 @@
     transform-origin: left bottom;
   }
 }
-input:checked ~ .pseudo_checkbox{
+
+input:checked ~ .pseudo_checkbox {
   border: 2px solid $color_group_1;
-  &::before{
+
+  &::before {
     opacity: 1;
   }
 }
+
 //input:checked:disabled ~ .pseudo_checkbox{
 //  background-color: $color_bg_disabled;
 //}
 input:disabled {
-  &~ .pseudo_checkbox{
+  & ~ .pseudo_checkbox {
     background-color: $color_bg_disabled;
   }
-  &~ .title{
+
+  & ~ .title {
     opacity: 0.5;
   }
 }
 
-.application_date{
+.application_date {
   margin-bottom: 15px;
 }
-
 
 
 /***** временные периоды *****/
 .departure_period,
 .movement_period,
-.load_period{
-  input{
+.load_period {
+  input {
     width: 100px;
   }
-  .labels{
+
+  .labels {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -124,40 +157,64 @@ input:disabled {
 }
 
 /* ***** для прикрепления файлов ***** */
-.cit__form_attachment{
+.cit__form_attachment {
   cursor: pointer;
   font-size: 14px;
+  background-color: lightcoral !important;
 
-  .cit__form_attachment__title{
+  .cit__form_attachment__title {
     line-height: 36px;
     padding: 0 10px;
+    color: white;
   }
 
-  [type=file]{
+  [type=file] {
     position: absolute;
     width: 1px;
     height: 1px;
     margin: -1px;
-    border:0;
+    border: 0;
     padding: 0;
     clip: rect(0 0 0 0);
     overflow: hidden;
   }
 }
 
-.flex-start{
+.flex-start {
   justify-content: flex-start;
 }
 
-.left-margin-30{
-  >*{
-    margin-right: 30px;
+.left-margin-label-30 {
+  > label + label {
+    margin-left: 30px;
   }
 }
 
-.form_row input{
+.form_row input {
   margin-top: auto;
 }
 
+.input_in_bottom {
+  label {
+    position: relative;
 
+    //*:nth-child(1) {
+    //  margin-bottom: 51px;
+    //}
 
+    input:nth-child(2) {
+      position: absolute;
+      bottom: 0;
+    }
+  }
+}
+
+.input_in_bottom.all-inputs-absolute {
+  label {
+    position: relative;
+
+    *:nth-child(1) {
+      margin-bottom: 51px;
+    }
+  }
+}
