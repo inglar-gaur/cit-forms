@@ -41,8 +41,12 @@
                             v-if="$store.state.SelectedBidPoints.list.includes('WebStaffingStripping')"
                     ></WebStaffingStripping>
 
+                    <Repair
+                            v-if="$store.state.SelectedBidPoints.list.includes('RepairContainer')"
+                    ></Repair>
+
                     <div class="form_row">
-                        <label @click="$store.commit('openPopup', 'priceSelectPopup')">
+                        <label @click="$store.commit('openPopup', 'PriceSelectPopup')">
                             <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
                         </label>
                     </div>
@@ -52,8 +56,8 @@
                             <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text"
                                    value="Итого стоимость услуг:" disabled><span>руб.</span>
                         </label>
-                        <label @click="$store.commit('openPopup', 'priceSelectedPopup')">
-                            <input style="width: 240px" type="text" value="Раскрыть список заказанных услуг" disabled>
+                        <label @click="$store.commit('openPopup', 'PriceSelectedPopup')">
+                            <input style="width: 270px; margin-left: 50px" type="text" value="Раскрыть список заказанных услуг" disabled>
                         </label>
                     </div>
 
@@ -85,6 +89,7 @@
         ></receivingCreateForm>
 
         <PriceSelectPopup></PriceSelectPopup>
+        <PriceSelectedPopup></PriceSelectedPopup>
 
     </div>
 </template>
@@ -100,13 +105,17 @@
     import BidDateAndFiles from "./BidDateAndFiles";
     import CustomRelease from "./CustomRelease";
     import PriceSelectPopup from "../popups/PriceSelectPopup";
+    import PriceSelectedPopup from "../popups/PriceSelectedPopup";
     import Messages from "../popups/Messages";
+    import Repair from "../forms/Repair";
 
     export default {
         name: "receiving-main",
         components: {
+            Repair,
             Messages,
             PriceSelectPopup,
+            PriceSelectedPopup,
             BidDateAndFiles,
             CargoParameters,
             TrackParameters,

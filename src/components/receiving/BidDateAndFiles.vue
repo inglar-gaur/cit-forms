@@ -1,18 +1,6 @@
 <template>
     <div class="form_row input_in_bottom left-margin-label-30 flex-start">
 
-      <label class="container_number">
-        <span class="title">Номер контейнера</span>
-        <input
-            placeholder="AAAA9999999"
-            type="text"
-            :value="$store.state.WebBid.ContainerNumber"
-            @input="$store.commit('setBidProp', {prop: 'ContainerNumber', value: $event.target.value})"
-            pattern="[A-Z]{4}[0-9]{7}"
-            required
-        >
-      </label>
-
         <label class="service_date">
             <span class="title">{{ tableTitle }}</span>
             <!--                            <input type="text" name="application_date">-->
@@ -94,7 +82,7 @@
                 let timeIntervalTitle = 'Время прибытия';
 
                 if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
-                    timeIntervalTitle += ' в место погрузки';
+                    timeIntervalTitle += ' на погрузку';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     timeIntervalTitle += ' в место разггрузки';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){

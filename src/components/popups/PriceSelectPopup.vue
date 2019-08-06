@@ -1,11 +1,14 @@
 <template>
-    <div class="price-select-popup" v-show="$store.state.PriceSelectPopup">
+    <div class="price-select-popup" v-show="$store.state.Popups.PriceSelectPopup">
         <span class="close-cross" @click="$store.commit('closePopup', 'PriceSelectPopup')">x</span>
-        <div v-for="priceCategory in $store.state.Price.list">
-            <label class="label_width_outside_input" v-for="pricePoint in priceCategory.points">
-                <input type="checkbox" :checked="$store.state.Price.selected.includes(priceCategory)">
-                <span class="pseudo_checkbox"></span>
-                <span class="title">заказать ремонт контейнера</span>
+        <div style="margin: 50px 10px">
+            <label class="label_width_outside_input" v-for="(priceWebBidElement, index) in $store.state.Price.WebBid" style="display: flex; justify-content: space-between">
+                <div>
+                    <input type="checkbox" :checked="priceWebBidElement.checked" @input="$store.commit('changePrice', {price: 'WebBid', index: index})">
+                    <span class="pseudo_checkbox"></span>
+                    <span class="title">{{priceWebBidElement.title}}</span>
+                </div>
+                <span>{{priceWebBidElement.price}}</span>
             </label>
         </div>
     </div>

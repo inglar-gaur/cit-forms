@@ -96,7 +96,7 @@
             },
 
             waitingTimeTitle: function () {
-                let waitingTimeTitle = 'Время ожидания';
+                let waitingTimeTitle = 'Время';
 
                 if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     waitingTimeTitle += ' на погрузку';

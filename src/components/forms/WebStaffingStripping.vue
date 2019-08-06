@@ -100,7 +100,11 @@
 
             <table class="load_unload_table" v-if="$store.state.SelectedBidPoints.list.includes('WebGateIn')">
                 <tr>
-                    <th></th>
+                    <th colspan="6">Объект перемещения груза (место нахождения груза)</th>
+                </tr>
+                <tr>
+<!--                    <th></th>-->
+                    <th>Открытая площадка</th>
                     <th>Вагон</th>
                     <th>Контейнер</th>
                     <th>Автотранспорт</th>
@@ -108,34 +112,40 @@
                     <th>Площадка</th>
                 </tr>
                 <tr>
-                    <th>{{loadTableTitle}}</th>
+<!--                    <th>{{loadTableTitle}}</th>-->
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio" disabled>
+                            <input name="loading_out" type="radio">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio" disabled checked>
+                            <input name="loading_out" type="radio">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio" disabled>
+                            <input name="loading_out" type="radio">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio" disabled>
+                            <input name="loading_out" type="radio">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio" disabled>
+                            <input name="loading_out" type="radio">
+                            <span class="pseudo_checkbox"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="label_width_outside_input">
+                            <input name="loading_out" type="radio">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
@@ -175,10 +185,21 @@
                 <!--                </tr>-->
             </table>
 
-            <label style="margin-left: 30px">
-                <span class="title">Масса груза, кг</span>
-                <input type="number" name="receiving_form__cargo_parameters__weight">
-            </label>
+            <table style="margin-left: 40px">
+                <tr>
+                    <th>Признак объекта (место, № и тп)</th>
+                </tr>
+                <tr>
+                    <td style="position: relative">
+                        <input type="text" name="" style="height: 62px; position: absolute; top: 0; left: 0">
+                    </td>
+                </tr>
+            </table>
+
+<!--            <label style="margin-left: 30px">-->
+<!--                <span class="title">Масса груза, кг</span>-->
+<!--                <input type="number" name="receiving_form__cargo_parameters__weight">-->
+<!--            </label>-->
 
         </div>
     </div>

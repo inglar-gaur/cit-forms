@@ -23,7 +23,10 @@ const PopupsModule = {
          * @param {String} popup - Переменная открываемого окна
          */
         openPopup(state, popup) {
-            if(state.hasOwnProperty(popup)){
+            console.log(state);
+            console.log(popup);
+            console.log(Object.getOwnPropertyDescriptor(state, popup));
+            if(Object.getOwnPropertyDescriptor(state, popup) !== undefined){
                 state[popup] = true;
             }
         },
@@ -32,7 +35,7 @@ const PopupsModule = {
          * @param {String} popup - Переменная закрываемого окна
          */
         closePopup(state, popup) {
-            if(state.hasOwnProperty(popup)){
+            if(Object.getOwnPropertyDescriptor(state, popup) !== undefined){
                 state[popup] = false;
             }
         }
@@ -144,6 +147,20 @@ const Price = {
             {title: 'Предоставление ЗПУ на контейнер для перевозки опасных грузов', unit: 'штука', price: 600},
         ],
         selected: {WebBid: []},
+    },
+
+    mutations: {
+        changePrice: function (state, obj) {
+            if(state && obj && Array.isArray(state[obj.price]) && state[obj.price][obj.index]){
+                state[obj.price][obj.index].checked = !state[obj.price][obj.index].checked;
+            }
+        }
+    },
+
+    getters: {
+        getSelectedPriceElements: function (state) {
+            return state.WebBid.filter(elem => elem.checked);
+        }
     }
 };
 
