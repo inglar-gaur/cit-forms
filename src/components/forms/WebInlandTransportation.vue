@@ -31,6 +31,10 @@
                 <span class="minutes title">мин</span>
             </label>
         </div>
+
+        <CargoDetails
+            v-if="$store.state.SelectedBidPoints.list.includes('full') && !$store.state.SelectedBidPoints.list.includes('WebStaffingStripping')"
+        ></CargoDetails>
 <!--        <div class="form_row">-->
 <!--            <div class="receiving__time_interval_and_special_demand">-->
 <!--                <div class="time_interval">-->
@@ -59,6 +63,9 @@
 </template>
 
 <script>
+
+    import CargoDetails from "./subForms/CargoDetails";
+
     export default {
         name: "WebInlandTransportation",
 
@@ -70,11 +77,15 @@
           }
         },
 
+        components: {CargoDetails},
+
         computed:{
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('full')) {
+                    tableTitle += ' прибытия';
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     tableTitle += ' погрузки';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     tableTitle += ' разгрузки';

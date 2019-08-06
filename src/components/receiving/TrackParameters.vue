@@ -35,6 +35,13 @@
                     required
             >
         </label>
+
+        <label class="container_number" style="width: 150px; margin-left: 40px" v-if="$store.state.SelectedBidPoints.list.includes('full')">
+            <span class="title">Номер ЗПУ</span>
+            <input
+                    type="text"
+            >
+        </label>
 <!--        <label class="label_width_outside_input">-->
 <!--            <input name="receiving_form__truck_parameters_state" checked type="radio" readonly>-->
 <!--            <span class="pseudo_checkbox"></span>-->

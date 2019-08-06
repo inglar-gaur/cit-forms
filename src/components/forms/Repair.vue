@@ -17,7 +17,7 @@
                         строку
                     </button>
                 </td>
-                <td></td>
+                <td style="width: 10%"></td>
                 <td class="sum" style="position: relative; text-align: right"><div style="width: 80%; position: absolute; right: 5px; top: 2px">Итог категория ремонта:</div></td>
                 <td>
                     <input type="text" disabled>

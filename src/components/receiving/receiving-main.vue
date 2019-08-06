@@ -7,9 +7,11 @@
             <div class="application_wrap">
                 <div class="application">
                     <h2>Заявка на {{ mainOperationTextType }} контейнера <span
-                            class="application_number">№{{ 1 }}</span><small
-                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"> +
-                        автоперевозка</small></h2>
+                            class="application_number">№{{ 1 }}</span>
+<!--                        <small-->
+<!--                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"> +-->
+<!--                        автоперевозка</small>-->
+                    </h2>
 
                     <div class="application_date">
                         <span>Дата подачи заявки: </span>
@@ -177,9 +179,9 @@
             },
 
             mainOperationTextType: function () {
-                if (this.WebGateIn) {
+                if (this.$store.state.SelectedBidPoints.list.includes('WebGateIn')) {
                     return "прием";
-                } else if (this.WebGateOut) {
+                } else if (this.$store.state.SelectedBidPoints.list.includes('WebGateOut')) {
                     return "выдачу";
                 }
                 return "";

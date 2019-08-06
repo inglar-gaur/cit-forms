@@ -19,6 +19,7 @@
         empty:              'порожний',
         RepairContainer:    'заказать ремонт контейнера',
         ReturnContainer:    'заказать обратную доставку контейнера',
+        DangerousGoods:     'опасный груз',
     };
 
     export default {

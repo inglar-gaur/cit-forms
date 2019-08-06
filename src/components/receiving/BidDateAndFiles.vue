@@ -21,7 +21,7 @@
             <div class="title">{{timeIntervalTitle}}</div>
             <div class="labels">
                 <label>
-                    <!--                                <span class="label_title title">с</span>-->
+                    <span class="label_title title" v-if="setTimeIntervalTitle">с</span>
                     <!--                                    <input name="arrive_time_less" type="text">-->
                     <select>
                         <option>--</option>
@@ -30,13 +30,13 @@
                     <span class="hours title">час.</span>
                 </label>
                 <label>
-                    <!--                                <span class="label_title title">до</span>-->
+                    <span class="label_title title" v-if="setTimeIntervalTitle">до</span>
                     <!--                                    <input name="arrive_time_up" type="text">-->
                     <select>
                         <option>--</option>
                         <option v-for="minute in []">{{ minute }}</option>
                     </select>
-                    <span class="hours title">мин.</span>
+                    <span class="hours title">{{ setTimeIntervalTitle ? 'час.' : 'мин.'}}</span>
                 </label>
             </div>
         </div>
@@ -85,11 +85,15 @@
                     timeIntervalTitle += ' на погрузку';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     timeIntervalTitle += ' в место разггрузки';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                }else if((this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') || this.$store.state.SelectedBidPoints.list.includes('full')) && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     timeIntervalTitle += ' на терминал';
                 }
 
                 return timeIntervalTitle;
+            },
+
+            setTimeIntervalTitle: function () {
+                return this.$store.state.SelectedBidPoints.list.includes('WebGateIn') && this.$store.state.SelectedBidPoints.list.includes('full') && this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation');
             }
         },
 
