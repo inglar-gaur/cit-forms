@@ -26,17 +26,13 @@
     export default {
         name: "CustomRelease",
 
-        props: {
-            operations: {type: Array, default: []}
-        },
-
         computed:{
             tableTitle: function () {
                 let tableTitle = 'Период выполнения перемещения ';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.includes('WebGateIn')){
                     tableTitle += 'на СВХ';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.includes('WebGateOut')){
                     tableTitle += 'из СВХ';
                 }
 

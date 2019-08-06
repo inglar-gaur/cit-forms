@@ -3,7 +3,14 @@
 
       <label class="container_number">
         <span class="title">Номер контейнера</span>
-        <input placeholder="AAAA9999999" type="text" :value="container" @input="$parent.setContainerNumber($event.target.value)" pattern="[A-Z]{4}[0-9]{7}" required>
+        <input
+            placeholder="AAAA9999999"
+            type="text"
+            :value="$store.state.WebBid.ContainerNumber"
+            @input="$store.commit('setBidProp', {prop: 'ContainerNumber', value: $event.target.value})"
+            pattern="[A-Z]{4}[0-9]{7}"
+            required
+        >
       </label>
 
         <label class="service_date">
@@ -11,13 +18,14 @@
             <!--                            <input type="text" name="application_date">-->
             <!--                            <v-date-picker v-model="bid.bidDate"></v-date-picker>-->
             <datepicker
-                    v-model="bidDate"
+                    :value="$store.state.WebBid.ApplicationDate"
                     name="bid_date"
                     lang="ru"
                     format="DD.MM.YYYY"
                     valueType="format"
                     :first-day-of-week="1"
                     width="150px"
+                    @change="$store.commit('setBidProp', {prop: 'ApplicationDate', value: $event})"
             ></datepicker>
         </label>
 
@@ -29,7 +37,7 @@
                     <!--                                    <input name="arrive_time_less" type="text">-->
                     <select>
                         <option>--</option>
-                        <option v-for="hour in hours">{{ hour }}</option>
+                        <option v-for="hour in []">{{ hour }}</option>
                     </select>
                     <span class="hours title">час.</span>
                 </label>
@@ -38,7 +46,7 @@
                     <!--                                    <input name="arrive_time_up" type="text">-->
                     <select>
                         <option>--</option>
-                        <option v-for="minute in minutes">{{ minute }}</option>
+                        <option v-for="minute in []">{{ minute }}</option>
                     </select>
                     <span class="hours title">мин.</span>
                 </label>
@@ -63,11 +71,6 @@
         name: "BidDateAndFiles",
 
         props: {
-            operations:         {type: Array, default: []},
-            bidDate:            {type: String,  default: ""},
-            container:          {type: Number,  default: null},
-            hours:              {type: Array,   default: []},
-            minutes:            {type: Array,   default: []},
             canLoadVicarious:   {type: Boolean, default: false},
             canLoadDeclaration: {type: Boolean, default: false},
         },
@@ -76,11 +79,11 @@
             tableTitle: function () {
                 let tableTitle = 'Дата ';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     tableTitle += 'приема ктк на терминал';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     tableTitle += 'выдачи ктк с терминала';
-                }else if(this.operations.includes('WebGateInOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateInOut')){
                     tableTitle += 'приема/выдачи ктк';
                 }
 
@@ -90,11 +93,11 @@
             timeIntervalTitle: function () {
                 let timeIntervalTitle = 'Время прибытия';
 
-                if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     timeIntervalTitle += ' в место погрузки';
-                }else if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     timeIntervalTitle += ' в место разггрузки';
-                }else if(this.operations.includes('WebStaffingStripping') && this.operations.includes('WebGateIn')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     timeIntervalTitle += ' на терминал';
                 }
 

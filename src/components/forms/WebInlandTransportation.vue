@@ -3,15 +3,27 @@
         <div class="form_row input_in_bottom all-inputs-absolute">
             <label class="arrive_address">
                 <span class="title">{{ addressTitle }}</span>
-                <input v-model="address" type="text">
+                <input
+                        :value="$store.state.WebInlandTransportation.Address"
+                        type="text"
+                        @input="$store.commit('setTransportationProp', {prop: 'Address', value: $event.target.value})"
+                >
             </label>
             <label class="contact_person">
                 <span class="title">{{ contactsPersonTitle }}</span>
-                <input v-model="contactsPerson" type="text">
+                <input
+                        :value="$store.state.WebInlandTransportation.Contacts"
+                        type="text"
+                        @input="$store.commit('setTransportationProp', {prop: 'Contacts', value: $event.target.value})"
+                >
             </label>
             <label class="phone_number">
                 <span class="title">Телефон</span>
-                <input v-model="contactsPhone" type="text">
+                <input
+                        :value="$store.state.WebInlandTransportation.Phone"
+                        type="text"
+                        @input="$store.commit('setTransportationProp', {prop: 'Phone', value: $event.target.value})"
+                >
             </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
@@ -58,18 +70,13 @@
           }
         },
 
-        props: {
-            operations: {type: Array, default: []},
-            specialDemand: {type: String, default: ""}
-        },
-
         computed:{
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     tableTitle += ' погрузки';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     tableTitle += ' разгрузки';
                 }
 
@@ -79,9 +86,9 @@
             contactsPersonTitle: function () {
                 let contactsPersonTitle = 'Контактное лицо';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     contactsPersonTitle += ' в месте прибытия';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     contactsPersonTitle += ' в месте получения';
                 }
 
@@ -91,9 +98,9 @@
             waitingTimeTitle: function () {
                 let waitingTimeTitle = 'Время ожидания';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     waitingTimeTitle += ' на погрузку';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     waitingTimeTitle += ' в месте получения';
                 }
 

@@ -1,12 +1,23 @@
 <template>
     <div class="truck_parameters">
         <label class="label_width_outside_input">
-            <input required name="receiving_form__truck_parameters_size" :checked="+size === 20" type="radio" @input="$parent.setBidSize(20)">
+            <input
+                required
+                name="receiving_form__truck_parameters_size"
+                :checked="$store.state.WebBid.BidSize === 20"
+                type="radio"
+                @input="$store.commit('setBidProp', {prop: 'BidSize', value: 20})">
             <span class="pseudo_checkbox"></span>
             <span class="title">20 фут</span>
         </label>
         <label class="label_width_outside_input">
-            <input required name="receiving_form__truck_parameters_size" :checked="+size === 40" type="radio" @input="$parent.setBidSize(40)">
+            <input
+                required
+                name="receiving_form__truck_parameters_size"
+                :checked="$store.state.WebBid.BidSize === 40"
+                type="radio"
+                @input="$store.commit('setBidProp', {prop: 'BidSize', value: 40})"
+            >
             <span class="pseudo_checkbox"></span>
             <span class="title">40 фут</span>
         </label>

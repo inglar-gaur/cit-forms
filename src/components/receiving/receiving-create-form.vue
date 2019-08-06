@@ -273,23 +273,24 @@
                         // Перебор данных.
                         if(this.$data.hasOwnProperty(operation) && this[operation]){
 
+                            if(operation === 'bidEmpty'){
+                                this.$store.commit('setBidProp', {prop: 'BidEmpty', value: this[operation]});
+                            }
+
                             // Перебор массива
-                            if(operation === 'DangerousGoods' && this[operation].length > 0 && this[operation].forEach){
-                                this[operation].forEach(emptyValue => operations.push(emptyValue));
+                            if(operation === 'DangerousGoods' && this[operation] && this[operation].length > 0 && this[operation].forEach){
+                                this[operation].forEach(emptyValue => this.$store.commit('addPoint', emptyValue));
 
                             // Нужны значения объекта data
                             }else if(operation === 'webGate' || operation === 'bidEmpty'){
-                                operations.push(this[operation]);
+                                this.$store.commit('addPoint', this[operation]);
 
                             // Нужны ключи объекта data
                             }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
-                                operations.push(operation);
+                                this.$store.commit('addPoint', operation);
                             }
                         }
                     }
-
-                    this.$parent.createBid(operations);
-                    this.$parent.setEmpty(this.bidEmpty);
                 }
             },
 

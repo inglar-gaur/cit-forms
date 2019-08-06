@@ -1,15 +1,15 @@
 <template>
     <div>
 
-        <div v-show="mess.length > 0" class="form_message success">
-            <svg @click="mess = []" class="close-cross" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="gray" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z" class=""></path></svg>
-            <p v-for="message in mess">{{ message }}</p>
-        </div>
+        <Messages></Messages>
 
-        <form v-if="operations.length > 0" class="cit_form receiving_form" @submit="sendBid">
+        <form v-if="$store.state.SelectedBidPoints.list.length > 0" class="cit_form receiving_form" @submit="sendBid">
             <div class="application_wrap">
                 <div class="application">
-                    <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span><small v-if="bid.WebInlandTransportation"> + автоперевозка</small></h2>
+                    <h2>Заявка на {{ mainOperationTextType }} контейнера <span
+                            class="application_number">№{{ 1 }}</span><small
+                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"> +
+                        автоперевозка</small></h2>
 
                     <div class="application_date">
                         <span>Дата подачи заявки: </span>
@@ -17,90 +17,75 @@
                     </div>
 
                     <div>
-                        <OperationsList :operations="operations"></OperationsList>
-                        <TrackParameters
-                            :size="bidSize"
-                            :bidEmpty="bidEmpty"
-                        ></TrackParameters>
+                        <OperationsList></OperationsList>
+                        <TrackParameters></TrackParameters>
                         <CargoParameters
-                            v-if="bidEmpty === 'full'"
-                            :dangerCargo="bid.dangerCargo"
-                            :bidEmpty="bid.bidEmpty"
-                            :mass="bid.mass"
-                            :gross="bid.gross"
+                                v-if="$store.state.WebBid.bidEmpty === 'full'"
                         ></CargoParameters>
                     </div>
 
                     <BidDateAndFiles
-                        :operations="operations"
-                        :canLoadVicarious="bid.bidEmpty === true || operations.includes('WebGateOut')"
-                        :canLoadDeclaration="operations.includes('WebGateIn')"
-                        :hours="hours"
-                        :minutes="minutes"
-                        :bidDate="bid.bidDate"
-                        :container="containerNumber"
+                            :canLoadVicarious="$store.state.WebBid.bidEmpty === true || $store.state.SelectedBidPoints.list.includes('WebGateOut')"
+                            :canLoadDeclaration="$store.state.SelectedBidPoints.list.includes('WebGateIn')"
                     ></BidDateAndFiles>
 
-<!--                    <CustomRelease-->
-<!--                        v-if="operations.includes('WebCustomsRelease')"-->
-<!--                        :operations="operations"-->
-<!--                    ></CustomRelease>-->
+                    <CustomRelease
+                            v-if="$store.state.SelectedBidPoints.list.includes('WebCustomsRelease')"
+                    ></CustomRelease>
 
                     <WebInlandTransportation
-                        v-if="operations.includes('WebInlandTransportation')"
-                        :operations="operations"
-                        :specialDemand="bid.specialDemand"
+                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"
                     ></WebInlandTransportation>
 
                     <WebStaffingStripping
-                        v-if="operations.includes('WebStaffingStripping')"
-                        :operations="operations"
-                        :bidGoods="goods"
+                            v-if="$store.state.SelectedBidPoints.list.includes('WebStaffingStripping')"
                     ></WebStaffingStripping>
 
-                  <div class="form_row">
-                    <label  @click="openPriceSelect">
-                      <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
-                    </label>
-                  </div>
+                    <div class="form_row">
+                        <label @click="$store.commit('openPopup', 'priceSelectPopup')">
+                            <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
+                        </label>
+                    </div>
 
-                  <div class="form_row flex-start">
-                    <label>
-                      <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text" value="Итого стоимость услуг:" disabled><span>руб.</span>
-                    </label>
-                    <label>
-                      <select class="price-select" style="border: 2px solid lightgray; margin-left: 100px; width: 300px" type="text">
-                        <option disabled selected>раскрыть список заказанных услуг</option>
-                        <option>Услуга 1</option>
-                        <option>Услуга 2</option>
-                        <option>Услуга 3</option>
-                      </select>
-                    </label>
-                  </div>
+                    <div class="form_row flex-start">
+                        <label>
+                            <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text"
+                                   value="Итого стоимость услуг:" disabled><span>руб.</span>
+                        </label>
+                        <label @click="$store.commit('openPopup', 'priceSelectedPopup')">
+                            <input style="width: 240px" type="text" value="Раскрыть список заказанных услуг" disabled>
+                        </label>
+                    </div>
 
-                  <div class="form_row">
-                    <label v-show="true" class="cit__form_attachment receiving_add_file">
-                      <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию" @change="changeInputFileTitle">
-                      <span class="cit__form_attachment__title">Приложить доверенность</span>
-                    </label>
-                  </div>
+                    <div class="form_row">
+                        <label v-show="true" class="cit__form_attachment receiving_add_file">
+                            <input type="file" name="receiving_declaration_file" placeholder="Приложить декларацию"
+                                   @change="changeInputFileTitle">
+                            <span class="cit__form_attachment__title">Приложить доверенность</span>
+                        </label>
+                    </div>
 
                 </div>
 
             </div>
 
-            <button v-show="canAddContainer" @click.prevent="addContainer" class="cit_btn btn_add">+ Добавить контейнер</button>
+            <button v-show="canAddContainer" @click.prevent="addContainer" class="cit_btn btn_add">+ Добавить
+                контейнер
+            </button>
             <br>
-<!--            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>-->
-            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" type="submit">Подписать и отправить</button>
+            <!--            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>-->
+            <button :disabled="!$store.state.WebBid.bidEmpty || !$store.state.WebBid.bidSize" class="cit_btn btn_submit"
+                    type="submit">Подписать и отправить
+            </button>
             <button @click="clearForm" class="cit_btn btn_cancel">Отменить</button>
         </form>
 
         <receivingCreateForm
-            v-if="operations.length <= 0"
-            :mess="mess"
-        >
-        </receivingCreateForm>
+                v-else
+        ></receivingCreateForm>
+
+        <PriceSelectPopup></PriceSelectPopup>
+
     </div>
 </template>
 
@@ -114,10 +99,14 @@
     import CargoParameters from "./CargoParameters";
     import BidDateAndFiles from "./BidDateAndFiles";
     import CustomRelease from "./CustomRelease";
+    import PriceSelectPopup from "../popups/PriceSelectPopup";
+    import Messages from "../popups/Messages";
 
     export default {
         name: "receiving-main",
         components: {
+            Messages,
+            PriceSelectPopup,
             BidDateAndFiles,
             CargoParameters,
             TrackParameters,
@@ -130,17 +119,6 @@
 
         data: function () {
             return {
-                bid: {
-                    size: null,
-                    bidEmpty: null,
-                    mass: null,
-                    gross: null,
-                    dangerCargo: null,
-                    container: null,
-                    bidDate: null,
-                    specialDemand: '',
-                    goods: []
-                },
                 goods: [],
                 operations: [],
                 showCreateForm: true,
@@ -151,16 +129,15 @@
                 minutes: [10, 30, 45, 50],
                 mess: [],
                 clearMessTimer: null,
-                bidEmpty: '',
-                bidSize: null,
-                containerNumber: null,
+                PriceSelectPopup: false,
+                PriceSelectedPopup: false,
             }
         },
 
         watch: {
             "bids": {
                 handler: function () {
-                    if(this.bids.length > 0){
+                    if (this.bids.length > 0) {
                         this.activeSubmitButton = this.bids.every(bid => {
                             return (bid.bidType === "WebGateIn" || bid.bidType === "WebGateOut") &&
                                 (bid.bidEmpty === true || bid.bidEmpty === false) &&
@@ -168,12 +145,12 @@
                                 bid.container &&
                                 (bid.bidEmpty || (bid.massa && bid.brutto)) &&
                                 (!bid.WebInlandTransportation || (bid.placeInput && bid.contactPerson && bid.contactPhone && bid.waitingTime))
-                                // bid.bidDate
+                            // bid.bidDate
                         });
                         this.canAddContainer = this.bids[0] &&
-                            (this.bids[0].bidType === "WebGateIn" || (this.bids[0].bidType === "WebGateOut" && this.bids[0].bidEmpty))  &&
+                            (this.bids[0].bidType === "WebGateIn" || (this.bids[0].bidType === "WebGateOut" && this.bids[0].bidEmpty)) &&
                             !this.bids[0].WebInlandTransportation && !this.bids[0].WebStaffingStripping;
-                    }else{
+                    } else {
                         this.activeSubmitButton = false;
                         this.canAddContainer = false;
                     }
@@ -185,15 +162,15 @@
         computed: {
             nowDate: function () {
                 let date = new Date();
-                return (+date.getDate() < 10 ? "0"+date.getDate() : date.getDate())+'.'+
-                    ((+date.getMonth() + 1) < 10 ? "0"+(+date.getMonth() + 1) : (+date.getMonth() + 1))+'.'+
+                return (+date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + '.' +
+                    ((+date.getMonth() + 1) < 10 ? "0" + (+date.getMonth() + 1) : (+date.getMonth() + 1)) + '.' +
                     date.getFullYear()
             },
 
             mainOperationTextType: function () {
-                if(this.WebGateIn) {
+                if (this.WebGateIn) {
                     return "прием";
-                }else if(this.WebGateOut){
+                } else if (this.WebGateOut) {
                     return "выдачу";
                 }
                 return "";
@@ -202,25 +179,25 @@
 
         methods: {
             createBid: function (operations) {
-                if(Array.isArray(operations) && operations.length > 0){
+                if (Array.isArray(operations) && operations.length > 0) {
                     this.operations = operations;
                 }
             },
 
             setEmpty: function (empty) {
-                if(empty){
+                if (empty) {
                     this.bidEmpty = empty;
                 }
             },
 
             setBidSize: function (size) {
-                if(size){
+                if (size) {
                     this.bidSize = size;
                 }
             },
 
-            setContainerNumber: function(containerNumber){
-                if(+containerNumber > 0){
+            setContainerNumber: function (containerNumber) {
+                if (+containerNumber > 0) {
                     this.containerNumber = +containerNumber;
                 }
             },
@@ -235,25 +212,25 @@
 
             },
 
-            changeInputFileTitle: function(e){
+            changeInputFileTitle: function (e) {
                 // console.dir(e.target);
                 // e.target.files[0];
                 e.target.parentElement.children[1].innerHTML = e.target.files[0].name;
             },
 
             setBidProp: function (prop, value) {
-                if(prop && this.bid.hasOwnProperty(prop)){
+                if (prop && this.bid.hasOwnProperty(prop)) {
                     this.bid[prop] = value;
                 }
             },
 
             setBidGoods: function (index, prop, value) {
-                if(
+                if (
                     this.goods[index] &&
                     this.goods[index].hasOwnProperty(prop)
-                ){
+                ) {
                     this.goods[index][prop] = value;
-                    if(prop === 'weight' && +value > 1500){
+                    if (prop === 'weight' && +value > 1500) {
                         this.addMess('При дальнейшей отправке контейнера по ж/д со ст. Кольцово с заданными параметрами одного грузового места могут потребоваться особые условия перевозки.');
                     }
                 }
@@ -261,14 +238,14 @@
 
             addBidGoods: function () {
                 this.goods.push({
-                            name: null,
-                            amount: null,
-                            weight: null,
-                            size: null,
-                            pack: null,
-                            dangerClass: null,
-                            specialDemand: "",
-                        });
+                    name: null,
+                    amount: null,
+                    weight: null,
+                    size: null,
+                    pack: null,
+                    dangerClass: null,
+                    specialDemand: "",
+                });
             },
 
             /**
@@ -276,13 +253,13 @@
              * @param {string} mess
              */
             addMess: function (mess) {
-                if(mess && !this.mess.includes(mess)){
+                if (mess && !this.mess.includes(mess)) {
 
                     // Если сообщение есть, добавляем его список
                     this.mess.push(mess);
 
                     // Убираем интервал очистки списка сообщений
-                    if(this.clearMessTimer){
+                    if (this.clearMessTimer) {
                         clearTimeout(this.clearMessTimer);
                     }
 
@@ -312,7 +289,7 @@
 </script>
 
 <style scoped>
-    .close-cross{
+    .close-cross {
         width: 25px;
         height: 25px;
         position: absolute;
