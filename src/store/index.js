@@ -2,6 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 Vue.use(Vuex);
 
+let defaultWebBid = {
+    BidEmpty: '',
+    ContainerNumber: '',
+    BidSize: null,
+    ApplicationDate: '',
+};
+
 /**
  * Модуль всплывающих окон
  * @typedef {Object} PopupsState
@@ -54,12 +61,7 @@ const WebBid = {
     /**
      * @type WebBidState
      */
-    state: {
-        BidEmpty: '',
-        ContainerNumber: '',
-        BidSize: null,
-        ApplicationDate: '',
-    },
+    state: defaultWebBid,
 
     mutations: {
         /**
@@ -223,8 +225,15 @@ export default new Vuex.Store({
         WebCargoElements: WebCargoElements
     },
 
+    mutations: {
+        clearForm(state){
+            for(let defaultWebBidIndex in defaultWebBid){
+                if(defaultWebBid.hasOwnProperty(defaultWebBidIndex) && state.WebBid.hasOwnProperty(defaultWebBidIndex)){
+                    state.WebBid[defaultWebBidIndex] = defaultWebBid[defaultWebBidIndex];
+                }
+            }
 
-    getters: {
-
+            state.SelectedBidPoints.list = [];
+        }
     },
 });

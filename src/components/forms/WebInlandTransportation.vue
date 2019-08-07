@@ -27,13 +27,13 @@
             </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
-                <input value="180" type="text">
+                <input :value="waitingTimeValue" type="text">
                 <span class="minutes title">мин</span>
             </label>
         </div>
 
         <CargoDetails
-            v-if="$store.state.SelectedBidPoints.list.includes('full') && !$store.state.SelectedBidPoints.list.includes('WebStaffingStripping')"
+            v-if="!$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && ($store.state.SelectedBidPoints.list.includes('full') || $store.state.SelectedBidPoints.list.includes('ReturnContainer'))"
         ></CargoDetails>
 <!--        <div class="form_row">-->
 <!--            <div class="receiving__time_interval_and_special_demand">-->
@@ -86,9 +86,9 @@
                 if(this.$store.state.SelectedBidPoints.list.includes('full')) {
                     tableTitle += ' прибытия';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
-                    tableTitle += ' погрузки';
+                    tableTitle += ' погрузки (прибытия)';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
-                    tableTitle += ' разгрузки';
+                    tableTitle += ' разгрузки (прибытия)';
                 }
 
                 return tableTitle;
@@ -100,7 +100,7 @@
                 if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     contactsPersonTitle += ' в месте прибытия';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
-                    contactsPersonTitle += ' в месте получения';
+                    contactsPersonTitle += ' в месте прибытия';
                 }
 
                 return contactsPersonTitle;
@@ -109,14 +109,27 @@
             waitingTimeTitle: function () {
                 let waitingTimeTitle = 'Время';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut') && this.$store.state.SelectedBidPoints.list.includes('empty') && this.$store.state.SelectedBidPoints.list.includes('ReturnContainer')){
+                    waitingTimeTitle += ' ожидания получения груженого';
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     waitingTimeTitle += ' на погрузку';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
-                    waitingTimeTitle += ' в месте получения';
+                    waitingTimeTitle += ' на выгрузку';
                 }
 
                 return waitingTimeTitle;
             },
+
+            waitingTimeValue(){
+                switch (this.$store.state.WebBid.BidSize) {
+                    case 20:
+                        return '180';
+                    case 40:
+                        return '360';
+                    default:
+                        return '';
+                }
+            }
         },
     }
 </script>

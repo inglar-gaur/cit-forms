@@ -30,9 +30,9 @@
             tableTitle: function () {
                 let tableTitle = 'Период выполнения перемещения ';
 
-                if(this.$store.state.SelectedBidPoints.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     tableTitle += 'на СВХ';
-                }else if(this.$store.state.SelectedBidPoints.includes('WebGateOut')){
+                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     tableTitle += 'из СВХ';
                 }
 

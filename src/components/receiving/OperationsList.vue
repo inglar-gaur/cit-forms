@@ -13,12 +13,11 @@
 
     let operationsTitle = {
         WebGateIn:          'принять на терминал',
-        webGateOut:         'выдать с терминала',
+        WebGateOut:         'выдать с терминала',
         webGateInOut:       'принять/выдать',
         full:               'груженый',
         empty:              'порожний',
         RepairContainer:    'заказать ремонт контейнера',
-        ReturnContainer:    'заказать обратную доставку контейнера',
         DangerousGoods:     'опасный груз',
     };
 
@@ -55,6 +54,9 @@
                                 break;
                             case 'WebStaffingStripping':
                                 operations.push('заказать '+(SelectedBidPoints.includes('empty') ? 'погрузку' : 'разгрузку')+' контейнера');
+                                break;
+                            case 'ReturnContainer':
+                                operations.push('заказать обратную доставку '+(SelectedBidPoints.includes('empty') ? 'груженого' : 'порожнего')+' контейнера');
                         }
                     }
                 }

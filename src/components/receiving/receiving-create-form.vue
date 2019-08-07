@@ -64,7 +64,7 @@
                             </label>
 
                             <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoods" :disabled="bidEmpty !== 'full' && !WebStaffingStripping">
+                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoods" :disabled="bidEmpty !== 'full' && !ReturnContainer && !WebStaffingStripping">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз</span>
                             </label>
@@ -215,9 +215,7 @@
              * @returns {boolean}
              */
             notCanSelectReturnContainer: function () {
-                return this.notSelectedMainParams ||
-                    this.webGate === "WebGateInOut" || this.webGate === "WebGateIn" ||
-                    (this.webGate === "WebGateOut" && !this.WebInlandTransportation);
+                return this.notSelectedMainParams || this.webGate !== "WebGateOut" || !this.WebInlandTransportation;
             },
         },
 

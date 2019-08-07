@@ -46,7 +46,7 @@
         <!--                        <input v-if="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_proxy_file" placeholder="Приложить доверенность">-->
         <!--                        <input v-if="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_declaration_file" placeholder="Приложить декларацию">-->
 
-        <label v-show="canLoadVicarious" class="cit__form_attachment receiving_add_file">
+        <label v-show="false" class="cit__form_attachment receiving_add_file">
             <input type="file" name="receiving_proxy_file" placeholder="Приложить доверенность" @change="changeInputFileTitle">
             <span class="cit__form_attachment__title">Приложить декларацию</span>
         </label>
@@ -84,7 +84,7 @@
                 if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     timeIntervalTitle += ' на погрузку';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
-                    timeIntervalTitle += ' в место разггрузки';
+                    timeIntervalTitle += ' на разгрузку';
                 }else if((this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') || this.$store.state.SelectedBidPoints.list.includes('full')) && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     timeIntervalTitle += ' на терминал';
                 }
@@ -93,7 +93,7 @@
             },
 
             setTimeIntervalTitle: function () {
-                return this.$store.state.SelectedBidPoints.list.includes('WebGateIn') && this.$store.state.SelectedBidPoints.list.includes('full') && this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation');
+                return this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && !(this.$store.state.SelectedBidPoints.list.includes('WebGateIn') && this.$store.state.SelectedBidPoints.list.includes('empty'));
             }
         },
 

@@ -6,8 +6,7 @@
         <form v-if="$store.state.SelectedBidPoints.list.length > 0" class="cit_form receiving_form" @submit="sendBid">
             <div class="application_wrap">
                 <div class="application">
-                    <h2>Заявка на {{ mainOperationTextType }} контейнера <span
-                            class="application_number">№{{ 1 }}</span>
+                    <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span>
 <!--                        <small-->
 <!--                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"> +-->
 <!--                        автоперевозка</small>-->
@@ -30,10 +29,6 @@
                             :canLoadVicarious="$store.state.WebBid.bidEmpty === true || $store.state.SelectedBidPoints.list.includes('WebGateOut')"
                             :canLoadDeclaration="$store.state.SelectedBidPoints.list.includes('WebGateIn')"
                     ></BidDateAndFiles>
-
-                    <CustomRelease
-                            v-if="$store.state.SelectedBidPoints.list.includes('WebCustomsRelease')"
-                    ></CustomRelease>
 
                     <WebInlandTransportation
                             v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"
@@ -83,7 +78,7 @@
             <button :disabled="!$store.state.WebBid.bidEmpty || !$store.state.WebBid.bidSize" class="cit_btn btn_submit"
                     type="submit">Подписать и отправить
             </button>
-            <button @click="clearForm" class="cit_btn btn_cancel">Отменить</button>
+            <button @click="$store.commit('clearForm')" class="cit_btn btn_cancel">Отменить</button>
         </form>
 
         <receivingCreateForm
