@@ -595,7 +595,7 @@ input:disabled ~ .title {
 
 .input_in_bottom.all-inputs-absolute label {
   position: relative; }
-  .input_in_bottom.all-inputs-absolute label *:nth-child(1) {
+  .input_in_bottom.all-inputs-absolute label label:nth-child(1) {
     margin-bottom: 51px; }
 
 .subset {

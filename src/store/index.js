@@ -170,7 +170,13 @@ const WebInlandTransportation = {
     state: {
         Contacts: '',
         Phone: '',
-        Address: '',
+        Street: '',
+        Streets: [
+            '3-го Интернационала',
+            '3-й Пятилетки',
+            '8 марта, 10',
+            '8 марта, 84, 101',
+        ]
     },
 
     mutations: {
@@ -186,6 +192,19 @@ const WebInlandTransportation = {
                 state[obj.prop] = obj.value;
             }
         },
+
+        selectStreet: function (state, selectedStreet) {
+            let streetIndex = state.Streets.findIndex(street => street === selectedStreet);
+            if(~streetIndex){
+                state.Street = streetIndex;
+            }
+        },
+    },
+
+    getters:{
+      getSelectedStreet: function (state) {
+          return state.Streets[state.Street] ? state.Streets[state.Street] : '';
+      }
     }
 };
 

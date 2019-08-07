@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="form_row input_in_bottom all-inputs-absolute">
-            <label class="arrive_address">
+            <div class="arrive_address">
                 <span class="title">{{ addressTitle }}</span>
-                <input
-                        :value="$store.state.WebInlandTransportation.Address"
-                        type="text"
-                        @input="$store.commit('setTransportationProp', {prop: 'Address', value: $event.target.value})"
-                >
-            </label>
+                <EmulateSelect
+                    :placeholder="$store.getters.getSelectedStreet ? $store.getters.getSelectedStreet : 'Улица'"
+                    :elementsList="$store.state.WebInlandTransportation.Streets"
+                    selected-commit="selectStreet"
+                ></EmulateSelect>
+            </div>
             <label class="contact_person">
                 <span class="title">{{ contactsPersonTitle }}</span>
                 <input
@@ -33,7 +33,7 @@
         </div>
 
         <CargoDetails
-            v-if="!$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && ($store.state.SelectedBidPoints.list.includes('full') || $store.state.SelectedBidPoints.list.includes('ReturnContainer'))"
+            v-if="!$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && (($store.state.SelectedBidPoints.list.includes('full') && $store.state.SelectedBidPoints.list.includes('WebGateIn')) || ($store.state.SelectedBidPoints.list.includes('ReturnContainer') && $store.state.SelectedBidPoints.list.includes('empty')))"
         ></CargoDetails>
 <!--        <div class="form_row">-->
 <!--            <div class="receiving__time_interval_and_special_demand">-->
@@ -65,6 +65,7 @@
 <script>
 
     import CargoDetails from "./subForms/CargoDetails";
+    import EmulateSelect from "./subForms/EmulateSelect";
 
     export default {
         name: "WebInlandTransportation",
@@ -77,15 +78,13 @@
           }
         },
 
-        components: {CargoDetails},
+        components: {EmulateSelect, CargoDetails},
 
         computed:{
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('full')) {
-                    tableTitle += ' прибытия';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
                     tableTitle += ' погрузки (прибытия)';
                 }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
                     tableTitle += ' разгрузки (прибытия)';
