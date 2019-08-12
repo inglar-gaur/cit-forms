@@ -1,64 +1,47 @@
 <template>
-    <div>
+    <div v-if="$store.state.WebBid.wInlandTransportation">
         <div class="form_row input_in_bottom all-inputs-absolute">
-            <div class="arrive_address">
+            <div class="arrive_address" style="position: relative">
                 <span class="title">{{ addressTitle }}</span>
-                <EmulateSelect
-                    :placeholder="$store.getters.getSelectedStreet ? $store.getters.getSelectedStreet : 'Улица'"
-                    :elementsList="$store.state.WebInlandTransportation.Streets"
-                    selected-commit="selectStreet"
-                ></EmulateSelect>
+                <div style="position: absolute; left: 0; bottom: 0; width: 100%">
+                    <EmulateSelect
+                            :placeholder="$store.state.WebBid.wInlandTransportation.street ? $store.state.WebBid.wInlandTransportation.street : 'Улица'"
+                            :elementsList="$store.state.ReferenceData.Streets"
+                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'street', value: $event})"
+                    ></EmulateSelect>
+                </div>
             </div>
             <label class="contact_person">
                 <span class="title">{{ contactsPersonTitle }}</span>
                 <input
-                        :value="$store.state.WebInlandTransportation.Contacts"
+                        :value="$store.state.WebBid.wInlandTransportation.Contacts"
                         type="text"
-                        @input="$store.commit('setTransportationProp', {prop: 'Contacts', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'Contacts', value: $event.target.value})"
                 >
             </label>
             <label class="phone_number">
                 <span class="title">Телефон</span>
                 <input
-                        :value="$store.state.WebInlandTransportation.Phone"
+                        :value="$store.state.WebBid.wInlandTransportation.Phone"
                         type="text"
-                        @input="$store.commit('setTransportationProp', {prop: 'Phone', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'Phone', value: $event.target.value})"
                 >
             </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
-                <input :value="waitingTimeValue" type="text">
-                <span class="minutes title">мин</span>
+                <input :value="waitingTimeValue" type="text" disabled>
+<!--                <span class="minutes title">мин</span>-->
             </label>
         </div>
 
-        <CargoDetails
-            v-if="!$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') && (($store.state.SelectedBidPoints.list.includes('full') && $store.state.SelectedBidPoints.list.includes('WebGateIn')) || ($store.state.SelectedBidPoints.list.includes('ReturnContainer') && $store.state.SelectedBidPoints.list.includes('empty')))"
-        ></CargoDetails>
-<!--        <div class="form_row">-->
-<!--            <div class="receiving__time_interval_and_special_demand">-->
-<!--                <div class="time_interval">-->
-<!--                    <div class="title">Интервал времени прибытия</div>-->
-<!--                    <div class="labels">-->
-<!--                        <label>-->
-<!--                            <span class="label_title title">с</span>-->
-<!--                            <input name="arrive_time_less" type="text">-->
-<!--                            <span class="hours title">час.</span>-->
-<!--                        </label>-->
-<!--                        <label>-->
-<!--                            <span class="label_title title">до</span>-->
-<!--                            <input name="arrive_time_up" type="text" value="12:00" disabled>-->
-<!--                            <span class="hours title">час.</span>-->
-<!--                        </label>-->
-<!--                    </div>-->
-<!--                </div>-->
+        <!-- todo Надо выяснить где лежит список товаров при обратной доставке -->
 
-<!--                <label class="special_demand">-->
-<!--                    <span class="title">Особые требования</span>-->
-<!--                    <textarea :value="specialDemand" type="text" @input="$parent.setBidProp('specialDemand', $event.target.value)"></textarea>-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
+        <CargoDetails
+                v-if="($store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) || ($store.getters.isEmptyOutGateContainer && $store.state.WebBid.wInlandTransportation.ReturnContainer)"
+                :elements="$store.state.WebBid.wGateIn ? $store.state.WebBid.wGateIn.Cargo.Elements : []"
+                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', index:$event.index,  prop:$event.prop,  value:$event.value})"
+                @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wGateIn')"
+        ></CargoDetails>
     </div>
 </template>
 
@@ -84,9 +67,9 @@
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.getters.isWebGateIn){
                     tableTitle += ' погрузки (прибытия)';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
+                }else if(this.$store.getters.isWebGateOut){
                     tableTitle += ' разгрузки (прибытия)';
                 }
 
@@ -96,9 +79,9 @@
             contactsPersonTitle: function () {
                 let contactsPersonTitle = 'Контактное лицо';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.getters.isWebGateIn){
                     contactsPersonTitle += ' в месте прибытия';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
+                }else if(this.$store.getters.isWebGateOut){
                     contactsPersonTitle += ' в месте прибытия';
                 }
 
@@ -108,11 +91,13 @@
             waitingTimeTitle: function () {
                 let waitingTimeTitle = 'Время';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut') && this.$store.state.SelectedBidPoints.list.includes('empty') && this.$store.state.SelectedBidPoints.list.includes('ReturnContainer')){
+                if(
+                    this.$store.getters.isWebGateOut && this.$store.getters.isEmptyOutGateContainer && this.$store.state.WebBid.wInlandTransportation.ReturnContainer
+                ){
                     waitingTimeTitle += ' ожидания получения груженого';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                }else if(this.$store.getters.isWebGateIn){
                     waitingTimeTitle += ' на погрузку';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
+                }else if(this.$store.getters.isWebGateOut){
                     waitingTimeTitle += ' на выгрузку';
                 }
 
@@ -120,14 +105,23 @@
             },
 
             waitingTimeValue(){
-                switch (this.$store.state.WebBid.BidSize) {
-                    case 20:
-                        return '180';
-                    case 40:
-                        return '360';
-                    default:
-                        return '';
+                let WebGate = null;
+                if(this.$store.getters.isWebGateIn){
+                    WebGate = this.$store.getters.getWebBidOperation('wGateIn');
+                }else if(this.$store.getters.isWebGateOut){
+                    WebGate = this.$store.getters.getWebBidOperation('wGateOut');
                 }
+
+                if(WebGate && WebGate.Containers && Array.isArray(WebGate.Containers.ContainerList) && WebGate.Containers.ContainerList[0]){
+                    switch (WebGate.Containers.ContainerList[0].Size) {
+                        case 20:
+                            return '90 мин';
+                        case 40:
+                            return '180 мин';
+                    }
+                }
+
+                return '';
             }
         },
     }

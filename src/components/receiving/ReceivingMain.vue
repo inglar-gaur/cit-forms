@@ -3,7 +3,7 @@
 
         <Messages></Messages>
 
-        <form v-if="$store.state.SelectedBidPoints.list.length > 0" class="cit_form receiving_form" @submit="sendBid">
+        <form v-if="$store.getters.isWebGateIn || $store.getters.isWebGateOut" class="cit_form receiving_form" @submit="sendBid">
             <div class="application_wrap">
                 <div class="application">
                     <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span>
@@ -17,30 +17,17 @@
                         <input type="text" :value="nowDate" :placeholder="nowDate" readonly>
                     </div>
 
-                    <div>
-                        <OperationsList></OperationsList>
-                        <TrackParameters></TrackParameters>
-                        <CargoParameters
-                                v-if="$store.state.WebBid.bidEmpty === 'full'"
-                        ></CargoParameters>
-                    </div>
+                    <BidDateAndFiles></BidDateAndFiles>
 
-                    <BidDateAndFiles
-                            :canLoadVicarious="$store.state.WebBid.bidEmpty === true || $store.state.SelectedBidPoints.list.includes('WebGateOut')"
-                            :canLoadDeclaration="$store.state.SelectedBidPoints.list.includes('WebGateIn')"
-                    ></BidDateAndFiles>
+                    <WebGate
+                            v-if="$store.getters.isWebGateIn"
+                            WebGateType="wGateIn"
+                    ></WebGate>
 
-                    <WebInlandTransportation
-                            v-if="$store.state.SelectedBidPoints.list.includes('WebInlandTransportation')"
-                    ></WebInlandTransportation>
-
-                    <WebStaffingStripping
-                            v-if="$store.state.SelectedBidPoints.list.includes('WebStaffingStripping')"
-                    ></WebStaffingStripping>
-
-                    <Repair
-                            v-if="$store.state.SelectedBidPoints.list.includes('RepairContainer')"
-                    ></Repair>
+                    <WebGate
+                            v-if="$store.getters.isWebGateOut"
+                            WebGateType="wGateOut"
+                    ></WebGate>
 
                     <div class="form_row">
                         <label @click="$store.commit('openPopup', 'PriceSelectPopup')">
@@ -65,7 +52,6 @@
                             <span class="cit__form_attachment__title">Приложить доверенность</span>
                         </label>
                     </div>
-
                 </div>
 
             </div>
@@ -93,35 +79,16 @@
 
 <script>
 
-    import receivingCreateForm from "./receiving-create-form";
-    import WebInlandTransportation from "./../forms/WebInlandTransportation";
-    import WebStaffingStripping from "./../forms/WebStaffingStripping";
-    import OperationsList from "./OperationsList";
-    import TrackParameters from "./TrackParameters";
-    import CargoParameters from "./CargoParameters";
+    import receivingCreateForm from "./ReceivingCreateForm";
     import BidDateAndFiles from "./BidDateAndFiles";
-    import CustomRelease from "./CustomRelease";
     import PriceSelectPopup from "../popups/PriceSelectPopup";
     import PriceSelectedPopup from "../popups/PriceSelectedPopup";
     import Messages from "../popups/Messages";
-    import Repair from "../forms/Repair";
+    import WebGate from "./WebGate";
 
     export default {
         name: "receiving-main",
-        components: {
-            Repair,
-            Messages,
-            PriceSelectPopup,
-            PriceSelectedPopup,
-            BidDateAndFiles,
-            CargoParameters,
-            TrackParameters,
-            OperationsList,
-            receivingCreateForm,
-            WebInlandTransportation,
-            WebStaffingStripping,
-            CustomRelease
-        },
+        components: {Messages, BidDateAndFiles, WebGate, receivingCreateForm, PriceSelectPopup, PriceSelectedPopup},
 
         data: function () {
             return {
@@ -140,31 +107,6 @@
             }
         },
 
-        watch: {
-            "bids": {
-                handler: function () {
-                    if (this.bids.length > 0) {
-                        this.activeSubmitButton = this.bids.every(bid => {
-                            return (bid.bidType === "WebGateIn" || bid.bidType === "WebGateOut") &&
-                                (bid.bidEmpty === true || bid.bidEmpty === false) &&
-                                (bid.size === 20 || bid.size === 40) &&
-                                bid.container &&
-                                (bid.bidEmpty || (bid.massa && bid.brutto)) &&
-                                (!bid.WebInlandTransportation || (bid.placeInput && bid.contactPerson && bid.contactPhone && bid.waitingTime))
-                            // bid.bidDate
-                        });
-                        this.canAddContainer = this.bids[0] &&
-                            (this.bids[0].bidType === "WebGateIn" || (this.bids[0].bidType === "WebGateOut" && this.bids[0].bidEmpty)) &&
-                            !this.bids[0].WebInlandTransportation && !this.bids[0].WebStaffingStripping;
-                    } else {
-                        this.activeSubmitButton = false;
-                        this.canAddContainer = false;
-                    }
-                },
-                deep: true
-            }
-        },
-
         computed: {
             nowDate: function () {
                 let date = new Date();
@@ -174,13 +116,17 @@
             },
 
             mainOperationTextType: function () {
-                if (this.$store.state.SelectedBidPoints.list.includes('WebGateIn')) {
+                if (this.$store.getters.isWebGateIn) {
                     return "прием";
-                } else if (this.$store.state.SelectedBidPoints.list.includes('WebGateOut')) {
+                } else if (this.$store.getters.isWebGateOut){
                     return "выдачу";
                 }
                 return "";
             },
+        },
+
+        created(){
+            this.$store.commit('addDefaultContainer');
         },
 
         methods: {
@@ -219,8 +165,6 @@
             },
 
             changeInputFileTitle: function (e) {
-                // console.dir(e.target);
-                // e.target.files[0];
                 e.target.parentElement.children[1].innerHTML = e.target.files[0].name;
             },
 

@@ -5,9 +5,9 @@
                 <input
                         required
                         name="receiving_form__truck_parameters_size"
-                        :checked="$store.state.WebBid.BidSize === 20"
+                        :checked="containerSize === 20"
                         type="radio"
-                        @input="$store.commit('setBidProp', {prop: 'BidSize', value: 20})">
+                        @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 20})">
                 <span class="pseudo_checkbox"></span>
                 <span class="title">20 фут</span>
             </label>
@@ -15,9 +15,9 @@
                 <input
                         required
                         name="receiving_form__truck_parameters_size"
-                        :checked="$store.state.WebBid.BidSize === 40"
+                        :checked="containerSize === 40"
                         type="radio"
-                        @input="$store.commit('setBidProp', {prop: 'BidSize', value: 40})"
+                        @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 40})"
                 >
                 <span class="pseudo_checkbox"></span>
                 <span class="title">40 фут</span>
@@ -29,14 +29,14 @@
             <input
                     placeholder="AAAA9999999"
                     type="text"
-                    :value="$store.state.WebBid.ContainerNumber"
-                    @input="$store.commit('setBidProp', {prop: 'ContainerNumber', value: $event.target.value})"
+                    :value="containerNumber"
+                    @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Number', value: $event.target.value})"
                     pattern="[A-Z]{4}[0-9]{7}"
                     required
             >
         </label>
 
-        <label class="container_number" style="width: 150px; margin-left: 40px" v-if="$store.state.SelectedBidPoints.list.includes('full')">
+        <label class="container_number" style="width: 150px; margin-left: 40px" v-if="isFullContainer">
             <span class="title">Номер ЗПУ</span>
             <input
                     type="text"
@@ -55,10 +55,37 @@
     export default {
         name: "TrackParameters",
 
-        props: [
-                'size',
-                'bidEmpty'
-        ]
+        props: {
+            WebGateObject: {type: Object, default: null},
+            WebGateType: {type: String, default: ''},
+        },
+
+        computed:{
+            containerNumber(){
+                return this.WebGateObject &&
+                    this.WebGateObject.Containers &&
+                    Array.isArray(this.WebGateObject.Containers.ContainerList) &&
+                    this.WebGateObject.Containers.ContainerList[0] &&
+                    this.WebGateObject.Containers.ContainerList[0].Number ?
+                    this.WebGateObject.Containers.ContainerList[0].Number : '';
+            },
+            containerSize(){
+                return this.WebGateObject &&
+                this.WebGateObject.Containers &&
+                Array.isArray(this.WebGateObject.Containers.ContainerList) &&
+                this.WebGateObject.Containers.ContainerList[0] &&
+                this.WebGateObject.Containers.ContainerList[0].Size ?
+                    this.WebGateObject.Containers.ContainerList[0].Size : null;
+            },
+            isFullContainer(){
+                return this.WebGateObject &&
+                this.WebGateObject.Containers &&
+                Array.isArray(this.WebGateObject.Containers.ContainerList) &&
+                this.WebGateObject.Containers.ContainerList[0] &&
+                this.WebGateObject.Containers.ContainerList[0].State === 'груженый';
+            }
+
+        }
     }
 </script>
 

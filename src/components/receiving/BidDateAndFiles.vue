@@ -10,34 +10,59 @@
                     name="bid_date"
                     lang="ru"
                     format="DD.MM.YYYY"
-                    valueType="format"
+                    valueType="date"
                     :first-day-of-week="1"
                     width="150px"
-                    @change="$store.commit('setBidProp', {prop: 'ApplicationDate', value: $event})"
+                    @change="$store.commit('setBidDate', $event)"
             ></datepicker>
         </label>
 
-        <div class="time_interval">
+        <div class="time_interval" style="position: relative">
             <div class="title">{{timeIntervalTitle}}</div>
-            <div class="labels">
-                <label>
+            <div class="labels" style="position: absolute; bottom: 0; left: 0; width: 700px">
+                <div>
                     <span class="label_title title" v-if="setTimeIntervalTitle">с</span>
                     <!--                                    <input name="arrive_time_less" type="text">-->
-                    <select>
-                        <option>--</option>
-                        <option v-for="hour in []">{{ hour }}</option>
-                    </select>
+<!--                    <select>-->
+<!--                        <option>&#45;&#45;</option>-->
+<!--                        <option v-for="hour in []">{{ hour }}</option>-->
+<!--                    </select>-->
+<!--                    <span class="hours title">час.</span>-->
+                    <div style="display: inline-block; width: 75px">
+                        <EmulateSelect
+                                v-if="$store.state.WebBid.ApplicationDate && $store.state.ReferenceData.Hours"
+                                :placeholder="BidSelectedHours"
+                                :elementsList="$store.state.ReferenceData.Hours"
+                                @selectElement="$store.commit('setBidTime', {hours: $event})"
+                        ></EmulateSelect>
+                        <input
+                            v-else
+                            type="text"
+                            disabled
+                        >
+                    </div>
+
                     <span class="hours title">час.</span>
-                </label>
-                <label>
+                </div>
+                <div>
                     <span class="label_title title" v-if="setTimeIntervalTitle">до</span>
-                    <!--                                    <input name="arrive_time_up" type="text">-->
-                    <select>
-                        <option>--</option>
-                        <option v-for="minute in []">{{ minute }}</option>
-                    </select>
+                    <div style="display: inline-block; width: 75px">
+                        <input v-if="setTimeIntervalTitle || !$store.state.WebBid.ApplicationDate || !$store.state.ReferenceData.Minutes" type="text" disabled>
+                        <EmulateSelect
+                                :placeholder="BidSelectedMinutes"
+                                :elementsList="$store.state.ReferenceData.Minutes"
+                                @selectElement="$store.commit('setBidTime', {minutes: $event})"
+                                v-else
+                        ></EmulateSelect>
+                    </div>
                     <span class="hours title">{{ setTimeIntervalTitle ? 'час.' : 'мин.'}}</span>
-                </label>
+                    <!--                                    <input name="arrive_time_up" type="text">-->
+<!--                    <select>-->
+<!--                        <option>&#45;&#45;</option>-->
+<!--                        <option v-for="minute in []">{{ minute }}</option>-->
+<!--                    </select>-->
+<!--                    <span class="hours title">{{ setTimeIntervalTitle ? 'час.' : 'мин.'}}</span>-->
+                </div>
             </div>
         </div>
 
@@ -55,24 +80,21 @@
 </template>
 
 <script>
+    import EmulateSelect from "../forms/subForms/EmulateSelect";
     export default {
         name: "BidDateAndFiles",
-
-        props: {
-            canLoadVicarious:   {type: Boolean, default: false},
-            canLoadDeclaration: {type: Boolean, default: false},
-        },
+        components: {EmulateSelect},
 
         computed:{
             tableTitle: function () {
                 let tableTitle = 'Дата ';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
-                    tableTitle += 'приема ктк на терминал';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
-                    tableTitle += 'выдачи ктк с терминала';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebGateInOut')){
+                if(this.$store.getters.isWebGateIn && this.$store.getters.isWebGateOut){
                     tableTitle += 'приема/выдачи ктк';
+                }else if(this.$store.getters.isWebGateIn){
+                    tableTitle += 'приема ктк на терминал';
+                }else if(this.$store.getters.isWebGateOut){
+                    tableTitle += 'выдачи ктк с терминала';
                 }
 
                 return tableTitle;
@@ -81,11 +103,11 @@
             timeIntervalTitle: function () {
                 let timeIntervalTitle = 'Время прибытия';
 
-                if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                if(this.$store.state.WebBid.wInlandTransportation && this.$store.getters.isWebGateIn){
                     timeIntervalTitle += ' на погрузку';
-                }else if(this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && this.$store.state.SelectedBidPoints.list.includes('WebGateOut')){
+                }else if(this.$store.state.WebBid.wInlandTransportation && this.$store.getters.isWebGateOut){
                     timeIntervalTitle += ' на разгрузку';
-                }else if((this.$store.state.SelectedBidPoints.list.includes('WebStaffingStripping') || this.$store.state.SelectedBidPoints.list.includes('full')) && this.$store.state.SelectedBidPoints.list.includes('WebGateIn')){
+                }else if(this.$store.getters.isWebGateOut && (this.$store.state.WebBid.wStaffingStripping || (this.$store.isFullOutGateContainer))){
                     timeIntervalTitle += ' на терминал';
                 }
 
@@ -93,12 +115,20 @@
             },
 
             setTimeIntervalTitle: function () {
-                return this.$store.state.SelectedBidPoints.list.includes('WebInlandTransportation') && !(this.$store.state.SelectedBidPoints.list.includes('WebGateIn') && this.$store.state.SelectedBidPoints.list.includes('empty'));
-            }
+                // return false;
+                return this.$store.state.WebBid.wInlandTransportation && !(this.$store.getters.isWebGateIn && this.$store.getters.isEmptyInGateContainer);
+            },
+
+            BidSelectedHours(){
+                return this.$store.state.WebBid.ApplicationDate ? String(this.$store.state.WebBid.ApplicationDate.getHours()) : '--';
+            },
+            BidSelectedMinutes(){
+                return this.$store.state.WebBid.ApplicationDate ? String(this.$store.state.WebBid.ApplicationDate.getMinutes()) : '--';
+            },
         },
 
         methods: {
-            changeInputFileTitle: function () {
+            changeInputFileTitle(){
 
             }
         }

@@ -265,30 +265,73 @@
 
                 // Иначе формируем и передаем объект заявки
                 }else{
-                    let operations = [];
-                    for (let operation in this.$data){
 
-                        // Перебор данных.
-                        if(this.$data.hasOwnProperty(operation) && this[operation]){
+                    if(this.webGate === 'WebGateIn' || this.webGate === 'WebGateInOut'){
+                        this.$store.commit('setDefaultWebObject', 'wGateIn');
+                        this.$store.commit('addDefaultContainer', 'wGateIn');
+                        this.$store.commit('setContainerValue', {WebGateType: 'wGateIn', index: 0, prop: 'State', value: this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty' ? 'груженый' : 'порожний'});
 
-                            if(operation === 'bidEmpty'){
-                                this.$store.commit('setBidProp', {prop: 'BidEmpty', value: this[operation]});
-                            }
-
-                            // Перебор массива
-                            if(operation === 'DangerousGoods' && this[operation] && this[operation].length > 0 && this[operation].forEach){
-                                this[operation].forEach(emptyValue => this.$store.commit('addPoint', emptyValue));
-
-                            // Нужны значения объекта data
-                            }else if(operation === 'webGate' || operation === 'bidEmpty'){
-                                this.$store.commit('addPoint', this[operation]);
-
-                            // Нужны ключи объекта data
-                            }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
-                                this.$store.commit('addPoint', operation);
-                            }
+                        if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateIn') ||
+                            (this.DangerousGoods.includes('DangerousGoodsIn') && this.webGate === 'WebGateInOut')){
+                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateIn', prop: 'DangerousGoods', value: true});
                         }
                     }
+
+                    if(this.webGate === 'WebGateIn' && this.bidEmpty === 'full'){
+                        this.$store.commit('setCargoToWebGateIn', 'wGateIn');
+                    }
+
+                    if(this.webGate === 'WebGateOut' || this.webGate === 'WebGateInOut'){
+                        this.$store.commit('setDefaultWebObject', 'wGateOut');
+                        this.$store.commit('addDefaultContainer', 'wGateOut');
+                        this.$store.commit('setContainerValue', {WebGateType: 'wGateOut', index: 0, prop: 'State', value: this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'empty-full' ? 'груженый' : 'порожний'});
+                        if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateOut') ||
+                            (this.DangerousGoods.includes('DangerousGoodsOut') && this.webGate === 'WebGateInOut')){
+                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateOut', prop: 'DangerousGoods', value: true});
+                        }
+                    }
+
+                    if(this.WebInlandTransportation){
+                        this.$store.commit('setDefaultWebObject', 'wInlandTransportation');
+                        if(this.ReturnContainer){
+                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'ReturnContainer', value: true});
+                        }
+                    }
+                    if(this.WebCustomsRelease){
+                        this.$store.commit('setDefaultWebObject', 'wCustomsRelease');
+                    }
+                    if(this.WebStaffingStripping){
+                        this.$store.commit('setDefaultWebObject', 'wStaffingStripping');
+                    }
+                    if(this.RepairContainer){
+                        this.$store.commit('setDefaultWebObject', 'wRepairContainer');
+                    }
+
+
+                    // let operations = [];
+                    // for (let operation in this.$data){
+                    //
+                    //     // Перебор данных.
+                    //     if(this.$data.hasOwnProperty(operation) && this[operation]){
+                    //
+                    //         if(operation === 'bidEmpty'){
+                    //             this.$store.commit('setBidProp', {prop: 'BidEmpty', value: this[operation]});
+                    //         }
+                    //
+                    //         // Перебор массива
+                    //         if(operation === 'DangerousGoods' && this[operation] && this[operation].length > 0 && this[operation].forEach){
+                    //             this[operation].forEach(emptyValue => this.$store.commit('addPoint', emptyValue));
+                    //
+                    //         // Нужны значения объекта data
+                    //         }else if(operation === 'webGate' || operation === 'bidEmpty'){
+                    //             this.$store.commit('addPoint', this[operation]);
+                    //
+                    //         // Нужны ключи объекта data
+                    //         }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
+                    //             this.$store.commit('addPoint', operation);
+                    //         }
+                    //     }
+                    // }
                 }
             },
 

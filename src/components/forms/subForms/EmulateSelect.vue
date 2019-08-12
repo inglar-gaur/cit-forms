@@ -23,8 +23,7 @@
 
         props: {
             elementsList: {type: Array, default: []},
-            placeholder: '',
-            selectedCommit: ''
+            placeholder: {type: String, default: ''},
         },
 
         computed: {
@@ -39,9 +38,7 @@
         methods:{
             selectElement: function (element) {
                 this.openList = false;
-                if(this.selectedCommit){
-                    this.$store.commit(this.selectedCommit, element);
-                }
+                this.$emit('selectElement', element);
             }
         },
 
@@ -57,9 +54,7 @@
 
 <style lang="scss" scoped>
     .emulated-list{
-        label{
-            position: relative;
-        }
+        position: relative;
 
         .input-wrap{
             position: relative;
@@ -82,6 +77,7 @@
         background-color: white;
         width: 100%;
         padding-top: 10px;
+        z-index: 10;
 
         >div{
             cursor: pointer;

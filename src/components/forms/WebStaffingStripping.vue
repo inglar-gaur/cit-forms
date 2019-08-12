@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="$store.state.WebBid.wStaffingStripping">
         <!--        <div class="form_row">-->
 
         <!--            <fieldset class="load_period">-->
@@ -20,11 +20,15 @@
 
         <!--        </div>-->
 
-        <CargoDetails></CargoDetails>
+        <CargoDetails
+                :elements="$store.state.WebBid.wStaffingStripping.Cargo.Elements"
+                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wStaffingStripping', index:$event.index,  prop:$event.prop,  value:$event.value})"
+                @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wStaffingStripping')"
+        ></CargoDetails>
 
-        <div class="form_row">
+        <div class="form_row" v-if="$store.getters.isWebGateIn">
 
-            <table class="load_unload_table" v-if="$store.state.SelectedBidPoints.list.includes('WebGateIn')">
+            <table class="load_unload_table">
                 <tr>
                     <th colspan="6">Объект перемещения груза (место нахождения груза)</th>
                 </tr>
@@ -41,37 +45,37 @@
 <!--                    <th>{{loadTableTitle}}</th>-->
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="0" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="1" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="2" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="3" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="4" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
                     <td>
                         <label class="label_width_outside_input">
-                            <input name="loading_out" type="radio">
+                            <input name="loading_out" value="5" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>
                         </label>
                     </td>
@@ -113,7 +117,7 @@
 
             <table style="margin-left: 40px">
                 <tr>
-                    <th>Признак объекта (место, № и тп)</th>
+                    <th>{{goodsPlaceTitle}}</th>
                 </tr>
                 <tr>
                     <td style="position: relative">
@@ -136,6 +140,11 @@
     export default {
         name: "WebStaffingStripping",
         components: {CargoDetails},
+        data(){
+          return {
+              goodsPlace: -1
+          };
+        },
         computed: {
             tableTitle: function () {
                 let tableTitle = 'Период выполнения';
@@ -160,6 +169,12 @@
 
                 return loadTableTitle;
             },
+
+            goodsPlaceTitle(){
+                let places = ['Место площадки', 'Номер вагона', 'Номер контейнера', 'Номер автотранспорта', 'Номер склада', 'Место площадки'];
+
+                return places[this.goodsPlace] ? places[this.goodsPlace] : 'Признак объекта';
+            }
         }
     }
 </script>

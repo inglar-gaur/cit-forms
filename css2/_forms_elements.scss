@@ -214,7 +214,7 @@ input:disabled {
   label {
     position: relative;
 
-    label:nth-child(1) {
+    *:nth-child(1) {
       margin-bottom: 51px;
     }
   }
