@@ -4,7 +4,7 @@
             <label class="label_width_outside_input">
                 <input
                         required
-                        name="receiving_form__truck_parameters_size"
+                        :name="'receiving_form__truck_parameters_size_'+WebGateType"
                         :checked="containerSize === 20"
                         type="radio"
                         @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 20})">
@@ -14,7 +14,7 @@
             <label class="label_width_outside_input">
                 <input
                         required
-                        name="receiving_form__truck_parameters_size"
+                        :name="'receiving_form__truck_parameters_size_'+WebGateType"
                         :checked="containerSize === 40"
                         type="radio"
                         @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 40})"

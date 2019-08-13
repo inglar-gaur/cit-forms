@@ -274,9 +274,19 @@ const WebBid = {
         },
 
         addDefaultCargoElement(state, WebObjectType) {
+
+            if(
+                this.getters.isEmptyOutGateContainer &&
+                state.wInlandTransportation &&
+                state.wInlandTransportation.ReturnContainer &&
+                !state.wGateIn
+            ){
+                this.commit('setDefaultWebObject', 'wGateIn');
+                this.commit('setCargoToWebGateIn');
+            }
+
             let WebObject = this.getters.getWebBidOperation(WebObjectType);
 
-            console.log(WebObject);
             if (WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements)) {
                 WebObject.Cargo.Elements.push(
                     {
@@ -375,7 +385,8 @@ const WebBid = {
 
     getters: {
         isWebGateIn(state) {
-            return !!state.wGateIn;
+            // State может быть не заполнен для случая, когда выдача порожнего и обратная доставка груженого (тогда этот объект только для списка товаров)
+            return !!state.wGateIn && state.wGateIn.State;
         },
         isEmptyInGateContainer(state){
             return state.wGateIn && state.wGateIn.Containers && Array.isArray(state.wGateIn.Containers.ContainerList) && state.wGateIn.Containers.ContainerList[0] && state.wGateIn.Containers.ContainerList[0].State === 'порожний';
@@ -384,10 +395,9 @@ const WebBid = {
             return state.wGateIn && state.wGateIn.Containers && Array.isArray(state.wGateIn.Containers.ContainerList) && state.wGateIn.Containers.ContainerList[0] && state.wGateIn.Containers.ContainerList[0].State === 'груженый';
         },
         isWebGateOut(state) {
-            return !!state.wGateOut;
+            return !!state.wGateOut && state.wGateOut.State;
         },
         isEmptyOutGateContainer(state){
-            console.log(state.wGateOut);
             return state.wGateOut && state.wGateOut.Containers && Array.isArray(state.wGateOut.Containers.ContainerList) && state.wGateOut.Containers.ContainerList[0] && state.wGateOut.Containers.ContainerList[0].State === 'порожний';
         },
         isFullOutGateContainer(state){
@@ -511,9 +521,6 @@ const PopupsModule = {
          * @param {String} popup - Переменная открываемого окна
          */
         openPopup(state, popup) {
-            console.log(state);
-            console.log(popup);
-            console.log(Object.getOwnPropertyDescriptor(state, popup));
             if (Object.getOwnPropertyDescriptor(state, popup) !== undefined) {
                 state[popup] = true;
             }

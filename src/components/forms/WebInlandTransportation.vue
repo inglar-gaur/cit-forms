@@ -37,7 +37,7 @@
         <!-- todo Надо выяснить где лежит список товаров при обратной доставке -->
 
         <CargoDetails
-                v-if="($store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) || ($store.getters.isEmptyOutGateContainer && $store.state.WebBid.wInlandTransportation.ReturnContainer)"
+                v-if="($store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) || ($store.getters.isEmptyOutGateContainer && $store.state.WebBid.wInlandTransportation.ReturnContainer) || ($store.getters.isWebGateIn && $store.getters.isWebGateOut && $store.getters.isFullInGateContainer && $store.state.WebBid.wInlandTransportation)"
                 :elements="$store.state.WebBid.wGateIn ? $store.state.WebBid.wGateIn.Cargo.Elements : []"
                 @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', index:$event.index,  prop:$event.prop,  value:$event.value})"
                 @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wGateIn')"

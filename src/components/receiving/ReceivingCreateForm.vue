@@ -269,7 +269,9 @@
                     if(this.webGate === 'WebGateIn' || this.webGate === 'WebGateInOut'){
                         this.$store.commit('setDefaultWebObject', 'wGateIn');
                         this.$store.commit('addDefaultContainer', 'wGateIn');
-                        this.$store.commit('setContainerValue', {WebGateType: 'wGateIn', index: 0, prop: 'State', value: this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty' ? 'груженый' : 'порожний'});
+                        let fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty' ? 'груженый' : 'порожний';
+                        this.$store.commit('setContainerValue', {WebGateType: 'wGateIn', index: 0, prop: 'State', value: fullEmptyContainer});
+                        this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateIn', prop: 'State', value: fullEmptyContainer});
 
                         if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateIn') ||
                             (this.DangerousGoods.includes('DangerousGoodsIn') && this.webGate === 'WebGateInOut')){
@@ -277,14 +279,16 @@
                         }
                     }
 
-                    if(this.webGate === 'WebGateIn' && this.bidEmpty === 'full'){
+                    if((this.webGate === 'WebGateIn' && this.bidEmpty === 'full') || (this.webGate === 'WebGateInOut' && this.WebInlandTransportation && (this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty'))){
                         this.$store.commit('setCargoToWebGateIn', 'wGateIn');
                     }
 
                     if(this.webGate === 'WebGateOut' || this.webGate === 'WebGateInOut'){
                         this.$store.commit('setDefaultWebObject', 'wGateOut');
                         this.$store.commit('addDefaultContainer', 'wGateOut');
-                        this.$store.commit('setContainerValue', {WebGateType: 'wGateOut', index: 0, prop: 'State', value: this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'empty-full' ? 'груженый' : 'порожний'});
+                        let fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'empty-full' ? 'груженый' : 'порожний';
+                        this.$store.commit('setContainerValue', {WebGateType: 'wGateOut', index: 0, prop: 'State', value: fullEmptyContainer});
+                        this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateOut', prop: 'State', value: fullEmptyContainer});
                         if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateOut') ||
                             (this.DangerousGoods.includes('DangerousGoodsOut') && this.webGate === 'WebGateInOut')){
                             this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateOut', prop: 'DangerousGoods', value: true});
@@ -306,32 +310,6 @@
                     if(this.RepairContainer){
                         this.$store.commit('setDefaultWebObject', 'wRepairContainer');
                     }
-
-
-                    // let operations = [];
-                    // for (let operation in this.$data){
-                    //
-                    //     // Перебор данных.
-                    //     if(this.$data.hasOwnProperty(operation) && this[operation]){
-                    //
-                    //         if(operation === 'bidEmpty'){
-                    //             this.$store.commit('setBidProp', {prop: 'BidEmpty', value: this[operation]});
-                    //         }
-                    //
-                    //         // Перебор массива
-                    //         if(operation === 'DangerousGoods' && this[operation] && this[operation].length > 0 && this[operation].forEach){
-                    //             this[operation].forEach(emptyValue => this.$store.commit('addPoint', emptyValue));
-                    //
-                    //         // Нужны значения объекта data
-                    //         }else if(operation === 'webGate' || operation === 'bidEmpty'){
-                    //             this.$store.commit('addPoint', this[operation]);
-                    //
-                    //         // Нужны ключи объекта data
-                    //         }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
-                    //             this.$store.commit('addPoint', operation);
-                    //         }
-                    //     }
-                    // }
                 }
             },
 
