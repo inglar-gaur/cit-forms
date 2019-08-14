@@ -1,43 +1,51 @@
 <template>
-    <div v-if="$store.state.WebBid.wInlandTransportation">
+    <div v-if="WebInlandTransportationObject">
         <div class="form_row input_in_bottom all-inputs-absolute">
             <div class="arrive_address" style="position: relative">
                 <span class="title">{{ addressTitle }}</span>
                 <div style="position: absolute; left: 0; bottom: 0; width: 100%">
                     <EmulateSelect
-                            :placeholder="$store.state.WebBid.wInlandTransportation.street ? $store.state.WebBid.wInlandTransportation.street : 'Улица'"
+                            :placeholder="WebInlandTransportationObject.street ? WebInlandTransportationObject.street : 'Улица'"
                             :elementsList="$store.state.ReferenceData.Streets"
-                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'street', value: $event})"
+                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'street', value: $event})"
                     ></EmulateSelect>
                 </div>
             </div>
             <label class="contact_person">
                 <span class="title">{{ contactsPersonTitle }}</span>
                 <input
-                        :value="$store.state.WebBid.wInlandTransportation.Contacts"
+                        :value="WebInlandTransportationObject.Contacts"
                         type="text"
-                        @input="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'Contacts', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Contacts', value: $event.target.value})"
                 >
             </label>
             <label class="phone_number">
                 <span class="title">Телефон</span>
                 <input
-                        :value="$store.state.WebBid.wInlandTransportation.Phone"
+                        :value="WebInlandTransportationObject.Phone"
                         type="text"
-                        @input="$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'Phone', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Phone', value: $event.target.value})"
                 >
             </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
-                <input :value="waitingTimeValue" type="text" disabled>
+                <input :value="Container ? Container.WaitingTime : ''" type="text" disabled>
 <!--                <span class="minutes title">мин</span>-->
             </label>
         </div>
 
-        <!-- todo Надо выяснить где лежит список товаров при обратной доставке -->
-
+        <!--
+            Таблица с описанием груза доступна в трёх вариантах
+            1. Если это форма доставки входящей заявки, есть объект с грузом и выбраны погрузочно-разгрузочные работы
+            2. Если это форма доставки исходящей заявки, контейнер пуст и выбрана обратная доставка контейнера (груженого)
+            3. Если это форма доставки входящей заявки, выбрана сдвоенная операция, контейнер груженый и выбрана автоперевозка
+        -->
         <CargoDetails
-                v-if="($store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) || ($store.getters.isEmptyOutGateContainer && $store.state.WebBid.wInlandTransportation.ReturnContainer) || ($store.getters.isWebGateIn && $store.getters.isWebGateOut && $store.getters.isFullInGateContainer && $store.state.WebBid.wInlandTransportation)"
+                v-if="
+                    (WebGateTypePostfix === 'In' && $store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) ||
+                    (WebGateTypePostfix === 'Out' && Container && Container.Empty && WebInlandTransportationObject.ReturnContainer) ||
+                    (WebGateTypePostfix === 'In' && $store.getters.isWebGateIn && $store.getters.isWebGateOut && Container && Container.Full && WebInlandTransportationObject)
+                "
                 :elements="$store.state.WebBid.wGateIn ? $store.state.WebBid.wGateIn.Cargo.Elements : []"
                 @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', index:$event.index,  prop:$event.prop,  value:$event.value})"
                 @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wGateIn')"
@@ -58,7 +66,15 @@
               address: '',
               contactsPerson: '',
               contactsPhone: '',
+              container: null,
           }
+        },
+
+        props:{
+            WebGateTypePostfix: {type: String, default: ''},
+            WebGateObject: {type: Object, default: null},
+            WebInlandTransportationObject: {type: Object, default: null},
+            Container: {type: Object, default: null}
         },
 
         components: {EmulateSelect, CargoDetails},
@@ -67,10 +83,13 @@
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.$store.getters.isWebGateIn){
-                    tableTitle += ' погрузки (прибытия)';
-                }else if(this.$store.getters.isWebGateOut){
-                    tableTitle += ' разгрузки (прибытия)';
+                switch (this.WebGateTypePostfix) {
+                    case 'In':
+                        tableTitle += ' погрузки (прибытия)';
+                        break;
+                    case 'Out':
+                        tableTitle += ' разгрузки (прибытия)';
+                        break;
                 }
 
                 return tableTitle;
@@ -79,10 +98,13 @@
             contactsPersonTitle: function () {
                 let contactsPersonTitle = 'Контактное лицо';
 
-                if(this.$store.getters.isWebGateIn){
-                    contactsPersonTitle += ' в месте прибытия';
-                }else if(this.$store.getters.isWebGateOut){
-                    contactsPersonTitle += ' в месте прибытия';
+                switch (this.WebGateTypePostfix) {
+                    case 'In':
+                        contactsPersonTitle += ' в месте прибытия';
+                        break;
+                    case 'Out':
+                        contactsPersonTitle += ' в месте прибытия';
+                        break;
                 }
 
                 return contactsPersonTitle;
@@ -92,37 +114,19 @@
                 let waitingTimeTitle = 'Время';
 
                 if(
-                    this.$store.getters.isWebGateOut && this.$store.getters.isEmptyOutGateContainer && this.$store.state.WebBid.wInlandTransportation.ReturnContainer
+                    this.WebGateTypePostfix === 'Out' && this.Container && this.Container.Empty && this.WebInlandTransportationObject.ReturnContainer
                 ){
                     waitingTimeTitle += ' ожидания получения груженого';
-                }else if(this.$store.getters.isWebGateIn){
+                }else if(this.WebGateTypePostfix === 'In'){
                     waitingTimeTitle += ' на погрузку';
-                }else if(this.$store.getters.isWebGateOut){
+                }else if(this.WebGateTypePostfix === 'Out'){
                     waitingTimeTitle += ' на выгрузку';
                 }
 
                 return waitingTimeTitle;
             },
 
-            waitingTimeValue(){
-                let WebGate = null;
-                if(this.$store.getters.isWebGateIn){
-                    WebGate = this.$store.getters.getWebBidOperation('wGateIn');
-                }else if(this.$store.getters.isWebGateOut){
-                    WebGate = this.$store.getters.getWebBidOperation('wGateOut');
-                }
-
-                if(WebGate && WebGate.Containers && Array.isArray(WebGate.Containers.ContainerList) && WebGate.Containers.ContainerList[0]){
-                    switch (WebGate.Containers.ContainerList[0].Size) {
-                        case 20:
-                            return '90 мин';
-                        case 40:
-                            return '180 мин';
-                    }
-                }
-
-                return '';
-            }
+            wInlandTransportationType(){return  'wInlandTransportation'+this.WebGateTypePostfix;}
         },
     }
 </script>

@@ -90,7 +90,7 @@
                 let tableTitle = 'Дата ';
 
                 if(this.$store.getters.isWebGateIn && this.$store.getters.isWebGateOut){
-                    tableTitle += 'приема/выдачи ктк';
+                    tableTitle += 'услуги';
                 }else if(this.$store.getters.isWebGateIn){
                     tableTitle += 'приема ктк на терминал';
                 }else if(this.$store.getters.isWebGateOut){
@@ -103,11 +103,12 @@
             timeIntervalTitle: function () {
                 let timeIntervalTitle = 'Время прибытия';
 
-                if(this.$store.state.WebBid.wInlandTransportation && this.$store.getters.isWebGateIn){
+                if(this.$store.state.WebBid.wInlandTransportationIn && this.$store.getters.isWebGateIn){
                     timeIntervalTitle += ' на погрузку';
-                }else if(this.$store.state.WebBid.wInlandTransportation && this.$store.getters.isWebGateOut){
+                }else if(this.$store.state.WebBid.wInlandTransportationOut && this.$store.getters.isWebGateOut){
                     timeIntervalTitle += ' на разгрузку';
-                }else if(this.$store.getters.isWebGateOut && (this.$store.state.WebBid.wStaffingStripping || (this.$store.isFullOutGateContainer))){
+                // }else if(this.$store.getters.isWebGateOut && (this.$store.state.WebBid.wStaffingStripping || (this.$store.isFullOutGateContainer))){
+                }else if(this.$store.getters.isWebGateIn && this.$store.getters.isWebGateOut){
                     timeIntervalTitle += ' на терминал';
                 }
 
@@ -116,7 +117,7 @@
 
             setTimeIntervalTitle: function () {
                 // return false;
-                return this.$store.state.WebBid.wInlandTransportation && !(this.$store.getters.isWebGateIn && this.$store.getters.isEmptyInGateContainer);
+                return (this.$store.state.WebBid.wInlandTransportationIn || this.$store.state.WebBid.wInlandTransportationOut) && !(this.$store.getters.isWebGateIn && (this.$store.getters.WebGateInContainer && this.$store.getters.WebGateInContainer.Empty));
             },
 
             BidSelectedHours(){

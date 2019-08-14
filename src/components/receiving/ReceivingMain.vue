@@ -21,12 +21,12 @@
 
                     <WebGate
                             v-if="$store.getters.isWebGateIn"
-                            WebGateType="wGateIn"
+                            WebGateTypePostfix="In"
                     ></WebGate>
 
                     <WebGate
                             v-if="$store.getters.isWebGateOut"
-                            WebGateType="wGateOut"
+                            WebGateTypePostfix="Out"
                     ></WebGate>
 
                     <div class="form_row">

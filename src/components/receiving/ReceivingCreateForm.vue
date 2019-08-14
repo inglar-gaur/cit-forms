@@ -126,6 +126,9 @@
 </template>
 
 <script>
+
+    import Constants from "../../Constants";
+
     export default {
 
         /**
@@ -255,6 +258,8 @@
              */
             createBid: function () {
 
+                console.log('createBid');
+
                 // Если не выбраны все необходимые опции передаем родительскому компоненту сообщение об этом
                 if(this.notSelectedMainParams){
                     if(this.notSelectedMainOperation){
@@ -266,41 +271,42 @@
                 // Иначе формируем и передаем объект заявки
                 }else{
 
-                    if(this.webGate === 'WebGateIn' || this.webGate === 'WebGateInOut'){
-                        this.$store.commit('setDefaultWebObject', 'wGateIn');
-                        this.$store.commit('addDefaultContainer', 'wGateIn');
-                        let fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty' ? 'груженый' : 'порожний';
-                        this.$store.commit('setContainerValue', {WebGateType: 'wGateIn', index: 0, prop: 'State', value: fullEmptyContainer});
-                        this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateIn', prop: 'State', value: fullEmptyContainer});
+                    ['In', 'Out'].forEach(WebGateTypePostfix => {
+                        /**
+                         *
+                         * @type {string}
+                         */
+                        let WebGateType = 'WebGate'+WebGateTypePostfix,
+                            wGateType = 'wGate'+WebGateTypePostfix,
+                            wInlandTransportation = 'wInlandTransportation'+WebGateTypePostfix,
+                            EmptyFullVariants = WebGateTypePostfix === 'In' ? 'full-empty' : 'empty-full',
+                            fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === EmptyFullVariants ? Constants.ContainerTitleOfFull : Constants.ContainerTitleOfEmpty;
 
-                        if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateIn') ||
-                            (this.DangerousGoods.includes('DangerousGoodsIn') && this.webGate === 'WebGateInOut')){
-                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateIn', prop: 'DangerousGoods', value: true});
+                        if(this.webGate === WebGateType || this.webGate === 'WebGateInOut'){
+                            this.$store.commit('setDefaultWebObject', wGateType);
+                            this.$store.commit('addDefaultContainer', wGateType);
+                            this.$store.commit('setContainerValue', {WebGateType: wGateType, index: 0, prop: 'State', value: fullEmptyContainer});
+                            this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'State', value: fullEmptyContainer});
+                            if(
+                                (this.DangerousGoods.includes('DangerousGoods') && this.webGate === WebGateType) ||
+                                (this.DangerousGoods.includes('DangerousGoods'+WebGateTypePostfix) && this.webGate === 'WebGateInOut')
+                            ){
+                                this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'DangerousGoods', value: true});
+                            }
+
+                            if(this.WebInlandTransportation){
+                                this.$store.commit('setDefaultWebObject', wInlandTransportation);
+                                if(this.ReturnContainer){
+                                    this.$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportation, prop: 'ReturnContainer', value: true});
+                                }
+                            }
                         }
-                    }
+                    });
 
                     if((this.webGate === 'WebGateIn' && this.bidEmpty === 'full') || (this.webGate === 'WebGateInOut' && this.WebInlandTransportation && (this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty'))){
                         this.$store.commit('setCargoToWebGateIn', 'wGateIn');
                     }
 
-                    if(this.webGate === 'WebGateOut' || this.webGate === 'WebGateInOut'){
-                        this.$store.commit('setDefaultWebObject', 'wGateOut');
-                        this.$store.commit('addDefaultContainer', 'wGateOut');
-                        let fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === 'empty-full' ? 'груженый' : 'порожний';
-                        this.$store.commit('setContainerValue', {WebGateType: 'wGateOut', index: 0, prop: 'State', value: fullEmptyContainer});
-                        this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateOut', prop: 'State', value: fullEmptyContainer});
-                        if((this.DangerousGoods.includes('DangerousGoods') && this.webGate === 'WebGateOut') ||
-                            (this.DangerousGoods.includes('DangerousGoodsOut') && this.webGate === 'WebGateInOut')){
-                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wGateOut', prop: 'DangerousGoods', value: true});
-                        }
-                    }
-
-                    if(this.WebInlandTransportation){
-                        this.$store.commit('setDefaultWebObject', 'wInlandTransportation');
-                        if(this.ReturnContainer){
-                            this.$store.commit('setWebObjectValue', {WebObjectType: 'wInlandTransportation', prop: 'ReturnContainer', value: true});
-                        }
-                    }
                     if(this.WebCustomsRelease){
                         this.$store.commit('setDefaultWebObject', 'wCustomsRelease');
                     }

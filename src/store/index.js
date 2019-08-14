@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Constants from "../Constants";
 
 Vue.use(Vuex);
 
@@ -83,7 +84,8 @@ const WebBid = {
         wGateIn: null,
         wShipping: null,
         wStaffingStripping: null,
-        wInlandTransportation: null,
+        wInlandTransportationIn: null,
+        wInlandTransportationOut: null,
         wCustomsRelease: null,
         wRepairContainer: null,
     },
@@ -94,7 +96,7 @@ const WebBid = {
             /**
              * @type WebGate
              */
-            let WebGate = {
+            const WebGate = {
                 Id: null,
                 WebBidId: null,
                 State: null,
@@ -102,6 +104,27 @@ const WebBid = {
                 DangerousGoods: false,
                 DatePlan: null,
                 Containers: null,
+            };
+
+            const WebInlandTransportation = {
+                Id: null,
+                Comment: null,
+                TimeIdle: null,
+                Phone: null,
+                Contacts: null,
+                Address: null,
+                ServiceDatePlan: null,
+                DanderousGoods: null,
+                CustomsSchedule: null,
+                DoubleOperationType: null,
+                GateOutOperation: null,
+                GateInOperation: null,
+                WebBidId: null,
+                Containers: null,
+                Documents: null,
+                ReturnContainer: null,
+                street: null,
+                houseNumber: null,
             };
 
             switch (type) {
@@ -113,27 +136,11 @@ const WebBid = {
                     WebGate.Documents = null;
                     state.wGateOut = WebGate;
                     break;
-                case 'wInlandTransportation':
-                    state.wInlandTransportation = {
-                        Id: null,
-                        Comment: null,
-                        TimeIdle: null,
-                        Phone: null,
-                        Contacts: null,
-                        Address: null,
-                        ServiceDatePlan: null,
-                        DanderousGoods: null,
-                        CustomsSchedule: null,
-                        DoubleOperationType: null,
-                        GateOutOperation: null,
-                        GateInOperation: null,
-                        WebBidId: null,
-                        Containers: null,
-                        Documents: null,
-                        ReturnContainer: null,
-                        street: null,
-                        houseNumber: null,
-                    };
+                case 'wInlandTransportationIn':
+                    state.wInlandTransportationIn = WebInlandTransportation;
+                    break;
+                case 'wInlandTransportationOut':
+                    state.wInlandTransportationOut = WebInlandTransportation;
                     break;
                 case 'wStaffingStripping':
                     state.wStaffingStripping = {
@@ -276,9 +283,10 @@ const WebBid = {
         addDefaultCargoElement(state, WebObjectType) {
 
             if(
-                this.getters.isEmptyOutGateContainer &&
-                state.wInlandTransportation &&
-                state.wInlandTransportation.ReturnContainer &&
+                this.getters.WebGateOutContainer &&
+                this.getters.WebGateOutContainer.Empty &&
+                state.wInlandTransportationOut &&
+                state.wInlandTransportationOut.ReturnContainer &&
                 !state.wGateIn
             ){
                 this.commit('setDefaultWebObject', 'wGateIn');
@@ -375,8 +383,8 @@ const WebBid = {
 
         clearForm(state) {
             for (let stateProp in state) {
-
                 if (state.hasOwnProperty(stateProp)) {
+                    console.log(stateProp);
                     state[stateProp] = null;
                 }
             }
@@ -384,25 +392,46 @@ const WebBid = {
     },
 
     getters: {
-        isWebGateIn(state) {
-            // State может быть не заполнен для случая, когда выдача порожнего и обратная доставка груженого (тогда этот объект только для списка товаров)
-            return !!state.wGateIn && state.wGateIn.State;
+        // State может быть не заполнен для случая, когда выдача порожнего и обратная доставка груженого (тогда этот объект только для списка товаров)
+        isWebGateIn: state => !!state.wGateIn && state.wGateIn.State,
+        isWebGateOut: state => !!state.wGateOut && state.wGateOut.State,
+
+        /**
+         * Кэшированные данные о первом в списке контейнере входящей и исходящей заявок
+         * @typedef CachedContainerParams
+         * @property {Number}   Size
+         * @property {Boolean}  Empty
+         * @property {Boolean}  Full
+         * @property {String}   WaitingTime
+         *
+         * @return null|CachedContainerParams
+         */
+        WebGateInContainer: (state, getters) => getters.WebGateContainer('In'),
+        WebGateOutContainer: (state, getters) => getters.WebGateContainer('Out'),
+        WebGateContainer: (state, getters) => WebGateTypePostfix => {
+            let container = null;
+
+            let WebGateObject = getters.getWebBidOperation('wGate'+WebGateTypePostfix);
+            if(WebGateObject && WebGateObject.Containers && Array.isArray(WebGateObject.Containers.ContainerList) && WebGateObject.Containers.ContainerList[0]){
+                container = {
+                    Size: WebGateObject.Containers.ContainerList[0].Size,
+                    Empty: WebGateObject.Containers.ContainerList[0].State === Constants.ContainerTitleOfEmpty,
+                    Full: WebGateObject.Containers.ContainerList[0].State === Constants.ContainerTitleOfFull,
+                };
+                switch (container.Size) {
+                    case 20:
+                        container.WaitingTime = '90 мин';
+                        break;
+                    case 40:
+                        container.WaitingTime = '180 мин';
+                        break;
+                }
+            }
+
+            return container;
         },
-        isEmptyInGateContainer(state){
-            return state.wGateIn && state.wGateIn.Containers && Array.isArray(state.wGateIn.Containers.ContainerList) && state.wGateIn.Containers.ContainerList[0] && state.wGateIn.Containers.ContainerList[0].State === 'порожний';
-        },
-        isFullInGateContainer(state){
-            return state.wGateIn && state.wGateIn.Containers && Array.isArray(state.wGateIn.Containers.ContainerList) && state.wGateIn.Containers.ContainerList[0] && state.wGateIn.Containers.ContainerList[0].State === 'груженый';
-        },
-        isWebGateOut(state) {
-            return !!state.wGateOut && state.wGateOut.State;
-        },
-        isEmptyOutGateContainer(state){
-            return state.wGateOut && state.wGateOut.Containers && Array.isArray(state.wGateOut.Containers.ContainerList) && state.wGateOut.Containers.ContainerList[0] && state.wGateOut.Containers.ContainerList[0].State === 'порожний';
-        },
-        isFullOutGateContainer(state){
-            return state.wGateOut && state.wGateOut.Containers && Array.isArray(state.wGateOut.Containers.ContainerList) && state.wGateOut.Containers.ContainerList[0] && state.wGateOut.Containers.ContainerList[0].State === 'груженый';
-        },
+
+
         isDangerousGoods(state){
             return (state.wGateIn && state.wGateIn.DangerousGoods) || (state.wGateOut && state.wGateOut.DangerousGoods);
         },

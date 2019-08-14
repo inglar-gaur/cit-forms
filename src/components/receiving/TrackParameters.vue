@@ -36,18 +36,18 @@
             >
         </label>
 
-        <label class="container_number" style="width: 150px; margin-left: 40px" v-if="isFullContainer">
+        <label class="container_number" style="width: 150px; margin-left: 40px" v-if="Container && Container.Full">
             <span class="title">Номер ЗПУ</span>
             <input
                     type="text"
             >
         </label>
-<!--        <label class="label_width_outside_input">-->
-<!--            <input name="receiving_form__truck_parameters_state" checked type="radio" readonly>-->
-<!--            <span class="pseudo_checkbox"></span>-->
-<!--            <span class="title" v-if="bidEmpty === 'empty'">Порожний</span>-->
-<!--            <span class="title" v-if="bidEmpty === 'full'">Груженый</span>-->
-<!--        </label>-->
+        <!--        <label class="label_width_outside_input">-->
+        <!--            <input name="receiving_form__truck_parameters_state" checked type="radio" readonly>-->
+        <!--            <span class="pseudo_checkbox"></span>-->
+        <!--            <span class="title" v-if="bidEmpty === 'empty'">Порожний</span>-->
+        <!--            <span class="title" v-if="bidEmpty === 'full'">Груженый</span>-->
+        <!--        </label>-->
     </div>
 </template>
 
@@ -57,19 +57,20 @@
 
         props: {
             WebGateObject: {type: Object, default: null},
-            WebGateType: {type: String, default: ''},
+            WebGateTypePostfix: {type: String, default: ''},
+            Container: {type: Object, default: null}
         },
 
-        computed:{
-            containerNumber(){
+        computed: {
+            containerNumber() {
                 return this.WebGateObject &&
-                    this.WebGateObject.Containers &&
-                    Array.isArray(this.WebGateObject.Containers.ContainerList) &&
-                    this.WebGateObject.Containers.ContainerList[0] &&
-                    this.WebGateObject.Containers.ContainerList[0].Number ?
+                this.WebGateObject.Containers &&
+                Array.isArray(this.WebGateObject.Containers.ContainerList) &&
+                this.WebGateObject.Containers.ContainerList[0] &&
+                this.WebGateObject.Containers.ContainerList[0].Number ?
                     this.WebGateObject.Containers.ContainerList[0].Number : '';
             },
-            containerSize(){
+            containerSize() {
                 return this.WebGateObject &&
                 this.WebGateObject.Containers &&
                 Array.isArray(this.WebGateObject.Containers.ContainerList) &&
@@ -77,12 +78,16 @@
                 this.WebGateObject.Containers.ContainerList[0].Size ?
                     this.WebGateObject.Containers.ContainerList[0].Size : null;
             },
-            isFullContainer(){
+            isFullContainer() {
                 return this.WebGateObject &&
-                this.WebGateObject.Containers &&
-                Array.isArray(this.WebGateObject.Containers.ContainerList) &&
-                this.WebGateObject.Containers.ContainerList[0] &&
-                this.WebGateObject.Containers.ContainerList[0].State === 'груженый';
+                    this.WebGateObject.Containers &&
+                    Array.isArray(this.WebGateObject.Containers.ContainerList) &&
+                    this.WebGateObject.Containers.ContainerList[0] &&
+                    this.WebGateObject.Containers.ContainerList[0].State === 'груженый';
+            },
+
+            WebGateType() {
+                return 'wGate' + this.WebGateTypePostfix;
             }
 
         }
