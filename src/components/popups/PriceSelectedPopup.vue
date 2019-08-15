@@ -1,36 +1,46 @@
 <template>
     <div class="price-select-popup" v-show="$store.state.Popups.PriceSelectedPopup">
         <span class="close-cross" @click="$store.commit('closePopup', 'PriceSelectedPopup')">x</span>
-        <table v-if="$store.getters.getSelectedPriceElements.Basic">
-            <tr v-for="service in $store.getters.getSelectedPriceElements.Basic">
-                <td>{{service.title}}</td>
-                <td></td>
-                <td>{{service.unit}}</td>
-                <td>{{service.cost}}</td>
-            </tr>
-        </table>
-        <table v-if="$store.getters.getSelectedPriceElements.InlandTransportations">
-            <tr v-for="service in $store.getters.getSelectedPriceElements.InlandTransportations">
-                <td>{{service.title}}</td>
-                <td>{{service.street}}</td>
-                <td>{{service.houseNumber}}</td>
-                <td>{{service.cost}}</td>
-            </tr>
-        </table>
-        <table v-if="$store.getters.getSelectedPriceElements.RepairServices">
-            <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
-                <td>{{service.Title}}</td>
-                <td>{{service.Characteristic}}</td>
-                <td>{{service.Barcode}}</td>
-                <td>{{service.RepairCategory}}</td>
-                <td>{{service.TotalRepairCategory}}</td>
-                <td>{{service.Cost}}</td>
-            </tr>
-            <tr v-if="totalRepairCost">
-                <td colspan="5" style="float: right"><span>Итого стоимость</span></td>
-                <td>{{totalRepairCost}}</td>
-            </tr>
-        </table>
+        <h3>Список заказанных услуг</h3>
+        <template v-if="$store.getters.getSelectedPriceElements.Basic.length">
+            <h4>Услуги из прайса</h4>
+            <table>
+                <tr v-for="service in $store.getters.getSelectedPriceElements.Basic">
+                    <td>{{service.title}}</td>
+                    <td></td>
+                    <td>{{service.unit}}</td>
+                    <td>{{service.cost}}</td>
+                </tr>
+            </table>
+        </template>
+        <template v-if="$store.getters.getSelectedPriceElements.InlandTransportations">
+            <h4>Услуги доставки</h4>
+            <table>
+                <tr v-for="service in $store.getters.getSelectedPriceElements.InlandTransportations">
+                    <td>{{service.title}}</td>
+                    <td>{{service.street}}</td>
+                    <td>{{service.houseNumber}}</td>
+                    <td>{{service.cost}}</td>
+                </tr>
+            </table>
+        </template>
+        <template v-if="$store.getters.getSelectedPriceElements.RepairServices">
+            <h4>Услуги по ремонту</h4>
+            <table>
+                <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
+                    <td>{{service.Title}}</td>
+                    <td>{{service.Characteristic}}</td>
+                    <td>{{service.Barcode}}</td>
+                    <td>{{service.RepairCategory}}</td>
+                    <td>{{service.TotalRepairCategory}}</td>
+                    <td>{{service.Cost}}</td>
+                </tr>
+                <tr v-if="totalRepairCost">
+                    <td colspan="5" style="float: right"><span>Итого стоимость</span></td>
+                    <td>{{totalRepairCost}}</td>
+                </tr>
+            </table>
+        </template>
     </div>
 </template>
 
