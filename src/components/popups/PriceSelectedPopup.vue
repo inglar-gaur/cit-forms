@@ -26,7 +26,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedPriceElements.RepairServices">
+        <template v-if="$store.getters.getSelectedPriceElements.RepairServices.length">
             <h4>Услуги по ремонту</h4>
             <table>
                 <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
