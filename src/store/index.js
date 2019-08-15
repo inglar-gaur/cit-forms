@@ -55,30 +55,56 @@ const Price = {
     getters: {
         getSelectedPriceElements: function (state, getters) {
 
+            const SelectedPriceList = {
+                Basic: [],
+                InlandTransportations: [],
+                RepairServices: []
+            };
+
+            SelectedPriceList.Basic = state.SelectedBasicServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
+
             // Список выбранных услуг автоперевозки
-            let InlandTransportations = [];
             ['In', 'Out'].forEach(wInlandTransportationPostfix => {
                 /**
                  * Объект автоперевозки входящей или исходящей заявки
                  * @type {WebInlandTransportation|null}
                  */
                 let WebInlandTransportation = getters.getWebBidOperation('wInlandTransportation' + wInlandTransportationPostfix);
+
                 // Если есть объект, улица и дом, выбираем цену и формируем объект для таблицы
-                if (WebInlandTransportation && WebInlandTransportation.street && +getters.getStreetZoneCost(WebInlandTransportation.street) && WebInlandTransportation.houseNumber) {
-                    InlandTransportations.push({
-                        title: 'Автоперевозка',
-                        street: WebInlandTransportation.street,
-                        houseNumber: WebInlandTransportation.houseNumber,
-                        cost: +getters.getStreetZoneCost(WebInlandTransportation.street)
-                    });
-                    // При заказе обратной доставке формируем объект и дя неё
-                    if (WebInlandTransportation.ReturnContainer) {
-                        InlandTransportations.push({
-                            title: 'Автоперевозка обратная доставка',
-                            street: 'Бахчиванджи',
-                            houseNumber: 'д2',
-                            cost: 1500
-                        });
+                if (WebInlandTransportation && WebInlandTransportation.street && WebInlandTransportation.houseNumber) {
+
+                    let StreetObject = getters.getStreets.find(street => street.title === WebInlandTransportation['street']);
+
+                    if (StreetObject) {
+                        let Container = getters['WebGate' + wInlandTransportationPostfix + 'Container'];
+
+                        let Cost = null;
+                        if (Container && (Container.Size === 20 || Container.Size === 40)) {
+                            if (Container.Empty) {
+                                Cost = StreetObject[Container.Size];
+                            } else if (Container.Full && Container.WeightGross) {
+                                Cost = StreetObject[Container.Size + ((Container.Size === 20 && Container.WeightGross > 24) || (Container.Size === 40 && Container.WeightGross > 30) ? 'h' : '')];
+                            }
+
+                            if (Cost) {
+                                SelectedPriceList.InlandTransportations.push({
+                                    title: 'Автоперевозка',
+                                    street: WebInlandTransportation.street,
+                                    houseNumber: WebInlandTransportation.houseNumber,
+                                    cost: Cost
+                                });
+                                // При заказе обратной доставке формируем объект и дя неё
+                                if (WebInlandTransportation.ReturnContainer) {
+                                    SelectedPriceList.InlandTransportations.push({
+                                        title: 'Автоперевозка обратная доставка',
+                                        street: 'Бахчиванджи',
+                                        houseNumber: 'д2',
+                                        cost: 1500
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -88,17 +114,12 @@ const Price = {
              * @type {WebRepairContainer|null}
              */
             let RepairObject = getters.getWebBidOperation('wRepairContainer');
-            /**
-             * Массив с данными по ремонту для таблицы выбранных услуг
-             * @type {Array|null}
-             */
-            let RepairServices = null;
 
             // Проверяем наличие и заполненность массива с услугами ремонта
             if (RepairObject && Array.isArray(RepairObject.list) && RepairObject.list.length > 0) {
 
                 // Формируем итоговый массив из таблицы в форме
-                RepairServices = RepairObject.list.map(repairService => {
+                SelectedPriceList.RepairServices = RepairObject.list.map(repairService => {
                     return {
                         Title: repairService.Name,
                         Characteristic: repairService.Characteristic,
@@ -107,14 +128,14 @@ const Price = {
                     };
                 })
                 // Фильтруем (проверка на наличие и названия и характеристики услуги)
-                .filter(RepairService => RepairService.Title && RepairService.Characteristic)
-                // Сортируем по возрастанию категории (для подсчета итоговой категории)
-                .sort((predRepairService, nextRepairService) => nextRepairService.RepairCategory < predRepairService.RepairCategory ? 1 : -1);
+                    .filter(RepairService => RepairService.Title && RepairService.Characteristic)
+                    // Сортируем по возрастанию категории (для подсчета итоговой категории)
+                    .sort((predRepairService, nextRepairService) => nextRepairService.RepairCategory < predRepairService.RepairCategory ? 1 : -1);
 
                 let totalCategories = {1: 0, 2: 0, 3: 0, cost: 0};
-                for (let i = 0; i < RepairServices.length; i++) {
-                    if (0 < +RepairServices[i].RepairCategory < 4) {
-                        ++totalCategories[+RepairServices[i].RepairCategory];
+                for (let i = 0; i < SelectedPriceList.RepairServices.length; i++) {
+                    if (0 < +SelectedPriceList.RepairServices[i].RepairCategory < 4) {
+                        ++totalCategories[+SelectedPriceList.RepairServices[i].RepairCategory];
                     }
 
                     if (totalCategories[1] >= 4) {
@@ -132,32 +153,28 @@ const Price = {
 
                     if (!totalCategories[4]) {
                         if (totalCategories[3]) {
-                            RepairServices[i].TotalRepairCategory = 'III';
+                            SelectedPriceList.RepairServices[i].TotalRepairCategory = 'III';
                         } else if (totalCategories[2]) {
-                            RepairServices[i].TotalRepairCategory = 'II';
+                            SelectedPriceList.RepairServices[i].TotalRepairCategory = 'II';
                         }
                     }
 
-                    if (i >= RepairServices.length - 1) {
+                    if (i >= SelectedPriceList.RepairServices.length - 1) {
                         if (totalCategories[4]) {
-                            RepairServices[i].Cost = 'Договорная';
+                            SelectedPriceList.RepairServices[i].Cost = 'Договорная';
                             break;
                         } else if (totalCategories[3]) {
-                            RepairServices[i].Cost = 7000;
+                            SelectedPriceList.RepairServices[i].Cost = 7000;
                         } else if (totalCategories[2]) {
-                            RepairServices[i].Cost = 5000;
+                            SelectedPriceList.RepairServices[i].Cost = 5000;
                         } else if (totalCategories[1]) {
-                            RepairServices[i].Cost = 3000;
+                            SelectedPriceList.RepairServices[i].Cost = 3000;
                         }
                     }
                 }
             }
 
-            return {
-                Basic: state.SelectedBasicServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem),
-                InlandTransportations: InlandTransportations,
-                RepairServices: RepairServices
-            };
+            return SelectedPriceList;
         }
     }
 };
@@ -204,11 +221,11 @@ const ReferenceData = {
         Hours: [10, 12, 14, 17],
         Minutes: [10, 12, 14, 17],
         Streets: [
-            {title: '3-го Интернационала', zone: '24-30'},
-            {title: '3-й Пятилетки', zone: '16-23'},
-            {title: '8 марта, 10', zone: '16-23'},
-            {title: '8 марта, 84, 101', zone: '16-23'},
-            {title: '8 марта, 181', zone: '11-15'},
+            {title: '3-го Интернационала', 20: 8800, '20h': 10300, 40: 10500, '40h': 11100},
+            {title: '3-й Пятилетки', 20: 8500, '20h': 9800, 40: 10000, '40h': 10500},
+            {title: '8 марта, 10', 20: 8500, '20h': 9800, 40: 10000, '40h': 10500},
+            {title: '8 марта, 84, 101', 20: 8500, '20h': 9800, 40: 10000, '40h': 10500},
+            {title: '8 марта, 181', 20: 8300, '20h': 9400, 40: 98000, '40h': 10300},
         ],
         StreetZoneCosts: {
             '11-15': 2000,
@@ -270,13 +287,15 @@ const ReferenceData = {
         getStreetsList: state => {
             return state.Streets.map(street => street.title).filter(street => street)
         },
-        getStreetZoneCost: state => streetTitle => {
-            let streetIndex = state.Streets.findIndex(street => street.title === streetTitle);
-            if (~streetIndex && state.Streets[streetIndex].zone && state.StreetZoneCosts[state.Streets[streetIndex].zone]) {
-                return state.StreetZoneCosts[state.Streets[streetIndex].zone];
-            }
-            return null;
-        }
+
+        getStreets: state => state.Streets,
+        // getStreetZoneCost: state => streetTitle => {
+        //     let streetIndex = state.Streets.findIndex(street => street.title === streetTitle);
+        //     if (~streetIndex && state.Streets[streetIndex].zone && state.StreetZoneCosts[state.Streets[streetIndex].zone]) {
+        //         return state.StreetZoneCosts[state.Streets[streetIndex].zone];
+        //     }
+        //     return null;
+        // }
     }
 
 };

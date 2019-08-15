@@ -34,6 +34,14 @@
                         @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Phone', value: $event.target.value})"
                 >
             </label>
+            <label v-if="Container.Full" style="width: 150px">
+                <span class="title">Вес контейнера (т)</span>
+                <input
+                        :value="Container.WeightGross"
+                        type="text"
+                        @input="$store.commit('setContainerValue', {WebGateType: 'wGate'+WebGateTypePostfix, index: 0, prop: 'WeightGross', value: +$event.target.value})"
+                >
+            </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
                 <input :value="Container ? Container.WaitingTime : ''" type="text" disabled>
