@@ -64,7 +64,7 @@
                             </label>
 
                             <label v-if="webGate !== 'WebGateInOut'" class="label_width_outside_input">
-                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoods" :disabled="bidEmpty !== 'full' && !WebStaffingStripping">
+                                <input type="checkbox" v-model="DangerousGoods" value="DangerousGoods" :disabled="bidEmpty !== 'full' && !ReturnContainer && !WebStaffingStripping">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Опасный груз</span>
                             </label>
@@ -126,6 +126,9 @@
 </template>
 
 <script>
+
+    import Constants from "../../Constants";
+
     export default {
 
         /**
@@ -215,9 +218,7 @@
              * @returns {boolean}
              */
             notCanSelectReturnContainer: function () {
-                return this.notSelectedMainParams ||
-                    this.webGate === "WebGateInOut" || this.webGate === "WebGateIn" ||
-                    (this.webGate === "WebGateOut" && !this.WebInlandTransportation);
+                return this.notSelectedMainParams || this.webGate !== "WebGateOut" || !this.WebInlandTransportation;
             },
         },
 
@@ -257,6 +258,8 @@
              */
             createBid: function () {
 
+                console.log('createBid');
+
                 // Если не выбраны все необходимые опции передаем родительскому компоненту сообщение об этом
                 if(this.notSelectedMainParams){
                     if(this.notSelectedMainOperation){
@@ -267,29 +270,52 @@
 
                 // Иначе формируем и передаем объект заявки
                 }else{
-                    let operations = [];
-                    for (let operation in this.$data){
 
-                        // Перебор данных.
-                        if(this.$data.hasOwnProperty(operation) && this[operation]){
+                    ['In', 'Out'].forEach(WebGateTypePostfix => {
+                        /**
+                         *
+                         * @type {string}
+                         */
+                        let WebGateType = 'WebGate'+WebGateTypePostfix,
+                            wGateType = 'wGate'+WebGateTypePostfix,
+                            wInlandTransportation = 'wInlandTransportation'+WebGateTypePostfix,
+                            EmptyFullVariants = WebGateTypePostfix === 'In' ? 'full-empty' : 'empty-full',
+                            fullEmptyContainer = this.bidEmpty === 'full' || this.bidEmpty === 'full-full' || this.bidEmpty === EmptyFullVariants ? Constants.ContainerTitleOfFull : Constants.ContainerTitleOfEmpty;
 
-                            // Перебор массива
-                            if(operation === 'DangerousGoods' && this[operation].length > 0 && this[operation].forEach){
-                                this[operation].forEach(emptyValue => operations.push(emptyValue));
+                        if(this.webGate === WebGateType || this.webGate === 'WebGateInOut'){
+                            this.$store.commit('setDefaultWebObject', wGateType);
+                            this.$store.commit('addDefaultContainer', wGateType);
+                            this.$store.commit('setContainerValue', {WebGateType: wGateType, index: 0, prop: 'State', value: fullEmptyContainer});
+                            this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'State', value: fullEmptyContainer});
+                            if(
+                                (this.DangerousGoods.includes('DangerousGoods') && this.webGate === WebGateType) ||
+                                (this.DangerousGoods.includes('DangerousGoods'+WebGateTypePostfix) && this.webGate === 'WebGateInOut')
+                            ){
+                                this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'DangerousGoods', value: true});
+                            }
 
-                            // Нужны значения объекта data
-                            }else if(operation === 'webGate' || operation === 'bidEmpty'){
-                                operations.push(this[operation]);
-
-                            // Нужны ключи объекта data
-                            }else if(operation !== 'DangerousGoods' && operation !== 'webGate' && operation !== 'bidEmpty'){
-                                operations.push(operation);
+                            if(this.WebInlandTransportation){
+                                this.$store.commit('setDefaultWebObject', wInlandTransportation);
+                                if(this.ReturnContainer){
+                                    this.$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportation, prop: 'ReturnContainer', value: true});
+                                }
                             }
                         }
+                    });
+
+                    if((this.webGate === 'WebGateIn' && this.bidEmpty === 'full') || (this.webGate === 'WebGateInOut' && this.WebInlandTransportation && (this.bidEmpty === 'full-full' || this.bidEmpty === 'full-empty'))){
+                        this.$store.commit('setCargoToWebGateIn', 'wGateIn');
                     }
 
-                    this.$parent.createBid(operations);
-                    this.$parent.setEmpty(this.bidEmpty);
+                    if(this.WebCustomsRelease){
+                        this.$store.commit('setDefaultWebObject', 'wCustomsRelease');
+                    }
+                    if(this.WebStaffingStripping){
+                        this.$store.commit('setDefaultWebObject', 'wStaffingStripping');
+                    }
+                    if(this.RepairContainer){
+                        this.$store.commit('setDefaultWebObject', 'wRepairContainer');
+                    }
                 }
             },
 

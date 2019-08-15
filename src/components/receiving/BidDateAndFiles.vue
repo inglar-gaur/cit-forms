@@ -1,47 +1,68 @@
 <template>
     <div class="form_row input_in_bottom left-margin-label-30 flex-start">
 
-      <label class="container_number">
-        <span class="title">Номер контейнера</span>
-        <input placeholder="AAAA9999999" type="text" :value="container" @input="$parent.setContainerNumber($event.target.value)" pattern="[A-Z]{4}[0-9]{7}" required>
-      </label>
-
         <label class="service_date">
             <span class="title">{{ tableTitle }}</span>
             <!--                            <input type="text" name="application_date">-->
             <!--                            <v-date-picker v-model="bid.bidDate"></v-date-picker>-->
             <datepicker
-                    v-model="bidDate"
+                    :value="$store.state.WebBid.ApplicationDate"
                     name="bid_date"
                     lang="ru"
                     format="DD.MM.YYYY"
-                    valueType="format"
+                    valueType="date"
                     :first-day-of-week="1"
                     width="150px"
+                    @change="$store.commit('setBidDate', $event)"
             ></datepicker>
         </label>
 
-        <div class="time_interval">
+        <div class="time_interval" style="position: relative">
             <div class="title">{{timeIntervalTitle}}</div>
-            <div class="labels">
-                <label>
-                    <!--                                <span class="label_title title">с</span>-->
+            <div class="labels" style="position: absolute; bottom: 0; left: 0; width: 700px">
+                <div>
+                    <span class="label_title title" v-if="setTimeIntervalTitle">с</span>
                     <!--                                    <input name="arrive_time_less" type="text">-->
-                    <select>
-                        <option>--</option>
-                        <option v-for="hour in hours">{{ hour }}</option>
-                    </select>
+<!--                    <select>-->
+<!--                        <option>&#45;&#45;</option>-->
+<!--                        <option v-for="hour in []">{{ hour }}</option>-->
+<!--                    </select>-->
+<!--                    <span class="hours title">час.</span>-->
+                    <div style="display: inline-block; width: 75px">
+                        <EmulateSelect
+                                v-if="$store.state.WebBid.ApplicationDate && $store.state.ReferenceData.Hours"
+                                :placeholder="BidSelectedHours"
+                                :elementsList="$store.state.ReferenceData.Hours"
+                                @selectElement="$store.commit('setBidTime', {hours: $event})"
+                        ></EmulateSelect>
+                        <input
+                            v-else
+                            type="text"
+                            disabled
+                        >
+                    </div>
+
                     <span class="hours title">час.</span>
-                </label>
-                <label>
-                    <!--                                <span class="label_title title">до</span>-->
+                </div>
+                <div>
+                    <span class="label_title title" v-if="setTimeIntervalTitle">до</span>
+                    <div style="display: inline-block; width: 75px">
+                        <input v-if="setTimeIntervalTitle || !$store.state.WebBid.ApplicationDate || !$store.state.ReferenceData.Minutes" type="text" disabled>
+                        <EmulateSelect
+                                :placeholder="BidSelectedMinutes"
+                                :elementsList="$store.state.ReferenceData.Minutes"
+                                @selectElement="$store.commit('setBidTime', {minutes: $event})"
+                                v-else
+                        ></EmulateSelect>
+                    </div>
+                    <span class="hours title">{{ setTimeIntervalTitle ? 'час.' : 'мин.'}}</span>
                     <!--                                    <input name="arrive_time_up" type="text">-->
-                    <select>
-                        <option>--</option>
-                        <option v-for="minute in minutes">{{ minute }}</option>
-                    </select>
-                    <span class="hours title">мин.</span>
-                </label>
+<!--                    <select>-->
+<!--                        <option>&#45;&#45;</option>-->
+<!--                        <option v-for="minute in []">{{ minute }}</option>-->
+<!--                    </select>-->
+<!--                    <span class="hours title">{{ setTimeIntervalTitle ? 'час.' : 'мин.'}}</span>-->
+                </div>
             </div>
         </div>
 
@@ -50,7 +71,7 @@
         <!--                        <input v-if="bid.bidEmpty === true || bid.bidType === 'WebGateOut'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_proxy_file" placeholder="Приложить доверенность">-->
         <!--                        <input v-if="bid.bidType !== 'WebGateIn'" class="cit__form_attachment receiving_add_file" type="file" name="receiving_declaration_file" placeholder="Приложить декларацию">-->
 
-        <label v-show="canLoadVicarious" class="cit__form_attachment receiving_add_file">
+        <label v-show="false" class="cit__form_attachment receiving_add_file">
             <input type="file" name="receiving_proxy_file" placeholder="Приложить доверенность" @change="changeInputFileTitle">
             <span class="cit__form_attachment__title">Приложить декларацию</span>
         </label>
@@ -59,29 +80,21 @@
 </template>
 
 <script>
+    import EmulateSelect from "../forms/subForms/EmulateSelect";
     export default {
         name: "BidDateAndFiles",
-
-        props: {
-            operations:         {type: Array, default: []},
-            bidDate:            {type: String,  default: ""},
-            container:          {type: Number,  default: null},
-            hours:              {type: Array,   default: []},
-            minutes:            {type: Array,   default: []},
-            canLoadVicarious:   {type: Boolean, default: false},
-            canLoadDeclaration: {type: Boolean, default: false},
-        },
+        components: {EmulateSelect},
 
         computed:{
             tableTitle: function () {
                 let tableTitle = 'Дата ';
 
-                if(this.operations.includes('WebGateIn')){
+                if(this.$store.getters.isWebGateIn && this.$store.getters.isWebGateOut){
+                    tableTitle += 'услуги';
+                }else if(this.$store.getters.isWebGateIn){
                     tableTitle += 'приема ктк на терминал';
-                }else if(this.operations.includes('WebGateOut')){
+                }else if(this.$store.getters.isWebGateOut){
                     tableTitle += 'выдачи ктк с терминала';
-                }else if(this.operations.includes('WebGateInOut')){
-                    tableTitle += 'приема/выдачи ктк';
                 }
 
                 return tableTitle;
@@ -90,20 +103,33 @@
             timeIntervalTitle: function () {
                 let timeIntervalTitle = 'Время прибытия';
 
-                if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateIn')){
-                    timeIntervalTitle += ' в место погрузки';
-                }else if(this.operations.includes('WebInlandTransportation') && this.operations.includes('WebGateOut')){
-                    timeIntervalTitle += ' в место разггрузки';
-                }else if(this.operations.includes('WebStaffingStripping') && this.operations.includes('WebGateIn')){
+                if(this.$store.state.WebBid.wInlandTransportationIn && this.$store.getters.isWebGateIn){
+                    timeIntervalTitle += ' на погрузку';
+                }else if(this.$store.state.WebBid.wInlandTransportationOut && this.$store.getters.isWebGateOut){
+                    timeIntervalTitle += ' на разгрузку';
+                // }else if(this.$store.getters.isWebGateOut && (this.$store.state.WebBid.wStaffingStripping || (this.$store.isFullOutGateContainer))){
+                }else if(this.$store.getters.isWebGateIn && this.$store.getters.isWebGateOut){
                     timeIntervalTitle += ' на терминал';
                 }
 
                 return timeIntervalTitle;
-            }
+            },
+
+            setTimeIntervalTitle: function () {
+                // return false;
+                return (this.$store.state.WebBid.wInlandTransportationIn || this.$store.state.WebBid.wInlandTransportationOut) && !(this.$store.getters.isWebGateIn && (this.$store.getters.WebGateInContainer && this.$store.getters.WebGateInContainer.Empty));
+            },
+
+            BidSelectedHours(){
+                return this.$store.state.WebBid.ApplicationDate ? String(this.$store.state.WebBid.ApplicationDate.getHours()) : '--';
+            },
+            BidSelectedMinutes(){
+                return this.$store.state.WebBid.ApplicationDate ? String(this.$store.state.WebBid.ApplicationDate.getMinutes()) : '--';
+            },
         },
 
         methods: {
-            changeInputFileTitle: function () {
+            changeInputFileTitle(){
 
             }
         }

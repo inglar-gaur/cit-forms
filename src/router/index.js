@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home      from '../components/home';
-import receiving  from '../components/receiving/receiving-main';
+import receiving  from '../components/receiving/ReceivingMain';
 
 Vue.use(Router);
 

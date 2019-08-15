@@ -13,20 +13,16 @@
 
     let operationsTitle = {
         WebGateIn:          'принять на терминал',
-        webGateOut:         'выдать с терминала',
+        WebGateOut:         'выдать с терминала',
         webGateInOut:       'принять/выдать',
         full:               'груженый',
         empty:              'порожний',
         RepairContainer:    'заказать ремонт контейнера',
-        ReturnContainer:    'заказать обратную доставку контейнера',
+        DangerousGoods:     'опасный груз',
     };
 
     export default {
         name: "OperationsList",
-
-        props: {
-            operations: {type: Array, default: []},
-        },
 
         computed: {
 
@@ -39,24 +35,28 @@
                  * @type {Array.<string>}
                  */
                 let operations = [];
+                let SelectedBidPoints = this.$store.state.SelectedBidPoints.list;
 
-                for(let i = 0; i < this.operations.length; i++){
+                for(let i = 0; i < SelectedBidPoints.length; i++){
 
                     // Если есть в списке с названиями
-                    if(operationsTitle[this.operations[i]]){
-                        operations.push(operationsTitle[this.operations[i]]);
+                    if(operationsTitle[SelectedBidPoints[i]]){
+                        operations.push(operationsTitle[SelectedBidPoints[i]]);
 
                     // Персональные обработчики
                     }else{
-                        switch (this.operations[i]) {
+                        switch (SelectedBidPoints[i]) {
                             case 'WebInlandTransportation':
-                                operations.push('заказать автоперевозку'+(this.operations.includes('WebGateInOut') ? '' : ((this.operations.includes('WebGateIn') ? ' до' : ' от') + ' терминала')));
+                                operations.push('заказать автоперевозку'+(SelectedBidPoints.includes('WebGateInOut') ? '' : ((SelectedBidPoints.includes('WebGateIn') ? ' до' : ' от') + ' терминала')));
                                 break;
                             case 'WebCustomsRelease':
-                                operations.push('заказать перемещение '+(this.operations.includes('WebGateIn') ? 'на' : 'из')+' СВХ');
+                                operations.push('заказать перемещение '+(SelectedBidPoints.includes('WebGateIn') ? 'на' : 'из')+' СВХ');
                                 break;
                             case 'WebStaffingStripping':
-                                operations.push('заказать '+(this.operations.includes('empty') ? 'погрузку' : 'разгрузку')+' контейнера');
+                                operations.push('заказать '+(SelectedBidPoints.includes('empty') ? 'погрузку' : 'разгрузку')+' контейнера');
+                                break;
+                            case 'ReturnContainer':
+                                operations.push('заказать обратную доставку '+(SelectedBidPoints.includes('empty') ? 'груженого' : 'порожнего')+' контейнера');
                         }
                     }
                 }

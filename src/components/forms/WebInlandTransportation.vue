@@ -1,52 +1,70 @@
 <template>
-    <div>
+    <div v-if="WebInlandTransportationObject">
         <div class="form_row input_in_bottom all-inputs-absolute">
-            <label class="arrive_address">
+            <div class="arrive_address" style="position: relative">
                 <span class="title">{{ addressTitle }}</span>
-                <input v-model="address" type="text">
-            </label>
+                <div style="position: absolute; left: 0; bottom: 0; width: 70%">
+                    <EmulateSelect
+                            :placeholder="WebInlandTransportationObject.street ? WebInlandTransportationObject.street : 'Улица'"
+                            :elementsList="$store.getters.getStreetsList"
+                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'street', value: $event})"
+                    ></EmulateSelect>
+                </div>
+                <div style="width: 30%;position: absolute;bottom: 0;right: 0;">
+                    <input
+                            type="text"
+                            :placeholder="WebInlandTransportationObject.house ? WebInlandTransportationObject.house : 'Дом'"
+                            @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'houseNumber', value: $event.target.value})"
+                    >
+                </div>
+            </div>
             <label class="contact_person">
                 <span class="title">{{ contactsPersonTitle }}</span>
-                <input v-model="contactsPerson" type="text">
+                <input
+                        :value="WebInlandTransportationObject.Contacts"
+                        type="text"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Contacts', value: $event.target.value})"
+                >
             </label>
             <label class="phone_number">
                 <span class="title">Телефон</span>
-                <input v-model="contactsPhone" type="text">
+                <input
+                        :value="WebInlandTransportationObject.Phone"
+                        type="text"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Phone', value: $event.target.value})"
+                >
             </label>
             <label class="waiting_time">
                 <span class="title">{{ waitingTimeTitle }}</span>
-                <input value="180" type="text">
-                <span class="minutes title">мин</span>
+                <input :value="Container ? Container.WaitingTime : ''" type="text" disabled>
+<!--                <span class="minutes title">мин</span>-->
             </label>
         </div>
-<!--        <div class="form_row">-->
-<!--            <div class="receiving__time_interval_and_special_demand">-->
-<!--                <div class="time_interval">-->
-<!--                    <div class="title">Интервал времени прибытия</div>-->
-<!--                    <div class="labels">-->
-<!--                        <label>-->
-<!--                            <span class="label_title title">с</span>-->
-<!--                            <input name="arrive_time_less" type="text">-->
-<!--                            <span class="hours title">час.</span>-->
-<!--                        </label>-->
-<!--                        <label>-->
-<!--                            <span class="label_title title">до</span>-->
-<!--                            <input name="arrive_time_up" type="text" value="12:00" disabled>-->
-<!--                            <span class="hours title">час.</span>-->
-<!--                        </label>-->
-<!--                    </div>-->
-<!--                </div>-->
 
-<!--                <label class="special_demand">-->
-<!--                    <span class="title">Особые требования</span>-->
-<!--                    <textarea :value="specialDemand" type="text" @input="$parent.setBidProp('specialDemand', $event.target.value)"></textarea>-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--
+            Таблица с описанием груза доступна в трёх вариантах
+            1. Если это форма доставки входящей заявки, есть объект с грузом и выбраны погрузочно-разгрузочные работы
+            2. Если это форма доставки исходящей заявки, контейнер пуст и выбрана обратная доставка контейнера (груженого)
+            3. Если это форма доставки входящей заявки, выбрана сдвоенная операция, контейнер груженый и выбрана автоперевозка
+        -->
+        <CargoDetails
+                v-if="
+                    (WebGateTypePostfix === 'In' && $store.state.WebBid.wGateIn && $store.state.WebBid.wGateIn.Cargo && !$store.state.WebBid.wStaffingStripping) ||
+                    (WebGateTypePostfix === 'Out' && Container && Container.Empty && WebInlandTransportationObject.ReturnContainer) ||
+                    (WebGateTypePostfix === 'In' && $store.getters.isWebGateIn && $store.getters.isWebGateOut && Container && Container.Full && WebInlandTransportationObject)
+                "
+                :elements="$store.state.WebBid.wGateIn ? $store.state.WebBid.wGateIn.Cargo.Elements : []"
+                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', index:$event.index,  prop:$event.prop,  value:$event.value})"
+                @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wGateIn')"
+        ></CargoDetails>
     </div>
 </template>
 
 <script>
+
+    import CargoDetails from "./subForms/CargoDetails";
+    import EmulateSelect from "./subForms/EmulateSelect";
+
     export default {
         name: "WebInlandTransportation",
 
@@ -55,22 +73,30 @@
               address: '',
               contactsPerson: '',
               contactsPhone: '',
+              container: null,
           }
         },
 
-        props: {
-            operations: {type: Array, default: []},
-            specialDemand: {type: String, default: ""}
+        props:{
+            WebGateTypePostfix: {type: String, default: ''},
+            WebGateObject: {type: Object, default: null},
+            WebInlandTransportationObject: {type: Object, default: null},
+            Container: {type: Object, default: null}
         },
+
+        components: {EmulateSelect, CargoDetails},
 
         computed:{
             addressTitle: function () {
                 let tableTitle = 'Адрес места';
 
-                if(this.operations.includes('WebGateIn')){
-                    tableTitle += ' погрузки';
-                }else if(this.operations.includes('WebGateOut')){
-                    tableTitle += ' разгрузки';
+                switch (this.WebGateTypePostfix) {
+                    case 'In':
+                        tableTitle += ' погрузки (прибытия)';
+                        break;
+                    case 'Out':
+                        tableTitle += ' разгрузки (прибытия)';
+                        break;
                 }
 
                 return tableTitle;
@@ -79,26 +105,35 @@
             contactsPersonTitle: function () {
                 let contactsPersonTitle = 'Контактное лицо';
 
-                if(this.operations.includes('WebGateIn')){
-                    contactsPersonTitle += ' в месте прибытия';
-                }else if(this.operations.includes('WebGateOut')){
-                    contactsPersonTitle += ' в месте получения';
+                switch (this.WebGateTypePostfix) {
+                    case 'In':
+                        contactsPersonTitle += ' в месте прибытия';
+                        break;
+                    case 'Out':
+                        contactsPersonTitle += ' в месте прибытия';
+                        break;
                 }
 
                 return contactsPersonTitle;
             },
 
             waitingTimeTitle: function () {
-                let waitingTimeTitle = 'Время ожидания';
+                let waitingTimeTitle = 'Время';
 
-                if(this.operations.includes('WebGateIn')){
+                if(
+                    this.WebGateTypePostfix === 'Out' && this.Container && this.Container.Empty && this.WebInlandTransportationObject.ReturnContainer
+                ){
+                    waitingTimeTitle += ' ожидания получения груженого';
+                }else if(this.WebGateTypePostfix === 'In'){
                     waitingTimeTitle += ' на погрузку';
-                }else if(this.operations.includes('WebGateOut')){
-                    waitingTimeTitle += ' в месте получения';
+                }else if(this.WebGateTypePostfix === 'Out'){
+                    waitingTimeTitle += ' на выгрузку';
                 }
 
                 return waitingTimeTitle;
             },
+
+            wInlandTransportationType(){return  'wInlandTransportation'+this.WebGateTypePostfix;}
         },
     }
 </script>
