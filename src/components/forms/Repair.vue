@@ -33,7 +33,7 @@
                 <td><input
                         type="text"
                         disabled
-                        :value="repairElement.RepairCategory"
+                        :value="repairElement.RepairCategoryText"
                 ></td>
                 <td><input
                         type="text"

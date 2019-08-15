@@ -3,12 +3,19 @@
         <div class="form_row input_in_bottom all-inputs-absolute">
             <div class="arrive_address" style="position: relative">
                 <span class="title">{{ addressTitle }}</span>
-                <div style="position: absolute; left: 0; bottom: 0; width: 100%">
+                <div style="position: absolute; left: 0; bottom: 0; width: 70%">
                     <EmulateSelect
                             :placeholder="WebInlandTransportationObject.street ? WebInlandTransportationObject.street : 'Улица'"
-                            :elementsList="$store.state.ReferenceData.Streets"
+                            :elementsList="$store.getters.getStreetsList"
                             @selectElement="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'street', value: $event})"
                     ></EmulateSelect>
+                </div>
+                <div style="width: 30%;position: absolute;bottom: 0;right: 0;">
+                    <input
+                            type="text"
+                            :placeholder="WebInlandTransportationObject.house ? WebInlandTransportationObject.house : 'Дом'"
+                            @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'houseNumber', value: $event.target.value})"
+                    >
                 </div>
             </div>
             <label class="contact_person">

@@ -1,12 +1,34 @@
 <template>
     <div class="price-select-popup" v-show="$store.state.Popups.PriceSelectedPopup">
         <span class="close-cross" @click="$store.commit('closePopup', 'PriceSelectedPopup')">x</span>
-        <table>
-            <tr v-for="priceWebBidSelectedElement in $store.state.getSelectedPriceElements">
-                <td>{{priceWebBidSelectedElement.title}}</td>
+        <table v-if="$store.getters.getSelectedPriceElements.Basic">
+            <tr v-for="service in $store.getters.getSelectedPriceElements.Basic">
+                <td>{{service.title}}</td>
                 <td></td>
-                <td>{{priceWebBidSelectedElement.unit}}</td>
-                <td>{{priceWebBidSelectedElement.price}}</td>
+                <td>{{service.unit}}</td>
+                <td>{{service.cost}}</td>
+            </tr>
+        </table>
+        <table v-if="$store.getters.getSelectedPriceElements.InlandTransportations">
+            <tr v-for="service in $store.getters.getSelectedPriceElements.InlandTransportations">
+                <td>{{service.title}}</td>
+                <td>{{service.street}}</td>
+                <td>{{service.houseNumber}}</td>
+                <td>{{service.cost}}</td>
+            </tr>
+        </table>
+        <table v-if="$store.getters.getSelectedPriceElements.RepairServices">
+            <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
+                <td>{{service.Title}}</td>
+                <td>{{service.Characteristic}}</td>
+                <td>{{service.Barcode}}</td>
+                <td>{{service.RepairCategory}}</td>
+                <td>{{service.TotalRepairCategory}}</td>
+                <td>{{service.Cost}}</td>
+            </tr>
+            <tr v-if="totalRepairCost">
+                <td colspan="5" style="float: right"><span>Итого стоимость</span></td>
+                <td>{{totalRepairCost}}</td>
             </tr>
         </table>
     </div>
@@ -15,6 +37,18 @@
 <script>
     export default {
         name: "PriceSelectedPopup",
+
+        computed:{
+            totalRepairCost(){
+                if(
+                    this.$store.getters.getSelectedPriceElements.RepairServices.length > 0 &&
+                    this.$store.getters.getSelectedPriceElements.RepairServices[this.$store.getters.getSelectedPriceElements.RepairServices.length - 1].Cost
+                ){
+                    return this.$store.getters.getSelectedPriceElements.RepairServices[this.$store.getters.getSelectedPriceElements.RepairServices.length - 1].Cost;
+                }
+                return '';
+            }
+        }
     }
 </script>
 

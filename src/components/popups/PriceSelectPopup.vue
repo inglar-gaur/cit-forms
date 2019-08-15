@@ -2,13 +2,13 @@
     <div class="price-select-popup" v-show="$store.state.Popups.PriceSelectPopup">
         <span class="close-cross" @click="$store.commit('closePopup', 'PriceSelectPopup')">x</span>
         <div style="margin: 50px 10px">
-            <label class="label_width_outside_input" v-for="(priceWebBidElement, index) in $store.state.Price.WebBid" style="display: flex; justify-content: space-between">
+            <label class="label_width_outside_input" v-for="(basicService, index) in $store.getters.getBasicServices" style="display: flex; justify-content: space-between">
                 <div>
-                    <input type="checkbox" :checked="priceWebBidElement.checked" @input="$store.commit('changePrice', {price: 'WebBid', index: index})">
+                    <input type="checkbox" :value="index" :checked="$store.getters.getSelectedPriceElements.Basic.includes(index)" v-model="SelectedBasicServices">
                     <span class="pseudo_checkbox"></span>
-                    <span class="title">{{priceWebBidElement.title}}</span>
+                    <span class="title">{{basicService.title}}</span>
                 </div>
-                <span>{{priceWebBidElement.price}}</span>
+                <span>{{basicService.price}}</span>
             </label>
         </div>
     </div>
@@ -17,6 +17,18 @@
 <script>
     export default {
         name: "PriceSelectPopup",
+
+        data(){
+            return {
+              SelectedBasicServices: []
+            };
+        },
+
+        watch: {
+            SelectedBasicServices(){
+                this.$store.commit('setSelectedBasicServices', this.SelectedBasicServices);
+            }
+        }
     }
 </script>
 
