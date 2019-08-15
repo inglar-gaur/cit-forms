@@ -238,13 +238,104 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss">
+
     .close-cross {
-        width: 25px;
-        height: 25px;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
+        /*width: 25px;*/
+        /*height: 25px;*/
+        /*position: absolute;*/
+        /*top: 10px;*/
+        /*right: 10px;*/
+        /*cursor: pointer;*/
     }
+
+    .price-select-popup {
+
+        h2, h3, h4, h5{
+            margin-bottom: 0.75em;
+        }
+
+        position: fixed;
+        background-color: white;
+        z-index: 1000;
+        top: 2.5vh;
+
+        width: 45vw;
+        height: 95vh;
+        padding: 75px 30px;
+        border: 2px solid #DA2341;
+
+        &.select{
+            left: 4vw;
+        }
+        &.selected{
+            right: 4vw;
+        }
+
+        .close-cross{
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            color: red;
+            font-size: 30px;
+            cursor: pointer;
+            svg{
+                width: 20px;
+                fill: red;
+                transition: all 0.1s ease-in-out;
+            }
+            &:hover{
+                svg{
+                    opacity: 0.7;
+                    transform: scale(1.3) rotate(90deg);
+                }
+            }
+        }
+
+        table{
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            width: 100%;
+            td{
+                border: 1px solid lightgray;
+                min-height: 40px;
+                min-width: 40px;
+                padding: 10px;
+
+                .label_width_outside_input{
+                    cursor: pointer;
+                    justify-content: center;
+                    .pseudo_checkbox{
+                        margin-right: 0;
+                    }
+                }
+
+            }
+
+
+            // delete outer borders
+
+            tr:first-child{
+                td{
+                    /*border-top: transparent;*/
+                }
+            }
+            tr:last-child{
+                td{
+                    /*border-bottom: transparent;*/
+                }
+            }
+
+            td:first-child{
+                /*border-left: transparent;*/
+            }
+            td:last-child{
+                /*border-right: transparent;*/
+            }
+
+        }
+
+    }
+
+
 </style>
