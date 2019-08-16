@@ -361,6 +361,12 @@ export default {
             );
         },
 
+        delRepairElement(state, index){
+            if(Array.isArray(state.wRepairContainer.list) && state.wRepairContainer.list[index]){
+                state.wRepairContainer.list.splice(index, 1);
+            }
+        },
+
         /**
          * Изменение элемента списка товаров
          * @param state
@@ -399,18 +405,23 @@ export default {
                 state && state.wRepairContainer && Array.isArray(state.wRepairContainer.list) && // Проверка наличия объекта ремонта и массива услуг в нём
                 inputData && ~inputData.index && state.wRepairContainer.list[inputData.index]    // Проверка входящего индекса и наличия соответствующего элемента
             ) {
-                // Если есть такое свойство, устанавливаем его
-                if (state.wRepairContainer.list[inputData.index].hasOwnProperty(inputData.prop) && inputData.value !== undefined) {
-                    state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
-                }
 
                 // Если изменилось название, сбрасываем выбранную ранее характеристику
                 if(inputData.prop === 'Name'){
-                    state.wRepairContainer.list[inputData.index].Characteristic = null;
+                    let MainRepairServiceIndex = this.getters.getRepairVariants.findIndex(MainRepairService => MainRepairService.title === inputData.value && ~MainRepairService.Barcode);
+                    if(~MainRepairServiceIndex){
+                        state.wRepairContainer.list[inputData.index].Name = inputData.value;
+                        state.wRepairContainer.list[inputData.index].Barcode = +MainRepairServiceIndex;
+                        state.wRepairContainer.list[inputData.index].Characteristic = null;
+                        state.wRepairContainer.list[inputData.index].RepairCategory = null;
+                        state.wRepairContainer.list[inputData.index].RepairCategoryText = null;
+                    }
                 }
-                // Иначе если изменилась характеристика и выбраны и название и характеристика услуги, устанавливаем категорию
-                else if (inputData.prop === 'Characteristic' && state.wRepairContainer.list[inputData.index].Name && state.wRepairContainer.list[inputData.index].Characteristic) {
+                // Иначе если изменилась характеристика, устанавливаем её и вычисляем категорию
+                else if (inputData.prop === 'Characteristic' && state.wRepairContainer.list[inputData.index]) {
 
+                    // console.log(state.wRepairContainer.list[inputData.index].Characteristic);
+                    // console.log(this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory]);
                     /**
                      * Ищем индекс данной услуги в общем списке услуг по ремонту
                      * @type {number}
@@ -424,44 +435,20 @@ export default {
                     if (~repairVariantIndex && this.getters.getRepairVariants[repairVariantIndex].characteristics) {
                         for (let repairCategory in this.getters.getRepairVariants[repairVariantIndex].characteristics) {
                             if (this.getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(repairCategory) &&
-                                this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory] === state.wRepairContainer.list[inputData.index].Characteristic) {
+                                this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory] === inputData.value) {
 
+                                state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
                                 // Если найдена соответствующая характеристика то присваиваем категорию и её текстовое отображение
                                 this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: +repairCategory});
-                                this.commit('changeRepairElement', {prop: 'Barcode', index: inputData.index, value: +repairVariantIndex+1});
-                                switch (+repairCategory) {
-                                    case 1:
-                                        this.commit('changeRepairElement', {
-                                            prop: 'RepairCategoryText',
-                                            index: inputData.index,
-                                            value: 'I категория'
-                                        });
-                                        break;
-                                    case 2:
-                                        this.commit('changeRepairElement', {
-                                            prop: 'RepairCategoryText',
-                                            index: inputData.index,
-                                            value: 'II категория'
-                                        });
-                                        break;
-                                    case 3:
-                                        this.commit('changeRepairElement', {
-                                            prop: 'RepairCategoryText',
-                                            index: inputData.index,
-                                            value: 'III категория'
-                                        });
-                                        break;
-                                    case 4:
-                                        this.commit('changeRepairElement', {
-                                            prop: 'RepairCategoryText',
-                                            index: inputData.index,
-                                            value: 'IV категория'
-                                        });
-                                        break;
+                                if(this.getters.getSelectedPriceElements.TotalRepairCategory >= 4){
+                                    this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
                                 }
                             }
                         }
                     }
+                    // Если есть такое свойство, устанавливаем его
+                }else if (state.wRepairContainer.list[inputData.index].hasOwnProperty(inputData.prop) && inputData.value !== undefined) {
+                    state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
                 }
 
                 state.wRepairContainer = copyObject(state.wRepairContainer);
@@ -556,5 +543,8 @@ export default {
                 return false;
             }
         },
-    }
+
+        getSelectedRepairServices: (state) =>
+            state.wRepairContainer && Array.isArray(state.wRepairContainer.list) ?
+                state.wRepairContainer.list.filter(service => ~service.Barcode).map(service => service.Barcode) : []},
 };

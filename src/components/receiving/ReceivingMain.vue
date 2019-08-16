@@ -38,7 +38,8 @@
                     <div class="form_row flex-start">
                         <label>
                             <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text"
-                                   value="Итого стоимость услуг:" disabled><span>руб.</span>
+                                   :value="'Итого стоимость услуг: '+$store.getters.getSelectedPriceElements.TotalCost" disabled>
+                            <span v-if="+$store.getters.getSelectedPriceElements.TotalCost > 0">руб.</span>
                         </label>
                         <label @click="$store.commit('openPopup', 'PriceSelectedPopup')">
                             <input style="width: 270px; margin-left: 50px" type="text" value="Раскрыть список заказанных услуг" disabled>
@@ -240,15 +241,6 @@
 
 <style lang="scss">
 
-    .close-cross {
-        /*width: 25px;*/
-        /*height: 25px;*/
-        /*position: absolute;*/
-        /*top: 10px;*/
-        /*right: 10px;*/
-        /*cursor: pointer;*/
-    }
-
     .price-select-popup {
 
         h2, h3, h4, h5{
@@ -264,6 +256,7 @@
         height: 95vh;
         padding: 75px 30px;
         border: 2px solid #DA2341;
+        overflow: auto;
 
         &.select{
             left: 4vw;

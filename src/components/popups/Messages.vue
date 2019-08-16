@@ -1,5 +1,5 @@
 <template>
-    <div v-show="$store.state.Messages.length > 0" class="form_message success">
+    <div v-show="$store.state.Messages.Messages.length > 0" class="form_message success">
         <div @click="$store.commit('clearMessages')">
             <svg class="close-cross" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                 <path fill="gray"
@@ -8,7 +8,7 @@
                 ></path>
             </svg>
         </div>
-        <p v-for="message in $store.state.Messages">{{ message }}</p>
+        <p v-for="message in $store.state.Messages.Messages">{{ message }}</p>
     </div>
 </template>
 
@@ -19,5 +19,12 @@
 </script>
 
 <style scoped>
-
+    .close-cross {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
 </style>

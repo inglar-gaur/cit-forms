@@ -16,7 +16,7 @@
                     <span class="title">{{basicService.title}}</span>
                 </td>
                 <td>
-                    <span>{{basicService.price}}</span>
+                    <span>{{basicService.Cost}}</span>
                 </td>
             </tr>
         </table>

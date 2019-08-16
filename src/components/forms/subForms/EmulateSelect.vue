@@ -75,13 +75,15 @@
     .emulated-list-list{
         position: absolute;
         background-color: white;
-        width: 100%;
+        width: 200%;
         padding-top: 10px;
         z-index: 10;
 
         >div{
             cursor: pointer;
             margin-left: 5px;
+            margin-bottom: 7px;
+            line-height: 1.2;
         }
     }
 

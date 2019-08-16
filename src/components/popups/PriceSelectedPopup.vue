@@ -1,5 +1,5 @@
 <template>
-    <div class="price-select-popup selected" v-show="$store.state.Popups.PriceSelectedPopup">
+    <div class="price-select-popup selected" v-show="$store.state.Popups.PriceSelectedPopup" style="z-index: 10">
         <span class="close-cross" @click="$store.commit('closePopup', 'PriceSelectedPopup')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
         </span>
@@ -11,7 +11,7 @@
                     <td>{{service.title}}</td>
                     <td></td>
                     <td>{{service.unit}}</td>
-                    <td>{{service.cost}}</td>
+                    <td>{{service.Cost}}</td>
                 </tr>
             </table>
         </template>
@@ -22,7 +22,7 @@
                     <td>{{service.title}}</td>
                     <td>{{service.street}}</td>
                     <td>{{service.houseNumber}}</td>
-                    <td>{{service.cost}}</td>
+                    <td>{{service.Cost}}</td>
                 </tr>
             </table>
         </template>
@@ -33,16 +33,22 @@
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
                     <td>{{service.Barcode}}</td>
-                    <td>{{service.RepairCategory}}</td>
-                    <td>{{service.TotalRepairCategory}}</td>
+                    <td>{{getTextRepairCategory(service.RepairCategory)}}</td>
+                    <td>{{getTextRepairCategory(service.TotalRepairCategory)}}</td>
                     <td>{{service.Cost}}</td>
                 </tr>
-                <tr v-if="totalRepairCost">
-                    <td colspan="5"><span>Итого стоимость</span></td>
-                    <td><div style="float:right;">{{totalRepairCost}}</div></td>
-                </tr>
+<!--                <tr v-if="totalRepairCost">-->
+<!--                    <td colspan="5"><span>Итого стоимость</span></td>-->
+<!--                    <td><div style="float:right;">{{totalRepairCost}}</div></td>-->
+<!--                </tr>-->
             </table>
         </template>
+        <table v-if="$store.getters.getSelectedPriceElements.TotalCost">
+            <tr>
+                <td>Итого стоимость: </td>
+                <td>{{$store.getters.getSelectedPriceElements.TotalCost}}</td>
+            </tr>
+        </table>
     </div>
 </template>
 
@@ -59,6 +65,23 @@
                     return this.$store.getters.getSelectedPriceElements.RepairServices[this.$store.getters.getSelectedPriceElements.RepairServices.length - 1].Cost;
                 }
                 return '';
+            }
+        },
+
+        methods:{
+            getTextRepairCategory: category => {
+                switch(category){
+                    case 1:
+                        return 'I';
+                    case 2:
+                        return 'II';
+                    case 3:
+                        return 'III';
+                    case 4:
+                        return 'IV';
+                    default:
+                        return '';
+                }
             }
         }
     }
