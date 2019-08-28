@@ -1,3 +1,29 @@
+/**
+ * Кэшированные данные о первом в списке контейнере входящей и исходящей заявок
+ * @typedef CachedContainerParams
+ * @property {Number}   Size
+ * @property {Boolean}  Empty
+ * @property {Boolean}  Full
+ * @property {String}   WaitingTime
+ * @property {Number}   WeightGross
+ *
+ */
+
+function getTextRepairCategory(category){
+    switch(category){
+        case 1:
+            return 'I';
+        case 2:
+            return 'II';
+        case 3:
+            return 'III';
+        case 4:
+            return 'IV';
+        default:
+            return '';
+    }
+}
+
 export default {
     state: {
         SelectedBasicServices: [],
@@ -17,7 +43,9 @@ export default {
             const SelectedPriceList = {
                 Basic: [],
                 InlandTransportations: [],
+                InlandReturnTransportations: [],
                 RepairServices: [],
+                PriceServices: [],
                 TotalCost: '',
                 TotalRepairCategory: null,
             };
@@ -35,35 +63,59 @@ export default {
                 // Если есть объект, улица и дом, выбираем цену и формируем объект для таблицы
                 if (WebInlandTransportation && WebInlandTransportation.street && WebInlandTransportation.houseNumber) {
 
-                    let StreetObject = getters.getStreets.find(street => street.title === WebInlandTransportation['street']);
+                    let StreetObject = getters.getStreets.find(street => street.Title === WebInlandTransportation['street']);
 
                     if (StreetObject) {
-                        let Container = getters['WebGate' + wInlandTransportationPostfix + 'Container'];
 
-                        let Cost = null;
+                        /**
+                         * Объект с контейнером заявки
+                         * @type {CachedContainerParams|null}
+                         */
+                        let Container = getters['WebGate' + wInlandTransportationPostfix + 'Container'];
+                        /**
+                         * Цена перевозки и вес контейнера
+                         * @type {string}
+                         */
+                        let Cost = '',
+                            WeightText = '';
+
                         if (Container && (Container.Size === 20 || Container.Size === 40)) {
+                            // Если контейнер пуст
                             if (Container.Empty) {
                                 Cost = StreetObject[Container.Size];
+                                WeightText = 'до 24 тн';
+                            // Если контейнер груженый и сверхтяжелый
                             } else if (Container.Full && Container.WeightGross && Container.WeightGross > 30) {
                                 Cost = "Договорная";
+                                WeightText = 'свыше 30 тн';
+                            // Если контейнер просто груженый
                             } else if (Container.Full && Container.WeightGross) {
-                                Cost = StreetObject[Container.Size + ((Container.Size === 20 && Container.WeightGross > 24) || (Container.Size === 40 && Container.WeightGross > 30) ? 'h' : '')];
+                                if(Container.WeightGross >= 24){
+                                    Cost = StreetObject[Container.Size+'h'];
+                                    WeightText = 'от 24 до 30 тн';
+                                }else{
+                                    Cost = StreetObject[Container.Size];
+                                    WeightText = 'до 24 тн';
+                                }
                             }
 
                             if (Cost) {
                                 SelectedPriceList.InlandTransportations.push({
-                                    title: 'Автоперевозка',
-                                    street: WebInlandTransportation.street,
-                                    houseNumber: WebInlandTransportation.houseNumber,
-                                    Cost: Cost
+                                    Address: WebInlandTransportation.street + (WebInlandTransportation.houseNumber ? WebInlandTransportation.houseNumber : ''),
+                                    Art: StreetObject.Art,
+                                    Size: Container.Size + ' фут',
+                                    Weight: WeightText,
+                                    Unit: getters.getUnitTitle(0),
+                                    Cost: Cost === "Договорная" ? Cost : Cost + ',00'
                                 });
-                                // При заказе обратной доставке формируем объект и дя неё
+                                // При заказе обратной доставке формируем объект и для неё
                                 if (WebInlandTransportation.ReturnContainer) {
-                                    SelectedPriceList.InlandTransportations.push({
-                                        title: 'Автоперевозка обратная доставка',
-                                        street: 'Бахчиванджи',
-                                        houseNumber: 'д2',
-                                        Cost: 1500
+                                    SelectedPriceList.InlandReturnTransportations.push({
+                                        Title: 'Обратная доставка'+(Container.Full ? ' порожнего' : '')+(Container.Empty ? ' груженого' : '')+' контейнера',
+                                        Address: 'Бахчиванджи, д2',
+                                        Cost: 1500,
+                                        Unit: getters.getUnitTitle(0),
+                                        Art: '18.1'
                                     });
                                 }
                             }
@@ -87,7 +139,7 @@ export default {
                         Title: repairService.Name,
                         Characteristic: repairService.Characteristic,
                         RepairCategory: repairService.RepairCategory,
-                        Barcode: repairService.Barcode
+                        Art: repairService.Art
                     };
                 })
                 // Фильтруем (проверка на наличие и названия и характеристики услуги)
@@ -136,36 +188,47 @@ export default {
                             SelectedPriceList.RepairServices[i].Cost = 'Договорная';
                             break;
                         } else if (totalCategories[3]) {
-                            SelectedPriceList.RepairServices[i].Cost = 7000;
+                            SelectedPriceList.RepairServices[i].Cost = '7000,00';
                         } else if (totalCategories[2]) {
-                            SelectedPriceList.RepairServices[i].Cost = 5000;
+                            SelectedPriceList.RepairServices[i].Cost = '5000,00';
                         } else if (totalCategories[1]) {
-                            SelectedPriceList.RepairServices[i].Cost = 3000;
+                            SelectedPriceList.RepairServices[i].Cost = '3000,00';
+                        }
+                    }
+
+                    SelectedPriceList.RepairServices[i].RepairCategory = getTextRepairCategory(SelectedPriceList.RepairServices[i].RepairCategory);
+                    SelectedPriceList.RepairServices[i].TotalRepairCategory = getTextRepairCategory(SelectedPriceList.RepairServices[i].TotalRepairCategory);
+                }
+            }
+
+            /**
+             * Переменные для вычисления общей стоимости
+             *
+             * Промежуточная переменная итоговой стоимости
+             * @type {Number}
+             */
+            let totalCost = 0;
+            /**
+             * Итоговый массив выбранных услуг
+             * @type {Array}
+             */
+            let totalArray = SelectedPriceList.Basic.concat(SelectedPriceList.InlandTransportations, SelectedPriceList.RepairServices);
+            if(totalArray.length > 0){
+                for(let i = 0; i < totalArray.length; i++){
+                    if(totalArray[i].Cost === 'Договорная'){
+                        SelectedPriceList.TotalCost = 'Договорная';
+                        break;
+                    }else if(+totalArray[i].Cost > 0)
+                    {
+                        totalCost += +totalArray[i].Cost;
+                        if(i >= totalArray.length - 1 && totalCost > 0){
+                            SelectedPriceList.TotalCost = totalCost+',00';
                         }
                     }
                 }
             }
 
-            /**
-             *
-             * @type {String}
-             */
-            let totalCost = '0';
-            let totalArray = SelectedPriceList.Basic.concat(SelectedPriceList.InlandTransportations, SelectedPriceList.RepairServices);
-            if(totalArray.length > 0){
-                for(let i = 0; i < totalArray.length; i++){
-                    if(totalArray[i].Cost === 'Договорная'){
-                        totalCost = 'Договорная';
-                        break;
-                    }else if(+totalArray[i].Cost > 0 && totalCost !== 'Договорная')
-                    {
-                        totalCost = String(+totalCost+totalArray[i].Cost);
-                    }
-                }
-            }
-            SelectedPriceList.TotalCost = totalCost === 'Договорная' || +totalCost > 0 ? String(totalCost) : '';
-
             return SelectedPriceList;
-        }
+        },
     }
 };

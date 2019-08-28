@@ -16,31 +16,64 @@
             </table>
         </template>
         <template v-if="$store.getters.getSelectedPriceElements.InlandTransportations.length">
-            <h4>Услуги доставки</h4>
+            <h4>автоперевозка контейнера</h4>
             <table>
+                <tr>
+                    <th>адрес</th>
+                    <th colspan="3">единица измерения</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
                 <tr v-for="service in $store.getters.getSelectedPriceElements.InlandTransportations">
-                    <td>{{service.title}}</td>
-                    <td>{{service.street}}</td>
-                    <td>{{service.houseNumber}}</td>
+                    <td>{{service.Address}}</td>
+                    <td>{{service.Unit}}</td>
+                    <td>{{service.Size}}</td>
+                    <td>{{service.Weight}}</td>
                     <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
                 </tr>
             </table>
         </template>
         <template v-if="$store.getters.getSelectedPriceElements.RepairServices.length">
             <h4>Услуги по ремонту</h4>
             <table>
+                <tr>
+                    <th>наименование повреждения</th>
+                    <th>характеристика ремонта</th>
+                    <th>категория ремонта</th>
+                    <th>итоговая категория</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
                 <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
-                    <td>{{service.Barcode}}</td>
-                    <td>{{getTextRepairCategory(service.RepairCategory)}}</td>
-                    <td>{{getTextRepairCategory(service.TotalRepairCategory)}}</td>
+                    <td>{{service.RepairCategory}}</td>
+                    <td>{{service.TotalRepairCategory}}</td>
                     <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
                 </tr>
 <!--                <tr v-if="totalRepairCost">-->
 <!--                    <td colspan="5"><span>Итого стоимость</span></td>-->
 <!--                    <td><div style="float:right;">{{totalRepairCost}}</div></td>-->
 <!--                </tr>-->
+            </table>
+        </template>
+        <template v-if="$store.getters.getSelectedPriceElements.InlandReturnTransportations.length">
+            <h4>автоперевозка контейнера</h4>
+            <table>
+                <tr>
+                    <th>наименование услуги</th>
+                    <th>единица измерения</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
+                <tr v-for="service in $store.getters.getSelectedPriceElements.InlandReturnTransportations">
+                    <td>{{service.Title}}</td>
+                    <td>{{service.Unit}}</td>
+                    <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
+                </tr>
             </table>
         </template>
         <table v-if="$store.getters.getSelectedPriceElements.TotalCost">
@@ -67,23 +100,6 @@
                 return '';
             }
         },
-
-        methods:{
-            getTextRepairCategory: category => {
-                switch(category){
-                    case 1:
-                        return 'I';
-                    case 2:
-                        return 'II';
-                    case 3:
-                        return 'III';
-                    case 4:
-                        return 'IV';
-                    default:
-                        return '';
-                }
-            }
-        }
     }
 </script>
 

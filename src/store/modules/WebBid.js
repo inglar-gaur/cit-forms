@@ -476,6 +476,7 @@ export default {
          * @property {Boolean}  Empty
          * @property {Boolean}  Full
          * @property {String}   WaitingTime
+         * @property {Number}   WeightGross
          *
          * @return null|CachedContainerParams
          */
