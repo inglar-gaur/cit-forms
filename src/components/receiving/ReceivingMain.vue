@@ -3,7 +3,7 @@
 
         <Messages></Messages>
 
-        <form v-if="$store.getters.isWebGateIn || $store.getters.isWebGateOut" class="cit_form receiving_form" @submit="sendBid">
+        <form v-if="$store.getters.isWebGateIn || $store.getters.isWebGateOut" class="cit_form receiving_form" @submit.prevent="sendBid">
             <div class="application_wrap">
                 <div class="application">
                     <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span>
@@ -38,8 +38,8 @@
                     <div class="form_row flex-start">
                         <label>
                             <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text"
-                                   :value="'Итого стоимость услуг: '+$store.getters.getSelectedPriceElements.TotalCost" disabled>
-                            <span v-if="+$store.getters.getSelectedPriceElements.TotalCost > 0">руб.</span>
+                                   :value="'Итого стоимость услуг: '+$store.getters.getSelectedServices.TotalCost" disabled>
+                            <span v-if="+$store.getters.getSelectedServices.TotalCost > 0">руб.</span>
                         </label>
                         <label @click="$store.commit('openPopup', 'PriceSelectedPopup')">
                             <input style="width: 270px; margin-left: 50px" type="text" value="Раскрыть список заказанных услуг" disabled>
@@ -62,7 +62,7 @@
             </button>
             <br>
             <!--            <button :disabled="!bidEmpty || !bidSize" class="cit_btn btn_submit" @click.prevent="sendBid">Подписать и отправить</button>-->
-            <button :disabled="!$store.state.WebBid.bidEmpty || !$store.state.WebBid.bidSize" class="cit_btn btn_submit"
+            <button :disabled="!$store.getters.canSubmitBid" class="cit_btn btn_submit"
                     type="submit">Подписать и отправить
             </button>
             <button @click="$store.commit('clearForm')" class="cit_btn btn_cancel">Отменить</button>
@@ -86,6 +86,7 @@
     import PriceSelectedPopup from "../popups/PriceSelectedPopup";
     import Messages from "../popups/Messages";
     import WebGate from "./WebGate";
+    import axios from "axios"
 
     export default {
         name: "receiving-main",
@@ -160,8 +161,63 @@
             },
 
             sendBid: function () {
-                this.addMess("Заявка отправлена");
-                this.operations = [];
+
+                // let originWebBid = this.$store.state.WebBid;
+
+                let postWebBid = {
+                    Id: 0,
+                    gId: "00000000-0000-0000-0000-000000000000",
+                    ApplicationDate: new Date(),
+                    Account: null,
+                    Status:  "Подана",
+                    DangerousGoods: !!this.$store.state.WebBid.DangerousGoods,
+                    Documents: this.$store.state.WebBid.Documents,
+                    wGateOut: this.$store.state.WebBid.wGateOut,
+                    wGateIn: this.$store.state.WebBid.wGateIn,
+                    wShipping: this.$store.state.WebBid.wShipping,
+                    wStaffingStripping: this.$store.state.WebBid.wStaffingStripping,
+                    wInlandTransportationIn: this.$store.state.WebBid.wInlandTransportationIn,
+                    wInlandTransportationOut: this.$store.state.WebBid.wInlandTransportationOut,
+                    wCustomsRelease: this.$store.state.WebBid.wCustomsRelease,
+                    wRepairContainer: this.$store.state.WebBid.wRepairContainer,
+                };
+
+                let container;
+
+                if(postWebBid.wGateIn){
+                    container = this.$store.getters.WebGateInContainer;
+
+                    postWebBid.wGateIn.DatePlan = this.$store.state.WebBid.ApplicationDate;
+                    if(container){
+                        postWebBid.wGateIn.State = container.State;
+                        postWebBid.wGateIn.Size = container.Size;
+                    }
+
+                }
+                if(postWebBid.wGateOut){
+                    container = this.$store.getters.WebGateOutContainer;
+
+                    postWebBid.wGateOut.DatePlan = this.$store.state.WebBid.ApplicationDate;
+                    if(container){
+                        postWebBid.wGateOut.State = container.State;
+                        postWebBid.wGateOut.Size = container.Size;
+                    }
+                }
+
+                let bodyFormData = new FormData();
+                bodyFormData.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
+                bodyFormData.set('WebBid', JSON.stringify(postWebBid));
+
+                axios({
+                    method: 'post',
+                    url: 'http://api.cit-ekb.ru/CreateWebBid',
+                    data: bodyFormData
+                })
+                .then(resp => {
+                    console.log(resp);
+                    this.$store.commit('addMessage', 'Заявка создана');
+                    this.$store.commit('clearForm');
+                });
 
             },
 

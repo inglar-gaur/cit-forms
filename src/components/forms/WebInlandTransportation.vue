@@ -29,6 +29,9 @@
             <label class="phone_number">
                 <span class="title">Телефон</span>
                 <input
+                        required
+                        placeholder="+79999999999"
+                        pattern="\+7[0-9]{10}"
                         :value="WebInlandTransportationObject.Phone"
                         type="text"
                         @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Phone', value: $event.target.value})"

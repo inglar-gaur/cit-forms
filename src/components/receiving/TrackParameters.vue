@@ -63,12 +63,7 @@
 
         computed: {
             containerNumber() {
-                return this.WebGateObject &&
-                this.WebGateObject.Containers &&
-                Array.isArray(this.WebGateObject.Containers.ContainerList) &&
-                this.WebGateObject.Containers.ContainerList[0] &&
-                this.WebGateObject.Containers.ContainerList[0].Number ?
-                    this.WebGateObject.Containers.ContainerList[0].Number : '';
+                return this.Container.Number;
             },
             containerSize() {
                 return this.WebGateObject &&

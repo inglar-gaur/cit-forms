@@ -83,9 +83,9 @@ import Constants from './../../Constants';
 
 function getDefaultCargo(){
     return  {
-        Id: null,
-        BidType: null,
-        BidId: null,
+        Id: 0,
+        BidType: 0,
+        BidId: 0,
         Elements: []
     }
 }
@@ -107,11 +107,11 @@ export default {
      * @type WebBidState
      */
     state: {
-        Id: null,
-        gId: null,
+        Id: 0,
+        gId: "00000000-0000-0000-0000-000000000000",
         ApplicationDate: null,
-        Account: null,
-        Status: null,
+        Account: '',
+        Status: '',
         DangerousGoods: false,
         Documents: null,
         wGateOut: null,
@@ -131,10 +131,10 @@ export default {
              * @type WebGate
              */
             const WebGate = {
-                Id: null,
-                WebBidId: null,
-                State: null,
-                Size: null,
+                Id: 0,
+                WebBidId: 0,
+                State: '',
+                Size: 0,
                 DangerousGoods: false,
                 DatePlan: null,
                 Containers: null,
@@ -144,25 +144,30 @@ export default {
              * @type WebInlandTransportation
              */
             const WebInlandTransportation = {
-                Id: null,
-                Comment: null,
-                TimeIdle: null,
-                Phone: null,
-                Contacts: null,
-                Address: null,
+                Id: 0,
+                Comment: '',
+                TimeIdle: 0,
+                Phone: '',
+                Contacts: '',
                 ServiceDatePlan: null,
-                DanderousGoods: null,
-                CustomsSchedule: null,
-                DoubleOperationType: null,
-                GateOutOperation: null,
-                GateInOperation: null,
-                WebBidId: null,
+                DanderousGoods: false,
+                CustomsSchedule: false,
+                DoubleOperationType: '',
+                GateOutOperation: false,
+                GateInOperation: false,
+                WebBidId: 0,
                 Containers: null,
                 Documents: null,
                 ReturnContainer: null,
-                street: null,
-                houseNumber: null,
+                street: '',
+                houseNumber: '',
             };
+
+            Object.defineProperty(WebInlandTransportation, 'Address', {
+                get: function () {
+                    return this.street + (this.houseNumber ? ', ' + this.houseNumber : '');
+                }
+            });
 
             switch (type) {
                 case 'wGateIn':
@@ -181,14 +186,14 @@ export default {
                     break;
                 case 'wStaffingStripping':
                     state.wStaffingStripping = {
-                        Id: null,
-                        WebBidId: null,
+                        Id: 0,
+                        WebBidId: 0,
                         ExecutePeriodStart: null,
                         ExecutePeriodEnd: null,
-                        Source: null,
-                        Receiver: null,
-                        SourceDescription: null,
-                        ReceiverDescription: null,
+                        Source: '',
+                        Receiver: '',
+                        SourceDescription: '',
+                        ReceiverDescription: '',
                         Containers: null,
                         Documents: null,
                         Cargo: getDefaultCargo(),
@@ -196,15 +201,15 @@ export default {
                     break;
                 case 'wCustomsRelease':
                     state.wCustomsRelease = {
-                        Id: null,
-                        WebBidId: null,
+                        Id: 0,
+                        WebBidId: 0,
                         Containers: null,
                         Documents: null,
                     };
                     break;
                 case 'wRepairContainer':
                     state.wRepairContainer = {
-                        Id: null,
+                        Id: 0,
                         list: [],
                     };
                     break;
@@ -221,9 +226,9 @@ export default {
                      * @type WebContainerList
                      */
                     WebGate.Containers = {
-                        Id: null,
-                        BidType: null,
-                        BidId: null,
+                        Id: 0,
+                        BidType: '',
+                        BidId: 0,
                         ContainerList: [],
                     };
                 }
@@ -233,18 +238,18 @@ export default {
                      * @type WebContainer
                      */
                     {
-                        Id: null,
+                        Id: 0,
                         Number: null,
-                        Size: null,
-                        State: null,
-                        StatePrism: null,
-                        CustomsStatus: null,
-                        Seal: null,
-                        DangerSign: null,
-                        SecurityService: null,
-                        InsuranceService: null,
-                        WeightGross: null,
-                        VGM: null,
+                        Size: 0,
+                        State: '',
+                        StatePrism: '',
+                        CustomsStatus: '',
+                        Seal: false,
+                        DangerSign: false,
+                        SecurityService: false,
+                        InsuranceService: false,
+                        WeightGross: 0,
+                        VGM: 0,
                     }
                 );
             }
@@ -335,9 +340,11 @@ export default {
             if (WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements)) {
                 WebObject.Cargo.Elements.push(
                     {
+                        Id: 0,
                         Name: '',
-                        UnitCount: null,
-                        UnitWeight: null,
+                        CodeETSNG: '',
+                        UnitCount: 0,
+                        UnitWeight: 0,
                         UnitSize: '',
                         PackageDescription: '',
                         DangerousClassification: '',
@@ -350,11 +357,8 @@ export default {
 
             state.wRepairContainer.list.push(
                 {
-                    Name: '',
+                    ServiceIndex: -1,
                     Characteristic: '',
-                    RepairCategory: null,
-                    RepairCategoryText: '',
-                    Barcode: null,
                     SpecialRequirements: '',
                     ImageFiles: [],
                 }
@@ -407,45 +411,57 @@ export default {
             ) {
 
                 // Если изменилось название, сбрасываем выбранную ранее характеристику
-                if(inputData.prop === 'Name'){
-                    let MainRepairServiceIndex = this.getters.getRepairVariants.findIndex(MainRepairService => MainRepairService.title === inputData.value && ~MainRepairService.Barcode);
-                    if(~MainRepairServiceIndex){
-                        state.wRepairContainer.list[inputData.index].Name = inputData.value;
-                        state.wRepairContainer.list[inputData.index].Barcode = +MainRepairServiceIndex;
-                        state.wRepairContainer.list[inputData.index].Characteristic = null;
-                        state.wRepairContainer.list[inputData.index].RepairCategory = null;
-                        state.wRepairContainer.list[inputData.index].RepairCategoryText = null;
-                    }
+                if(inputData.prop === 'ServiceIndex'){
+                    state.wRepairContainer.list[inputData.index].ServiceIndex = inputData.value;
+                    state.wRepairContainer.list[inputData.index].Characteristic = null;
+                    state.wRepairContainer.list[inputData.index].RepairCategory = null;
+                    state.wRepairContainer.list[inputData.index].RepairCategoryText = null;
                 }
-                // Иначе если изменилась характеристика, устанавливаем её и вычисляем категорию
-                else if (inputData.prop === 'Characteristic' && state.wRepairContainer.list[inputData.index]) {
+                // Иначе если изменилась характеристика, устанавливаем её и вычисляем и устанавливаем категорию
+                else if (
+                    inputData.prop === 'Characteristic' &&
+                    state.wRepairContainer.list[inputData.index] &&
+                    ~state.wRepairContainer.list[inputData.index].ServiceIndex
+                ) {
+
+                    let RepairService = this.getters.getRepairServices[state.wRepairContainer.list[inputData.index].ServiceIndex];
+
+                    if(RepairService && RepairService.Characteristics && RepairService.Characteristics[inputData.value]){
+                        state.wRepairContainer.list[inputData.index].Characteristic = inputData.value;
+
+                        // Если найдена соответствующая характеристика то присваиваем категорию
+                        this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: RepairService.Characteristics[inputData.value].Category});
+                        if(this.getters.getSelectedServices.TotalRepairCategory >= 4){
+                            this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
+                        }
+                    }
 
                     // console.log(state.wRepairContainer.list[inputData.index].Characteristic);
                     // console.log(this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory]);
-                    /**
-                     * Ищем индекс данной услуги в общем списке услуг по ремонту
-                     * @type {number}
-                     */
-                    let repairVariantIndex = this.getters.getRepairVariants.findIndex(repairVariant => repairVariant.title === state.wRepairContainer.list[inputData.index].Name);
-
-                    /**
-                     * Если найдена услуга, имеет характеристики, перебираем их ищем соответсвующую выбранной
-                     * (repairCategory не индекс массива, а имя св-ва потому что есть услуги без первой категории)
-                     */
-                    if (~repairVariantIndex && this.getters.getRepairVariants[repairVariantIndex].characteristics) {
-                        for (let repairCategory in this.getters.getRepairVariants[repairVariantIndex].characteristics) {
-                            if (this.getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(repairCategory) &&
-                                this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory] === inputData.value) {
-
-                                state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
-                                // Если найдена соответствующая характеристика то присваиваем категорию и её текстовое отображение
-                                this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: +repairCategory});
-                                if(this.getters.getSelectedPriceElements.TotalRepairCategory >= 4){
-                                    this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
-                                }
-                            }
-                        }
-                    }
+                    // /**
+                    //  * Ищем индекс данной услуги в общем списке услуг по ремонту
+                    //  * @type {number}
+                    //  */
+                    // let repairVariantIndex = this.getters.getRepairVariants.findIndex(repairVariant => repairVariant.title === state.wRepairContainer.list[inputData.index].Name);
+                    //
+                    // /**
+                    //  * Если найдена услуга, имеет характеристики, перебираем их ищем соответсвующую выбранной
+                    //  * (repairCategory не индекс массива, а имя св-ва потому что есть услуги без первой категории)
+                    //  */
+                    // if (~repairVariantIndex && this.getters.getRepairVariants[repairVariantIndex].characteristics) {
+                    //     for (let repairCategory in this.getters.getRepairVariants[repairVariantIndex].characteristics) {
+                    //         if (this.getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(repairCategory) &&
+                    //             this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory] === inputData.value) {
+                    //
+                    //             state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
+                    //             // Если найдена соответствующая характеристика то присваиваем категорию и её текстовое отображение
+                    //             this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: +repairCategory});
+                    //             if(this.getters.getSelectedPriceElements.TotalRepairCategory >= 4){
+                    //                 this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     // Если есть такое свойство, устанавливаем его
                 }else if (state.wRepairContainer.list[inputData.index].hasOwnProperty(inputData.prop) && inputData.value !== undefined) {
                     state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
@@ -461,6 +477,10 @@ export default {
                     state[stateProp] = null;
                 }
             }
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
     },
 
@@ -492,6 +512,7 @@ export default {
                     Empty: WebGateObject.Containers.ContainerList[0].State === Constants.ContainerTitleOfEmpty,
                     Full: WebGateObject.Containers.ContainerList[0].State === Constants.ContainerTitleOfFull,
                     WeightGross: WebGateObject.Containers.ContainerList[0].WeightGross,
+                    Number: WebGateObject.Containers.ContainerList[0].Number,
                 };
                 switch (container.Size) {
                     case 20:
@@ -532,7 +553,7 @@ export default {
                             let characteristics = [];
                             for (let characteristic in getters.getRepairVariants[repairVariantIndex].characteristics) {
                                 if (getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(characteristic)) {
-                                    characteristics.push(getters.getRepairVariants[repairVariantIndex].characteristics[characteristic]);
+                                    characteristics.push(getters.getRepairVariants[repairVariantIndex].characteristics[characteristic].Title);
                                 }
                             }
                             return characteristics;
@@ -543,6 +564,20 @@ export default {
 
                 return false;
             }
+        },
+
+        canSubmitBid(state, getters){
+            if(state.ApplicationDate){
+                let container;
+                if(getters.isWebGateIn){
+                    container = getters.WebGateInContainer;
+                }else if(getters.isWebGateOut){
+                    container = getters.WebGateOutContainer;
+                }
+
+                return !!(container && container.Size && container.Number);
+            }
+            return false;
         },
 
         getSelectedRepairServices: (state) =>

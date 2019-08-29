@@ -4,10 +4,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
         </span>
         <h3>Список заказанных услуг</h3>
-        <template v-if="$store.getters.getSelectedPriceElements.Basic.length">
+        <template v-if="$store.getters.getSelectedServices.Basic.length">
             <h4>Услуги из прайса</h4>
             <table>
-                <tr v-for="service in $store.getters.getSelectedPriceElements.Basic">
+                <tr v-for="service in $store.getters.getSelectedServices.Basic">
                     <td>{{service.title}}</td>
                     <td></td>
                     <td>{{service.unit}}</td>
@@ -15,7 +15,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedPriceElements.InlandTransportations.length">
+        <template v-if="$store.getters.getSelectedServices.InlandTransportations.length">
             <h4>автоперевозка контейнера</h4>
             <table>
                 <tr>
@@ -24,7 +24,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedPriceElements.InlandTransportations">
+                <tr v-for="service in $store.getters.getSelectedServices.InlandTransportations">
                     <td>{{service.Address}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Size}}</td>
@@ -34,7 +34,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedPriceElements.RepairServices.length">
+        <template v-if="$store.getters.getSelectedServices.RepairServices.length">
             <h4>Услуги по ремонту</h4>
             <table>
                 <tr>
@@ -45,7 +45,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedPriceElements.RepairServices">
+                <tr v-for="service in $store.getters.getSelectedServices.RepairServices">
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
                     <td>{{service.RepairCategory}}</td>
@@ -59,7 +59,7 @@
 <!--                </tr>-->
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedPriceElements.InlandReturnTransportations.length">
+        <template v-if="$store.getters.getSelectedServices.InlandReturnTransportations.length">
             <h4>автоперевозка контейнера</h4>
             <table>
                 <tr>
@@ -68,7 +68,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedPriceElements.InlandReturnTransportations">
+                <tr v-for="service in $store.getters.getSelectedServices.InlandReturnTransportations">
                     <td>{{service.Title}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
@@ -76,10 +76,10 @@
                 </tr>
             </table>
         </template>
-        <table v-if="$store.getters.getSelectedPriceElements.TotalCost">
+        <table v-if="$store.getters.getSelectedServices.TotalCost">
             <tr>
                 <td>Итого стоимость: </td>
-                <td>{{$store.getters.getSelectedPriceElements.TotalCost}}</td>
+                <td>{{$store.getters.getSelectedServices.TotalCost}}</td>
             </tr>
         </table>
     </div>
@@ -92,10 +92,10 @@
         computed:{
             totalRepairCost(){
                 if(
-                    this.$store.getters.getSelectedPriceElements.RepairServices.length > 0 &&
-                    this.$store.getters.getSelectedPriceElements.RepairServices[this.$store.getters.getSelectedPriceElements.RepairServices.length - 1].Cost
+                    this.$store.getters.getSelectedServices.RepairServices.length > 0 &&
+                    this.$store.getters.getSelectedServices.RepairServices[this.$store.getters.getSelectedServices.RepairServices.length - 1].Cost
                 ){
-                    return this.$store.getters.getSelectedPriceElements.RepairServices[this.$store.getters.getSelectedPriceElements.RepairServices.length - 1].Cost;
+                    return this.$store.getters.getSelectedServices.RepairServices[this.$store.getters.getSelectedServices.RepairServices.length - 1].Cost;
                 }
                 return '';
             }

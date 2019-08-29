@@ -15,7 +15,7 @@
                         <tr v-for="priceService in priceServiceCategory.List">
                             <td>
                                 <label class="label_width_outside_input">
-                                    <input type="checkbox" :value="priceService.Art" :checked="$store.getters.getSelectedPriceElements.Basic.includes(priceService.Art)" v-model="SelectedBasicServices">
+                                    <input type="checkbox" :value="priceService.Art" :checked="$store.getters.getSelectedServices.Basic.includes(priceService.Art)" v-model="SelectedBasicServices">
                                     <span class="pseudo_checkbox"></span>
                                 </label>
                             </td>

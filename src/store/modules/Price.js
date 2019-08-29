@@ -38,7 +38,7 @@ export default {
     },
 
     getters: {
-        getSelectedPriceElements: function (state, getters, rootState) {
+        getSelectedServices: function (state, getters, rootState) {
 
             const SelectedPriceList = {
                 Basic: [],
@@ -135,17 +135,38 @@ export default {
 
                 // Формируем итоговый массив из таблицы в форме
                 SelectedPriceList.RepairServices = RepairObject.list.map(repairService => {
-                    return {
-                        Title: repairService.Name,
-                        Characteristic: repairService.Characteristic,
-                        RepairCategory: repairService.RepairCategory,
-                        Art: repairService.Art
-                    };
+
+                    let Obj = {};
+                    if(
+                        ~repairService.ServiceIndex
+
+                    ){
+                        Obj.Title =
+                            getters.getRepairServices[repairService.ServiceIndex] &&
+                            getters.getRepairServices[repairService.ServiceIndex].Title
+                            ? getters.getRepairServices[repairService.ServiceIndex].Title : '';
+
+                        Obj.Characteristic =
+                            repairService.Characteristic &&
+                            getters.getRepairServices[repairService.ServiceIndex] &&
+                            getters.getRepairServices[repairService.ServiceIndex].Characteristics &&
+                            getters.getRepairServices[repairService.ServiceIndex].Characteristics[repairService.Characteristic]
+                                ? getters.getRepairServices[repairService.ServiceIndex].Characteristics[repairService.Characteristic].Title : '';
+
+                        // console.log(Obj);
+                        if(Obj.Title && Obj.Characteristic){
+                            Obj.RepairCategory = repairService.RepairCategory;
+                            Obj.Art = repairService.Characteristic;
+                        }
+                    }
+                    return Obj;
+
                 })
                 // Фильтруем (проверка на наличие и названия и характеристики услуги)
-                    .filter(RepairService => RepairService.Title && RepairService.Characteristic)
+                //     .filter(RepairService => RepairService && RepairService.Title && RepairService.Characteristic)
                     // Сортируем по возрастанию категории (для подсчета итоговой категории)
                     .sort((predRepairService, nextRepairService) => nextRepairService.RepairCategory < predRepairService.RepairCategory ? 1 : -1);
+
 
                 let totalCategories = {1: 0, 2: 0, 3: 0, 4: 0};
                 for (let i = 0; i < SelectedPriceList.RepairServices.length; i++) {
@@ -218,9 +239,9 @@ export default {
                     if(totalArray[i].Cost === 'Договорная'){
                         SelectedPriceList.TotalCost = 'Договорная';
                         break;
-                    }else if(+totalArray[i].Cost > 0)
+                    }else if(totalArray[i].Cost && +totalArray[i].Cost.slice(0, -3) > 0)
                     {
-                        totalCost += +totalArray[i].Cost;
+                        totalCost += +totalArray[i].Cost.slice(0, -3);
                         if(i >= totalArray.length - 1 && totalCost > 0){
                             SelectedPriceList.TotalCost = totalCost+',00';
                         }

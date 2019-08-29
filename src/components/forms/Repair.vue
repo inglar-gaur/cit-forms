@@ -15,22 +15,24 @@
                 <tr v-for="(repairElement, index) in $store.state.WebBid.wRepairContainer.list">
                     <td colspan="3">
                         <EmulateSelect
-                            :placeholder="repairElement.Name ? repairElement.Name : 'Вид повреждения'"
-                            :elementsList="$store.getters.getTitlesRepairVariants"
-                            @selectElement="$store.commit('changeRepairElement', {prop: 'Name', index: index, value: $event})"
+                            :placeholder="getServiceTitleFromIndex(repairElement.ServiceIndex)"
+                            :elementsList="RepairServiceTitles"
+                            @selectElement="selectRepairService(index, $event)"
                             v-if="$store.state.WebBid.wRepairContainer.list.length === index+1"
                         ></EmulateSelect>
                         <template v-else>
                             <div class="row-del" @click="$store.commit('delRepairElement', index)"></div>
-                            <input type="text" :value="repairElement.Name" disabled>
+                            <input type="text" :value="getServiceTitleFromIndex(repairElement.ServiceIndex)" disabled>
                         </template>
                     </td>
                     <td>
                         <EmulateSelect
-                            v-if="$store.getters.getCharacteristicsFromVariantName(repairElement.Name) && $store.state.WebBid.wRepairContainer.list.length === index+1"
-                            :placeholder="repairElement.Characteristic ? repairElement.Characteristic : 'Характеристика ремонта'"
-                            :elementsList="$store.getters.getCharacteristicsFromVariantName(repairElement.Name)"
-                            @selectElement="$store.commit('changeRepairElement', {prop: 'Characteristic', index: index, value: $event})"
+                            v-if="getServiceCharacteristicsList(repairElement.ServiceIndex) && $store.state.WebBid.wRepairContainer.list.length === index+1"
+                            :placeholder="
+                                $store.getters.getSelectedServices.RepairServices[index] && $store.getters.getSelectedServices.RepairServices[index].Characteristic
+                                ? $store.getters.getSelectedServices.RepairServices[index].Characteristic : 'Характеристика ремонта'"
+                            :elementsList="getServiceCharacteristicsList(repairElement.ServiceIndex)"
+                            @selectElement="selectRepairCharacteristic(index, repairElement.ServiceIndex, $event)"
                         ></EmulateSelect>
                         <input v-else type="text" :value="repairElement.Characteristic" disabled>
                     </td>
@@ -53,15 +55,15 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button v-show="canAddNewRepairService" @click.prevent="$store.commit('addDefaultRepairElement')" class="cit_btn btn_add">+ Добавить строку</button>
+                        <button v-show="CanAddNewRepairService" @click.prevent="$store.commit('addDefaultRepairElement')" class="cit_btn btn_add">+ Добавить строку</button>
                     </td>
                     <td style="width: 10%"></td>
                     <td class="sum" style="position: relative; text-align: right"><div style="width: 80%; position: absolute; right: 5px; top: 2px">Итог категория ремонта:</div></td>
                     <td>
-                        <input type="text" :value="getTextRepairCategory($store.getters.getSelectedPriceElements.TotalRepairCategory)" disabled>
+                        <input type="text" :value="getTextRepairCategory($store.getters.getSelectedServices.TotalRepairCategory)" disabled>
                     </td>
                 </tr>
-                <tr v-if="$store.getters.getSelectedPriceElements.TotalRepairCategory >= 4">
+                <tr v-if="$store.getters.getSelectedServices.TotalRepairCategory >= 4">
                     <td colspan="8" style="padding: 10px">
                         <label class="label_width_outside_input">
                             <input type="checkbox" required>
@@ -85,14 +87,20 @@
         components: {EmulateSelect},
 
         computed: {
-            canAddNewRepairService(){
+            CanAddNewRepairService(){
 
-                return !!(Array.isArray(this.$store.state.WebBid.wRepairContainer.list) && this.$store.getters.getSelectedPriceElements.TotalRepairCategory < 4 &&
+                return !!(Array.isArray(this.$store.state.WebBid.wRepairContainer.list) && this.$store.getters.getSelectedServices.TotalRepairCategory < 4 &&
                     (
                         this.$store.state.WebBid.wRepairContainer.list.length === 0 ||
                         this.$store.state.WebBid.wRepairContainer.list.every(service => service.RepairCategory)
                     )
                 );
+            },
+
+            RepairServiceTitles() {
+                return this.$store.getters.getRepairServices.map(RepairService =>
+                    RepairService.Title ? RepairService.Title : null
+                ).filter(RepairService => RepairService);
             }
         },
 
@@ -110,16 +118,52 @@
                     default:
                         return '';
                 }
-            }
-        },
+            },
 
-        watch:{
-            '$store': function () {
-                if(this.$store.getters.changeRepairElement.TotalRepairCategory >= 4){
-                    console.log('Category 4');
+            getServiceTitleFromIndex(ServiceIndex){
+
+                    return this.RepairServiceTitles[ServiceIndex] ? this.RepairServiceTitles[ServiceIndex] : 'Вид повреждения';
+            },
+
+            getServiceCharacteristicsList(ServiceIndex){
+                if(this.$store.getters.getRepairServices[ServiceIndex] && this.$store.getters.getRepairServices[ServiceIndex].Characteristics){
+                    let ServiceCharacteristicsList = [];
+
+                    for(let ServiceCharacteristics in this.$store.getters.getRepairServices[ServiceIndex].Characteristics){
+                        if(
+                            this.$store.getters.getRepairServices[ServiceIndex].Characteristics.hasOwnProperty(ServiceCharacteristics) &&
+                            this.$store.getters.getRepairServices[ServiceIndex].Characteristics[ServiceCharacteristics].Title
+                        ){
+                            ServiceCharacteristicsList.push(this.$store.getters.getRepairServices[ServiceIndex].Characteristics[ServiceCharacteristics].Title);
+                        }
+                    }
+
+                    return ServiceCharacteristicsList.length > 0 ? ServiceCharacteristicsList : null;
+                }
+
+                return null;
+            },
+
+            selectRepairService(RepairElementIndex, InputRepairServiceTitle){
+                let RepairServiceIndex = this.RepairServiceTitles.findIndex(RepairServiceTitle => RepairServiceTitle === InputRepairServiceTitle);
+                if(~RepairServiceIndex){
+                    this.$store.commit('changeRepairElement', {prop: 'ServiceIndex', index: RepairElementIndex, value: RepairServiceIndex});
+                }
+            },
+
+            selectRepairCharacteristic(RepairElementIndex, ServiceIndex, InputRepairCharacteristicTitle){
+                if(this.$store.getters.getRepairServices[ServiceIndex] && this.$store.getters.getRepairServices[ServiceIndex].Characteristics){
+                    for(let CharacteristicArt in this.$store.getters.getRepairServices[ServiceIndex].Characteristics){
+                        if(
+                            this.$store.getters.getRepairServices[ServiceIndex].Characteristics.hasOwnProperty(CharacteristicArt) &&
+                            this.$store.getters.getRepairServices[ServiceIndex].Characteristics[CharacteristicArt].Title === InputRepairCharacteristicTitle
+                        ){
+                            this.$store.commit('changeRepairElement', {prop: 'Characteristic', index: RepairElementIndex, value: CharacteristicArt});
+                        }
+                    }
                 }
             }
-        }
+        },
     }
 </script>
 
