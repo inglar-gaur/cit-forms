@@ -26,13 +26,13 @@ function getTextRepairCategory(category){
 
 export default {
     state: {
-        SelectedBasicServices: [],
+        SelectedPriceServices: [],
     },
 
     mutations: {
-        setSelectedBasicServices: function (state, selectedBasicServiceIndexes) {
-            if (Array.isArray(selectedBasicServiceIndexes)) {
-                state.SelectedBasicServices = selectedBasicServiceIndexes;
+        setSelectedPriceServices: function (state, selectedPriceServiceIndexes) {
+            if (Array.isArray(selectedPriceServiceIndexes)) {
+                state.SelectedPriceServices = selectedPriceServiceIndexes;
             }
         },
     },
@@ -50,7 +50,7 @@ export default {
                 TotalRepairCategory: null,
             };
 
-            // SelectedPriceList.Basic = state.SelectedBasicServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
+            // SelectedPriceList.Basic = state.SelectedPriceServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
 
             console.log(getters.getBasicServices);
             if(getters.isWebGateIn){
@@ -243,6 +243,45 @@ export default {
                 }
             }
 
+            // todo Учесть дефектовку контейнера
+
+            if(state.SelectedPriceServices.length > 0){
+
+                for(let ServiceArt in getters.getPriceServices.Services){
+                    if(
+                        getters.getPriceServices.Services.hasOwnProperty(ServiceArt) &&
+                        state.SelectedPriceServices.includes(ServiceArt) &&
+                        ~getters.getPriceServices.Services[ServiceArt].Category
+                    ){
+                        let Service = {
+                            Title: getters.getPriceServices.Services[ServiceArt].Title,
+                            Unit: getters.getPriceServices.Services[ServiceArt].Unit,
+                            Art: ServiceArt,
+                            Cost: getters.getPriceServices.Services[ServiceArt].Cost+',00',
+                            Category: getters.getPriceServices.Services[ServiceArt].Category,
+                            Type: getters.getPriceServices.Categories[getters.getPriceServices.Services[ServiceArt].Category].Type
+                        };
+                        SelectedPriceList.PriceServices.push(Service);
+                    }
+
+                    SelectedPriceList.PriceServices.filter(Service => Service.Title && Service.Art && ~Service.Category && ~Service.Type)
+                        .sort((PredService, NextService) => PredService.Type > NextService.Type && PredService.Category > NextService.Category ? 1 : -1);
+
+                    let lastType, lastCategory;
+
+                    SelectedPriceList.PriceServices.forEach((Service, Index) => {
+                        if(Service.Type !== lastType){
+                            SelectedPriceList.PriceServices[Index].TypeTitle = getters.getPriceServices.Types[Service.Type];
+                            lastType = Service.Type;
+                        }
+                        if(Service.Category !== lastCategory){
+                            SelectedPriceList.PriceServices[Index].CategoryTitle = getters.getPriceServices.Categories[Service.Category].Title;
+                            lastCategory = Service.Category;
+                        }
+                    });
+                }
+            }
+
             /**
              * Переменные для вычисления общей стоимости
              *
@@ -254,7 +293,7 @@ export default {
              * Итоговый массив выбранных услуг
              * @type {Array}
              */
-            let totalArray = SelectedPriceList.Basic.concat(SelectedPriceList.InlandTransportations, SelectedPriceList.RepairServices);
+            let totalArray = SelectedPriceList.Basic.concat(SelectedPriceList.InlandTransportations, SelectedPriceList.RepairServices, SelectedPriceList.PriceServices);
             if(totalArray.length > 0){
                 for(let i = 0; i < totalArray.length; i++){
                     if(totalArray[i].Cost === 'Договорная'){

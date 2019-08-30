@@ -82,6 +82,35 @@
                 </tr>
             </table>
         </template>
+        <template v-if="$store.getters.getSelectedServices.PriceServices.length">
+            <h4>терминальное обслуживание универсального контейнера</h4>
+            <table>
+                <tr>
+                    <th>наименование услуги</th>
+                    <th>ед.изм.</th>
+                    <th>кол-во</th>
+                    <th>расценки</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
+                <template v-for="service in $store.getters.getSelectedServices.PriceServices">
+                    <tr v-if="service.TypeTitle">
+                        <th colspan="6">{{service.TypeTitle}}</th>
+                    </tr>
+                    <tr v-if="service.CategoryTitle">
+                        <th colspan="6">{{service.CategoryTitle}}</th>
+                    </tr>
+                    <tr>
+                        <td>{{service.Title}}</td>
+                        <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
+                        <td>1</td>
+                        <td>{{service.Cost}}</td>
+                        <td>{{service.Cost}}</td>
+                        <td>{{service.Art}}</td>
+                    </tr>
+                </template>
+            </table>
+        </template>
         <table v-if="$store.getters.getSelectedServices.TotalCost">
             <tr>
                 <td>Итого стоимость: </td>

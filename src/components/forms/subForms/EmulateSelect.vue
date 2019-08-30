@@ -78,7 +78,7 @@
         width: 200%;
         padding-top: 10px;
         z-index: 10;
-        height: 350px;
+        max-height: 350px;
         overflow: auto;
 
         >div{
