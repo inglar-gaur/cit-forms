@@ -211,7 +211,10 @@
                 axios({
                     method: 'post',
                     url: 'http://api.cit-ekb.ru/CreateWebBid',
-                    data: bodyFormData
+                    data: bodyFormData,
+                    headers: {
+                        accept: 'application/json',
+                    }
                 })
                 .then(resp => {
                     console.log(resp);

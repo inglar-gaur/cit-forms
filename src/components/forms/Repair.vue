@@ -28,13 +28,12 @@
                     <td>
                         <EmulateSelect
                             v-if="getServiceCharacteristicsList(repairElement.ServiceIndex) && $store.state.WebBid.wRepairContainer.list.length === index+1"
-                            :placeholder="
-                                $store.getters.getSelectedServices.RepairServices[index] && $store.getters.getSelectedServices.RepairServices[index].Characteristic
-                                ? $store.getters.getSelectedServices.RepairServices[index].Characteristic : 'Характеристика ремонта'"
+                            :placeholder="getCharacteristicTitleFromArt(repairElement.Characteristic) ?
+                                getCharacteristicTitleFromArt(repairElement.Characteristic) : 'Характеристика ремонта'"
                             :elementsList="getServiceCharacteristicsList(repairElement.ServiceIndex)"
                             @selectElement="selectRepairCharacteristic(index, repairElement.ServiceIndex, $event)"
                         ></EmulateSelect>
-                        <input v-else type="text" :value="repairElement.Characteristic" disabled>
+                        <input v-else type="text" :value="getCharacteristicTitleFromArt(repairElement.Characteristic)" disabled>
                     </td>
                     <td><input
                             type="text"
@@ -123,6 +122,28 @@
             getServiceTitleFromIndex(ServiceIndex){
 
                     return this.RepairServiceTitles[ServiceIndex] ? this.RepairServiceTitles[ServiceIndex] : 'Вид повреждения';
+            },
+
+            getCharacteristicTitleFromArt(Art){
+
+                let foundElement = '';
+
+                if(Art){
+                    this.$store.getters.getRepairServices.findIndex(Service => {
+                        if(Service.Characteristics){
+                            for(let CharacteristicArt in Service.Characteristics){
+                                if(Service.Characteristics.hasOwnProperty(CharacteristicArt) && CharacteristicArt === Art){
+                                    foundElement = Service.Characteristics[CharacteristicArt].Title;
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return false;
+                    });
+                }
+
+                return foundElement ? foundElement : '';
             },
 
             getServiceCharacteristicsList(ServiceIndex){

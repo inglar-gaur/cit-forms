@@ -78,6 +78,8 @@
         width: 200%;
         padding-top: 10px;
         z-index: 10;
+        height: 350px;
+        overflow: auto;
 
         >div{
             cursor: pointer;
@@ -89,7 +91,7 @@
 
     .emulated-list.open{
         .list-chevron{
-            transform: rotateX(180deg);
+            transform: translateY(-50%) rotate(180deg);
         }
     }
 </style>

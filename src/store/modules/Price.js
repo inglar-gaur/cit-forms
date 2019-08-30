@@ -50,7 +50,23 @@ export default {
                 TotalRepairCategory: null,
             };
 
-            SelectedPriceList.Basic = state.SelectedBasicServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
+            // SelectedPriceList.Basic = state.SelectedBasicServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
+
+            console.log(getters.getBasicServices);
+            if(getters.isWebGateIn){
+                SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
+
+                if(rootState.WebBid.wCustomsRelease){
+                    SelectedPriceList.Basic.push(getters.getBasicServices['10.30']);
+                }
+            }
+            if(getters.isWebGateOut){
+                SelectedPriceList.Basic.push(getters.getBasicServices['10.6']);
+
+                if(rootState.WebBid.wCustomsRelease){
+                    SelectedPriceList.Basic.push(getters.getBasicServices['10.31']);
+                }
+            }
 
             // Список выбранных услуг автоперевозки
             ['In', 'Out'].forEach(wInlandTransportationPostfix => {
@@ -63,7 +79,12 @@ export default {
                 // Если есть объект, улица и дом, выбираем цену и формируем объект для таблицы
                 if (WebInlandTransportation && WebInlandTransportation.street && WebInlandTransportation.houseNumber) {
 
-                    let StreetObject = getters.getStreets.find(street => street.Title === WebInlandTransportation['street']);
+                    let StreetObject;
+                    for(let StreetArt in getters.getStreets){
+                        if(getters.getStreets.hasOwnProperty(StreetArt) && getters.getStreets[StreetArt].Title === WebInlandTransportation.street){
+                            StreetObject = getters.getStreets[StreetArt];
+                        }
+                    }
 
                     if (StreetObject) {
 
@@ -82,7 +103,7 @@ export default {
                         if (Container && (Container.Size === 20 || Container.Size === 40)) {
                             // Если контейнер пуст
                             if (Container.Empty) {
-                                Cost = StreetObject[Container.Size];
+                                Cost = StreetObject['_'+Container.Size];
                                 WeightText = 'до 24 тн';
                             // Если контейнер груженый и сверхтяжелый
                             } else if (Container.Full && Container.WeightGross && Container.WeightGross > 30) {
@@ -91,10 +112,10 @@ export default {
                             // Если контейнер просто груженый
                             } else if (Container.Full && Container.WeightGross) {
                                 if(Container.WeightGross >= 24){
-                                    Cost = StreetObject[Container.Size+'h'];
+                                    Cost = StreetObject['_'+Container.Size+'h'];
                                     WeightText = 'от 24 до 30 тн';
                                 }else{
-                                    Cost = StreetObject[Container.Size];
+                                    Cost = StreetObject['_'+Container.Size];
                                     WeightText = 'до 24 тн';
                                 }
                             }

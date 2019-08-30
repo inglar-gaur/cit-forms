@@ -165,7 +165,7 @@ export default {
 
             Object.defineProperty(WebInlandTransportation, 'Address', {
                 get: function () {
-                    return this.street + (this.houseNumber ? ', ' + this.houseNumber : '');
+                    return this.street + (this.street && this.houseNumber ? ', ' + this.houseNumber : '');
                 }
             });
 

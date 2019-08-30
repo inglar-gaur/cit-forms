@@ -97,6 +97,10 @@
 
         components: {EmulateSelect, CargoDetails},
 
+        created(){
+            this.$store.dispatch('getStreets');
+        },
+
         computed:{
             addressTitle: function () {
                 let tableTitle = 'Адрес места';

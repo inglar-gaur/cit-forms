@@ -5,13 +5,19 @@
         </span>
         <h3>Список заказанных услуг</h3>
         <template v-if="$store.getters.getSelectedServices.Basic.length">
-            <h4>Услуги из прайса</h4>
+            <h4>терминальное обслуживание универсального контейнера</h4>
             <table>
+                <tr>
+                    <th>наименование услуги</th>
+                    <th>единица измерения</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
                 <tr v-for="service in $store.getters.getSelectedServices.Basic">
-                    <td>{{service.title}}</td>
-                    <td></td>
-                    <td>{{service.unit}}</td>
+                    <td>{{service.Title}}</td>
+                    <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
                     <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
                 </tr>
             </table>
         </template>
