@@ -10,7 +10,6 @@ Vue.use(Vuetify);
 
 import Datepicker from 'vue2-datepicker';
 Vue.component('datepicker', Datepicker);
-console.log(Datepicker);
 
 // import 'vuetify/dist/vuetify.min.css'
 import store from './store/index';

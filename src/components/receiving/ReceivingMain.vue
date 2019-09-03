@@ -132,6 +132,104 @@
         },
 
         methods: {
+
+            sendBid() {
+
+                // let originWebBid = this.$store.state.WebBid;
+
+                // Формируем объект заявки для отправки на сервер
+                let postWebBid = {
+                    Id: 0,
+                    gId: "00000000-0000-0000-0000-000000000000",
+                    ApplicationDate: new Date(),
+                    Account: null,
+                    Status:  "Подана",
+                    DangerousGoods: !!this.$store.state.WebBid.DangerousGoods,
+                    Documents: this.$store.state.WebBid.Documents,
+                    wGateOut: this.$store.state.WebBid.wGateOut,
+                    wGateIn: this.$store.state.WebBid.wGateIn,
+                    wShipping: this.$store.state.WebBid.wShipping,
+                    wStaffingStripping: this.$store.state.WebBid.wStaffingStripping,
+                    wInlandTransportationIn: this.$store.state.WebBid.wInlandTransportationIn,
+                    wInlandTransportationOut: this.$store.state.WebBid.wInlandTransportationOut,
+                    wCustomsRelease: this.$store.state.WebBid.wCustomsRelease,
+                    wRepairContainer: this.$store.state.WebBid.wRepairContainer,
+                };
+
+                let container;
+
+                // Добавляем данные из контейнера в заявку (состояние и размер)
+                if(postWebBid.wGateIn){
+                    container = this.$store.getters.WebGateInContainer;
+
+                    postWebBid.wGateIn.DatePlan = this.$store.state.WebBid.ApplicationDate;
+                    if(container){
+                        postWebBid.wGateIn.State = container.State;
+                        postWebBid.wGateIn.Size = container.Size;
+                    }
+
+                }
+                if(postWebBid.wGateOut){
+                    container = this.$store.getters.WebGateOutContainer;
+
+                    postWebBid.wGateOut.DatePlan = this.$store.state.WebBid.ApplicationDate;
+                    if(container){
+                        postWebBid.wGateOut.State = container.State;
+                        postWebBid.wGateOut.Size = container.Size;
+                    }
+                }
+
+                console.log(postWebBid);
+
+                // Создание заявки
+                let FetchBody = new FormData();
+                FetchBody.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
+                FetchBody.set('WebBid', JSON.stringify(postWebBid));
+                fetch('http://api.cit-ekb.ru/CreateWebBid', {
+                    method: 'post',
+                    body: FetchBody,
+                    // headers:{
+                    //     'Content-Type': 'json'
+                    // }
+                }).then(CreateWebBidFetch => {
+                    console.log(CreateWebBidFetch.status);
+                    CreateWebBidFetch.json().then(resp => {
+                        // let json = JSON.parse(resp);
+                        console.log(resp);
+                        console.log(typeof(resp));
+                        console.log(resp.status);
+                        console.log(resp.bidId);
+                        if(resp && resp.status === 'ok' && +resp.bidId > 0){
+
+                            // FetchBody = new FormData();
+                            // FetchBody.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
+                            // FetchBody.set('idBid', CreateWebBidResult.bidId);
+                            // let GetBarCodeFetch = await fetch('http://api.cit-ekb.ru//GeneratePassCard', {
+                            //     method: 'post',
+                            //     body: FetchBody,
+                            // });
+                            //
+                            // if(GetBarCodeFetch.ok){
+                            //     let GetBarCodeResult = GetBarCodeFetch.text();
+                            //     alert(GetBarCodeResult);
+                            // }
+                        }
+                    });
+                    // CreateWebBidResult = JSON.parse(CreateWebBidResult);
+                });
+
+                // CreateWebBidFetch.then(resp => {
+                //
+                //     console.log(resp);
+                //     if(resp && resp.data && resp.data.status === 'ok' && +resp.data.bidId > 0){
+                //         this.getBarCode(+resp.data.bidId);
+                //         this.$store.commit('addMessage', 'Заявка создана');
+                //         this.$store.commit('clearForm');
+                //     }
+                // });
+
+            },
+
             createBid: function (operations) {
                 if (Array.isArray(operations) && operations.length > 0) {
                     this.operations = operations;
@@ -160,68 +258,12 @@
 
             },
 
-            sendBid: function () {
-
-                // let originWebBid = this.$store.state.WebBid;
-
-                let postWebBid = {
-                    Id: 0,
-                    gId: "00000000-0000-0000-0000-000000000000",
-                    ApplicationDate: new Date(),
-                    Account: null,
-                    Status:  "Подана",
-                    DangerousGoods: !!this.$store.state.WebBid.DangerousGoods,
-                    Documents: this.$store.state.WebBid.Documents,
-                    wGateOut: this.$store.state.WebBid.wGateOut,
-                    wGateIn: this.$store.state.WebBid.wGateIn,
-                    wShipping: this.$store.state.WebBid.wShipping,
-                    wStaffingStripping: this.$store.state.WebBid.wStaffingStripping,
-                    wInlandTransportationIn: this.$store.state.WebBid.wInlandTransportationIn,
-                    wInlandTransportationOut: this.$store.state.WebBid.wInlandTransportationOut,
-                    wCustomsRelease: this.$store.state.WebBid.wCustomsRelease,
-                    wRepairContainer: this.$store.state.WebBid.wRepairContainer,
-                };
-
-                let container;
-
-                if(postWebBid.wGateIn){
-                    container = this.$store.getters.WebGateInContainer;
-
-                    postWebBid.wGateIn.DatePlan = this.$store.state.WebBid.ApplicationDate;
-                    if(container){
-                        postWebBid.wGateIn.State = container.State;
-                        postWebBid.wGateIn.Size = container.Size;
-                    }
-
-                }
-                if(postWebBid.wGateOut){
-                    container = this.$store.getters.WebGateOutContainer;
-
-                    postWebBid.wGateOut.DatePlan = this.$store.state.WebBid.ApplicationDate;
-                    if(container){
-                        postWebBid.wGateOut.State = container.State;
-                        postWebBid.wGateOut.Size = container.Size;
-                    }
-                }
-
-                let bodyFormData = new FormData();
-                bodyFormData.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
-                bodyFormData.set('WebBid', JSON.stringify(postWebBid));
-
-                axios({
-                    method: 'post',
-                    url: 'http://api.cit-ekb.ru/CreateWebBid',
-                    data: bodyFormData,
-                    headers: {
-                        accept: 'application/json',
-                    }
-                })
-                .then(resp => {
-                    console.log(resp);
-                    this.$store.commit('addMessage', 'Заявка создана');
-                    this.$store.commit('clearForm');
-                });
-
+            async getBarCode(payload){
+                // console.log(context);
+                console.log(payload);
+                let getBarCodeFetch = await fetch(
+                    'http://api.cit-ekb.ru/GeneratePassCard?token=50338070-7c76-477e-af2c-c86039f349c6&idBid='+'0',
+                );
             },
 
             changeInputFileTitle: function (e) {

@@ -52,7 +52,6 @@ export default {
 
             // SelectedPriceList.Basic = state.SelectedPriceServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
 
-            console.log(getters.getBasicServices);
             if(getters.isWebGateIn){
                 SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
 

@@ -258,8 +258,6 @@
              */
             createBid: function () {
 
-                console.log('createBid');
-
                 // Если не выбраны все необходимые опции передаем родительскому компоненту сообщение об этом
                 if(this.notSelectedMainParams){
                     if(this.notSelectedMainOperation){
