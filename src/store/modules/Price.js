@@ -26,7 +26,8 @@ function getTextRepairCategory(category){
 
 export default {
     state: {
-        SelectedPriceServices: [],
+        SelectedPriceServices: [],      // Выбранные услуги из прайсов
+        SelectedPrices: []              // Прайсы, услуги которых можно выбрать
     },
 
     mutations: {
@@ -35,6 +36,12 @@ export default {
                 state.SelectedPriceServices = selectedPriceServiceIndexes;
             }
         },
+
+        setSelectedPrices: (state, selectedPrices) => {
+            if(state && Array.isArray(selectedPrices)){
+                state.SelectedPrices = selectedPrices;
+            }
+        }
     },
 
     getters: {

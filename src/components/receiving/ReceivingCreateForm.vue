@@ -115,6 +115,22 @@
                             </label>
 
                         </div>
+
+                        <div class="labels">
+
+                            <label class="label_width_outside_input">
+                                <input value="terminal" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать терминальную услугу</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input value="customs" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">Заказать услугу под таможенной процедурой</span>
+                            </label>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,7 +163,8 @@
                 WebCustomsRelease: false,           // Перемещение из зоны СВХ
                 WebStaffingStripping: false,        // Погрузочно-разгрузочные работы
                 ReturnContainer: false,             // Возврат контейнера
-                RepairContainer: false              // Ремонт контейнера
+                RepairContainer: false,             // Ремонт контейнера
+                Prices: []                          // Выбранные прайсы
             }
         },
 
@@ -314,6 +331,10 @@
                     if(this.RepairContainer){
                         this.$store.commit('setDefaultWebObject', 'wRepairContainer');
                     }
+
+                    if(this.Prices.length > 0){
+                        this.$store.commit('setSelectedPrices', this.Prices);
+                    }
                 }
             },
 
@@ -326,6 +347,7 @@
                 this.WebStaffingStripping = false;
                 this.ReturnContainer = false;
                 this.RepairContainer = false;
+                this.Prices = [];
             },
 
             /**

@@ -29,7 +29,7 @@
                             WebGateTypePostfix="Out"
                     ></WebGate>
 
-                    <div class="form_row">
+                    <div class="form_row" v-if="false">
                         <label @click="$store.commit('openPopup', 'PriceSelectPopup')">
                             <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
                         </label>
@@ -190,21 +190,35 @@
                     // }
                 }).then(CreateWebBidFetch => {
                     CreateWebBidFetch.json().then(resp => {
-                        // let json = JSON.parse(resp);
+                        resp = JSON.parse(resp);
                         if(resp && resp.status === 'ok' && +resp.bidId > 0){
 
-                            // FetchBody = new FormData();
-                            // FetchBody.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
-                            // FetchBody.set('idBid', CreateWebBidResult.bidId);
-                            // let GetBarCodeFetch = await fetch('http://api.cit-ekb.ru//GeneratePassCard', {
-                            //     method: 'post',
-                            //     body: FetchBody,
-                            // });
-                            //
-                            // if(GetBarCodeFetch.ok){
-                            //     let GetBarCodeResult = GetBarCodeFetch.text();
-                            //     alert(GetBarCodeResult);
-                            // }
+                            this.$store.commit('addMessage', 'Заявка создана');
+                            this.$store.commit('clearForm');
+
+                            FetchBody = new FormData();
+                            FetchBody.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
+                            FetchBody.set('idBid', resp.bidId);
+                            fetch(
+                                'http://api.cit-ekb.ru//GeneratePassCard?'+
+                                'token=50338070-7c76-477e-af2c-c86039f349c6&'+
+                                'idBid='+resp.bidId
+                            ).then(GetBarCodeFetch => {
+                                GetBarCodeFetch.json().then(resp => {
+                                    resp = JSON.parse(resp);
+
+                                    if(resp && resp.PassCard){
+                                        let printWindow = window.open('', 'PRINT', 'height=400,width=600');
+                                        printWindow.document.write(resp.PassCard);
+                                        printWindow.document.close(); // necessary for IE >= 10
+                                        printWindow.focus(); // necessary for IE >= 10*/
+
+                                        printWindow.print();
+                                    }
+
+                                })
+
+                            });
                         }
                     });
                     // CreateWebBidResult = JSON.parse(CreateWebBidResult);
