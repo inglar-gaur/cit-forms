@@ -14,8 +14,8 @@ export default {
 
 <style lang="scss">
 
-  @import "../css2/var";
-  @import "../css2/forms_elements";
+  @import "../public/css2/var";
+  @import "../public/css2/forms_elements";
 
   .cit_form .application{
     position: relative;

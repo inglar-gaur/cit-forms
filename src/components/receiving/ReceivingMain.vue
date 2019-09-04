@@ -86,7 +86,6 @@
     import PriceSelectedPopup from "../popups/PriceSelectedPopup";
     import Messages from "../popups/Messages";
     import WebGate from "./WebGate";
-    import axios from "axios"
 
     export default {
         name: "receiving-main",
@@ -179,8 +178,6 @@
                     }
                 }
 
-                console.log(postWebBid);
-
                 // Создание заявки
                 let FetchBody = new FormData();
                 FetchBody.set('token', '50338070-7c76-477e-af2c-c86039f349c6');
@@ -192,13 +189,8 @@
                     //     'Content-Type': 'json'
                     // }
                 }).then(CreateWebBidFetch => {
-                    console.log(CreateWebBidFetch.status);
                     CreateWebBidFetch.json().then(resp => {
                         // let json = JSON.parse(resp);
-                        console.log(resp);
-                        console.log(typeof(resp));
-                        console.log(resp.status);
-                        console.log(resp.bidId);
                         if(resp && resp.status === 'ok' && +resp.bidId > 0){
 
                             // FetchBody = new FormData();
@@ -260,7 +252,9 @@
 
             async getBarCode(payload){
                 // console.log(context);
+                /* eslint-disable no-console */
                 console.log(payload);
+                /* eslint-enable no-console */
                 let getBarCodeFetch = await fetch(
                     'http://api.cit-ekb.ru/GeneratePassCard?token=50338070-7c76-477e-af2c-c86039f349c6&idBid='+'0',
                 );

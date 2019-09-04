@@ -12,7 +12,7 @@
                     <th style="width: 20%">Особые требования к производству работ</th>
                     <th style="width: 15%">Приложить фото</th>
                 </tr>
-                <tr v-for="(repairElement, index) in $store.state.WebBid.wRepairContainer.list">
+                <tr v-for="(repairElement, index) in $store.state.WebBid.wRepairContainer.list" :key="index">
                     <td colspan="3">
                         <EmulateSelect
                             :placeholder="getServiceTitleFromIndex(repairElement.ServiceIndex)"

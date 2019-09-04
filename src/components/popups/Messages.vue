@@ -8,7 +8,7 @@
                 ></path>
             </svg>
         </div>
-        <p v-for="message in $store.state.Messages.Messages">{{ message }}</p>
+        <p v-for="(message, index) in $store.state.Messages.Messages" :key="index">{{ message }}</p>
     </div>
 </template>
 

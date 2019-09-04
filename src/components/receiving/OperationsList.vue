@@ -1,6 +1,6 @@
 <template>
     <fieldset class="chosen_parameters">
-        <label v-for="operation in operationList" class="label_width_outside_input">
+        <label v-for="(operation, index) in operationList" :key="index" class="label_width_outside_input">
             <!-- // todo here inputs should be always checked and disabled       -->
             <input name="" type="radio" checked readonly>
             <span class="pseudo_checkbox"></span>

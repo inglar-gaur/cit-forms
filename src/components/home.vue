@@ -1,6 +1,6 @@
 <template>
     <ul>
-        <li v-for="(menuItem) in menuItems">
+        <li v-for="(menuItem, index) in menuItems" :key="index">
             <router-link :to="menuItem.link" exact><span>{{menuItem.text}}</span></router-link>
         </li>
     </ul>

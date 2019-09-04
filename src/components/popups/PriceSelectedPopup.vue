@@ -13,7 +13,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.Basic">
+                <tr v-for="service in $store.getters.getSelectedServices.Basic" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
                     <td>{{service.Cost}}</td>
@@ -30,7 +30,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.InlandTransportations">
+                <tr v-for="service in $store.getters.getSelectedServices.InlandTransportations" :key="service.Art">
                     <td>{{service.Address}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Size}}</td>
@@ -51,7 +51,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.RepairServices">
+                <tr v-for="service in $store.getters.getSelectedServices.RepairServices" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
                     <td>{{service.RepairCategory}}</td>
@@ -74,7 +74,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.InlandReturnTransportations">
+                <tr v-for="service in $store.getters.getSelectedServices.InlandReturnTransportations" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
@@ -94,13 +94,13 @@
                     <th>артикул</th>
                 </tr>
                 <template v-for="service in $store.getters.getSelectedServices.PriceServices">
-                    <tr v-if="service.TypeTitle">
+                    <tr v-if="service.TypeTitle" :key="service.Art+'_type_title'">
                         <th colspan="6">{{service.TypeTitle}}</th>
                     </tr>
-                    <tr v-if="service.CategoryTitle">
+                    <tr v-if="service.CategoryTitle" :key="service.Art+'_category_title'">
                         <th colspan="6">{{service.CategoryTitle}}</th>
                     </tr>
-                    <tr>
+                    <tr :key="service.Art">
                         <td>{{service.Title}}</td>
                         <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
                         <td>1</td>

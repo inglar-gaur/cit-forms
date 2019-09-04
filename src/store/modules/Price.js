@@ -255,7 +255,7 @@ export default {
                         let Service = {
                             Title: getters.getPriceServices.Services[ServiceArt].Title,
                             Unit: getters.getPriceServices.Services[ServiceArt].Unit,
-                            Art: ServiceArt,
+                            Art: getters.getPriceServices.Services[ServiceArt].Art,
                             Cost: getters.getPriceServices.Services[ServiceArt].Cost+',00',
                             Category: getters.getPriceServices.Services[ServiceArt].Category,
                             Type: getters.getPriceServices.Categories[getters.getPriceServices.Services[ServiceArt].Category].Type

@@ -5,14 +5,14 @@
         </span>
 
         <template v-if="Array.isArray($store.getters.getPriceServices.Types)">
-            <div v-for="(ServiceType, TypeIndex) in $store.getters.getPriceServices.Types">
+            <div v-for="(ServiceType, TypeIndex) in $store.getters.getPriceServices.Types" :key="TypeIndex">
                 <h2>{{ ServiceType }}</h2>
                 <table v-if="$store.getters.getPriceServices.Categories.some(Category => Category.Type === TypeIndex)">
-                    <template v-for="CategoryIndex in $store.getters.getPriceServices.Categories.map((Category, Index) => Category.Type === TypeIndex ? Index : -1).filter(CategoryIndex => ~CategoryIndex)">
-                        <tr>
+                    <template v-for="(CategoryIndex, CatIndex) in $store.getters.getPriceServices.Categories.map((Category, Index) => Category.Type === TypeIndex ? Index : -1).filter(CategoryIndex => ~CategoryIndex)">
+                        <tr :key="CatIndex+'_cat'">
                             <th style="padding: 10px 0 5px" colspan="3">{{ $store.getters.getPriceServices.Categories[CategoryIndex].Title }}</th>
                         </tr>
-                        <tr v-for="Service in getServicesListByCategory(CategoryIndex)">
+                        <tr v-for="Service in getServicesListByCategory(CategoryIndex)" :key="Service.Art">
                             <td>
                                 <label class="label_width_outside_input">
                                     <input type="checkbox" :value="Service.Art" :checked="SelectedPriceServices.includes(Service.Art)" v-model="SelectedPriceServices">

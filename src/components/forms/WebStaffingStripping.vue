@@ -14,10 +14,10 @@
                     <th :colspan="goodsPlaces.length">Объект перемещения груза (место нахождения груза)</th>
                 </tr>
                 <tr>
-                    <th v-for="place in goodsPlaces">{{place.title}}</th>
+                    <th v-for="(place, index) in goodsPlaces" :key="index">{{place.title}}</th>
                 </tr>
                 <tr>
-                    <td v-for="(place, index) in goodsPlaces">
+                    <td v-for="(place, index) in goodsPlaces" :key="index">
                         <label class="label_width_outside_input">
                             <input name="loading_out" :value="index" type="radio" v-model="goodsPlace">
                             <span class="pseudo_checkbox"></span>

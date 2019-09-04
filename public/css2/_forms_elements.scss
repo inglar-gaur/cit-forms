@@ -299,6 +299,9 @@ input:disabled {
         right: -3px;
       }
     }
+    &:disabled{
+      background-color: transparent;
+    }
   }
 }
 

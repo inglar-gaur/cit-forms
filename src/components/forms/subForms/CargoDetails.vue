@@ -15,7 +15,7 @@
                 <th v-if="$store.getters.isDangerousGoods">Класс опасности</th>
                 <th>Особые требования к обращению с грузом</th>
             </tr>
-            <tr v-for="(WebCargoElement, index) in elements">
+            <tr v-for="(WebCargoElement, index) in elements" :key="index">
                 <td colspan="3">
                     <input
                             type="text"

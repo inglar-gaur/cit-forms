@@ -121,7 +121,7 @@
         </div>
 
         <button @click.prevent="createBid" class="cit_btn btn_submit" type="submit">Создать заявку</button>
-        <button @click.prevent="webGate = null" class="cit_btn btn_submit" :disabled="!webGate">Отменить</button>
+        <button @click.prevent="webGate = null" class="cit_btn btn_cancel" :disabled="!webGate">Отменить</button>
     </form>
 </template>
 

@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export default {
     state: {
         Hours: [10, 12, 14, 17],
@@ -149,13 +147,13 @@ export default {
 
     actions: {
         getStreets: context => {
-            axios({
-                url: 'http://api.cit-ekb.ru/GetNomenklOfAutoship'
-            }).then(resp => {
-                if(resp && resp.data){
-                    context.commit('setDataElement', {Prop: 'Streets', Value: JSON.parse(resp.data)});
-                }
-            });
+            // axios({
+            //     url: 'http://api.cit-ekb.ru/GetNomenklOfAutoship'
+            // }).then(resp => {
+            //     if(resp && resp.data){
+            //         context.commit('setDataElement', {Prop: 'Streets', Value: JSON.parse(resp.data)});
+            //     }
+            // });
         }
     }
 
