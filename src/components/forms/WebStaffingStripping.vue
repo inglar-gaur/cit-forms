@@ -11,7 +11,7 @@
 
             <table class="load_unload_table">
                 <tr>
-                    <th :colspan="goodsPlaces.length">Объект перемещения груза (место нахождения груза)</th>
+                    <th :colspan="goodsPlaces.length">{{ tableTitle }}</th>
                 </tr>
                 <tr>
                     <th v-for="(place, index) in goodsPlaces" :key="index">{{place.title}}</th>
@@ -60,12 +60,21 @@
         },
         computed: {
             tableTitle: function () {
-                let tableTitle = 'Период выполнения';
+                let tableTitle = '';
+                let container;
 
                 if (this.$store.getters.isWebGateIn) {
-                    tableTitle += ' погрузочных работ';
+                    container = this.$store.getters.WebGateInContainer;
+                    // tableTitle += ' погрузочных работ';
                 } else if (this.$store.getters.isWebGateOut) {
-                    tableTitle += ' разгрузочных работ';
+                    container = this.$store.getters.WebGateOutContainer;
+                    // tableTitle += ' разгрузочных работ';
+                }
+
+                if(container && container.State === 'порожний'){
+                    tableTitle = 'объект прибытия (нахождения) груза на Терминал';
+                }else if(container && container.State === 'груженый'){
+                    tableTitle = 'объект выбытия (перемещения) груза с Терминала';
                 }
 
                 return tableTitle;

@@ -103,8 +103,8 @@
                     <tr :key="service.Art">
                         <td>{{service.Title}}</td>
                         <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
-                        <td>1</td>
-                        <td>{{service.Cost}}</td>
+                        <td>{{service.Number}}</td>
+                        <td>{{service.CostForUnit}}</td>
                         <td>{{service.Cost}}</td>
                         <td>{{service.Art}}</td>
                     </tr>

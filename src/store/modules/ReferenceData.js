@@ -84,15 +84,15 @@ export default {
                 {Title: 'технологические операции по заявке Заказчика', Type: 1},
             ],
             Services:{
-                '10.13': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Foot: 20, Cost: 1500, Unit: 2, Category: 0},
-                '10.14': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Foot: 40, Cost: 2000, Unit: 2, Category: 0},
+                '10.13': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Size: 20, Cost: 1500, Unit: 2, Category: 0},
+                '10.14': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Size: 40, Cost: 2000, Unit: 2, Category: 0},
                 '10.15': {Title: 'Хранение рефрижераторного контейнера с навесным дизель генератором под нагрузкой', Cost: 1000, Unit: 2, Category: 0},
                 '10.19': {Title: 'Снятие навесного дизель-генератора с контейнера', Cost: 500, Unit: 3, Category: 0},
                 '10.59': {Title: 'Оформление переадресации, оформление телеграммы', Cost: 500, Unit: 0, Category: 1},
                 '10.60': {Title: 'Организация услуг по поиску и оформлению предоставления места на ж/д платформе', Cost: 5000, Unit: 0, Category: 1},
                 '10.61': {Title: 'Организация услуг по поиску и оформлению пользования контейнером', Cost: 5000, Unit: 0, Category: 1},
                 '11.21': {Title: 'Предоставление товара для досмотра/осмотра отбора проб/образцов', Cost: 600, Unit: 5, Category: 2},
-                '11.22': {Title: 'Распаллетирование грузового места', Cost: 400, Unit: 6, Category: 2},
+                '11.22': {Title: 'Распаллетирование грузового места', Cost: 400, Unit: 5, Category: 2},
             }
         },
     },
@@ -147,6 +147,14 @@ export default {
 
     actions: {
         getStreets: context => {
+            fetch('http://api.cit-ekb.ru/GetNomenklOfAutoship')
+                .then(GetNomenklOfAutoship => {
+                    GetNomenklOfAutoship.json().then(resp => {
+                        if(resp){
+                            context.commit('setDataElement', {Prop: 'Streets', Value: resp});
+                        }
+                    })
+                });
             // axios({
             //     url: 'http://api.cit-ekb.ru/GetNomenklOfAutoship'
             // }).then(resp => {

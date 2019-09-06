@@ -74,6 +74,8 @@
     }
     .emulated-list-list{
         position: absolute;
+        bottom: 100%;
+        left: 0;
         background-color: white;
         width: 200%;
         padding-top: 10px;

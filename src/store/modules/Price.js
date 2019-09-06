@@ -27,7 +27,8 @@ function getTextRepairCategory(category){
 export default {
     state: {
         SelectedPriceServices: [],      // Выбранные услуги из прайсов
-        SelectedPrices: []              // Прайсы, услуги которых можно выбрать
+        SelectedPrices: [],             // Прайсы, услуги которых можно выбрать
+        SelectedPricesNumbers: {}       // Количества услуг по артикулу
     },
 
     mutations: {
@@ -41,6 +42,34 @@ export default {
             if(state && Array.isArray(selectedPrices)){
                 state.SelectedPrices = selectedPrices;
             }
+        },
+
+        /**
+         * Установка количественной характеристики услуги
+         * @param state
+         * @param {Object} payLoad
+         * @param {String} payLoad.ServiceArt      - Артикул услуги
+         * @param {Number} payLoad.ServiceNumber   - Количество
+         */
+        setServiceNumber(state, payLoad){
+            if(payLoad.ServiceArt && +payLoad.ServiceNumber > 0){
+                state.SelectedPricesNumbers[payLoad.ServiceArt] = +payLoad.ServiceNumber;
+                let Old = state.SelectedPricesNumbers;
+                state.SelectedPricesNumbers = {};
+                state.SelectedPricesNumbers = Old;
+            }
+        },
+
+        delServiceNumber(state, ServiceArt){
+            if(state.SelectedPricesNumbers.hasOwnProperty(ServiceArt)){
+                delete state.SelectedPricesNumbers[ServiceArt];
+            }
+        },
+
+        clearForm(state){
+            state.SelectedPriceServices = [];
+            state.SelectedPrices = [];
+            state.SelectedPricesNumbers = {};
         }
     },
 
@@ -262,10 +291,12 @@ export default {
                         let Service = {
                             Title: getters.getPriceServices.Services[ServiceArt].Title,
                             Unit: getters.getPriceServices.Services[ServiceArt].Unit,
-                            Art: getters.getPriceServices.Services[ServiceArt].Art,
-                            Cost: getters.getPriceServices.Services[ServiceArt].Cost+',00',
+                            Art: ServiceArt,
+                            Cost: (getters.getPriceServices.Services[ServiceArt].Cost * state.SelectedPricesNumbers[ServiceArt])+',00',
                             Category: getters.getPriceServices.Services[ServiceArt].Category,
-                            Type: getters.getPriceServices.Categories[getters.getPriceServices.Services[ServiceArt].Category].Type
+                            Type: getters.getPriceServices.Categories[getters.getPriceServices.Services[ServiceArt].Category].Type,
+                            Number: state.SelectedPricesNumbers[ServiceArt],
+                            CostForUnit: getters.getPriceServices.Services[ServiceArt].Cost
                         };
                         SelectedPriceList.PriceServices.push(Service);
                     }

@@ -29,6 +29,8 @@
                             WebGateTypePostfix="Out"
                     ></WebGate>
 
+                    <PriceServices></PriceServices>
+
                     <div class="form_row" v-if="false">
                         <label @click="$store.commit('openPopup', 'PriceSelectPopup')">
                             <input style="width: 240px" type="text" value="+ Заказать услугу по прайсу" disabled>
@@ -72,7 +74,7 @@
                 v-else
         ></receivingCreateForm>
 
-        <PriceSelectPopup></PriceSelectPopup>
+
         <PriceSelectedPopup></PriceSelectedPopup>
 
     </div>
@@ -86,10 +88,11 @@
     import PriceSelectedPopup from "../popups/PriceSelectedPopup";
     import Messages from "../popups/Messages";
     import WebGate from "./WebGate";
+    import PriceServices from "../forms/PriceServices";
 
     export default {
         name: "receiving-main",
-        components: {Messages, BidDateAndFiles, WebGate, receivingCreateForm, PriceSelectPopup, PriceSelectedPopup},
+        components: {Messages, BidDateAndFiles, WebGate, receivingCreateForm, PriceSelectPopup, PriceSelectedPopup, PriceServices},
 
         data: function () {
             return {
@@ -190,7 +193,7 @@
                     // }
                 }).then(CreateWebBidFetch => {
                     CreateWebBidFetch.json().then(resp => {
-                        resp = JSON.parse(resp);
+                        // resp = JSON.parse(resp);
                         if(resp && resp.status === 'ok' && +resp.bidId > 0){
 
                             this.$store.commit('addMessage', 'Заявка создана');
@@ -205,7 +208,7 @@
                                 'idBid='+resp.bidId
                             ).then(GetBarCodeFetch => {
                                 GetBarCodeFetch.json().then(resp => {
-                                    resp = JSON.parse(resp);
+                                    // resp = JSON.parse(resp);
 
                                     if(resp && resp.PassCard){
                                         let printWindow = window.open('', 'PRINT', 'height=400,width=600');

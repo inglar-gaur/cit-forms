@@ -119,13 +119,13 @@
                         <div class="labels">
 
                             <label class="label_width_outside_input">
-                                <input value="terminal" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
+                                <input :value="0" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Заказать терминальную услугу</span>
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input value="customs" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
+                                <input :value="1" type="checkbox" v-model="Prices" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">Заказать услугу под таможенной процедурой</span>
                             </label>

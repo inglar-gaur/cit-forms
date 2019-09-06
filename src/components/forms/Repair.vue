@@ -14,6 +14,7 @@
                 </tr>
                 <tr v-for="(repairElement, index) in $store.state.WebBid.wRepairContainer.list" :key="index">
                     <td colspan="3">
+                        <div class="row-del" @click="$store.commit('delRepairElement', index)"></div>
                         <EmulateSelect
                             :placeholder="getServiceTitleFromIndex(repairElement.ServiceIndex)"
                             :elementsList="RepairServiceTitles"
@@ -21,7 +22,6 @@
                             v-if="$store.state.WebBid.wRepairContainer.list.length === index+1"
                         ></EmulateSelect>
                         <template v-else>
-                            <div class="row-del" @click="$store.commit('delRepairElement', index)"></div>
                             <input type="text" :value="getServiceTitleFromIndex(repairElement.ServiceIndex)" disabled>
                         </template>
                     </td>
@@ -79,6 +79,7 @@
 <script>
 
     import EmulateSelect from "./subForms/EmulateSelect";
+    import { mapState, mapGetters } from 'vuex';
 
     export default {
         name: "Repair",
@@ -86,12 +87,19 @@
         components: {EmulateSelect},
 
         computed: {
+            /**
+             * Возможность добавить новую строку с ремонтом
+             * @return {boolean}
+             */
             CanAddNewRepairService(){
 
-                return !!(Array.isArray(this.$store.state.WebBid.wRepairContainer.list) && this.$store.getters.getSelectedServices.TotalRepairCategory < 4 &&
+                console.log(this.RepairContainerList.every(service => service.RepairCategory));
+                return !!(
+                    Array.isArray(this.RepairContainerList) &&                                  // Список услуг ремонта - массив (надо ли?)
+                    this.TotalRepairCategory < 4 &&                                             // Итоговая категория ремонта меньше четырёх
                     (
-                        this.$store.state.WebBid.wRepairContainer.list.length === 0 ||
-                        this.$store.state.WebBid.wRepairContainer.list.every(service => service.RepairCategory)
+                        this.RepairContainerList.length === 0 ||                                // Списоек еще пуст
+                        this.RepairContainerList.every(service => service.RepairCategory)       // Или Все услуги имеют достаточно выбранных полей
                     )
                 );
             },
@@ -100,7 +108,15 @@
                 return this.$store.getters.getRepairServices.map(RepairService =>
                     RepairService.Title ? RepairService.Title : null
                 ).filter(RepairService => RepairService);
-            }
+            },
+
+            TotalRepairCategory(){
+                return this.$store.getters.getSelectedServices.TotalRepairCategory;
+            },
+
+            ...mapState({
+                RepairContainerList: state => state.WebBid.wRepairContainer.list,
+            })
         },
 
         methods:{

@@ -513,6 +513,7 @@ export default {
                     Full: WebGateObject.Containers.ContainerList[0].State === Constants.ContainerTitleOfFull,
                     WeightGross: WebGateObject.Containers.ContainerList[0].WeightGross,
                     Number: WebGateObject.Containers.ContainerList[0].Number,
+                    State: WebGateObject.Containers.ContainerList[0].State,
                 };
                 switch (container.Size) {
                     case 20:
