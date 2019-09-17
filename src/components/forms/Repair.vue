@@ -42,7 +42,7 @@
                     ></td>
                     <td><input
                             type="text"
-                            @input="$emit('changeRepairElement', {prop: 'SpecialRequirements', index: index, value: $event.target.value})"
+                            @input="$emit('changeRepairElement', {PropName: 'SpecialRequirements', ElementIndex: index, PropValue: $event.target.value})"
                             :value="repairElement.SpecialRequirements"
                     ></td>
                     <td>
@@ -184,7 +184,7 @@
             selectRepairService(RepairElementIndex, InputRepairServiceTitle){
                 let RepairServiceIndex = this.RepairServiceTitles.findIndex(RepairServiceTitle => RepairServiceTitle === InputRepairServiceTitle);
                 if(~RepairServiceIndex){
-                    this.$store.commit('changeRepairElement', {prop: 'ServiceIndex', index: RepairElementIndex, value: RepairServiceIndex});
+                    this.$store.commit('changeRepairElement', {PropName: 'ServiceIndex', ElementIndex: RepairElementIndex, PropValue: RepairServiceIndex});
                 }
             },
 
@@ -195,7 +195,7 @@
                             this.$store.getters.getRepairServices[ServiceIndex].Characteristics.hasOwnProperty(CharacteristicArt) &&
                             this.$store.getters.getRepairServices[ServiceIndex].Characteristics[CharacteristicArt].Title === InputRepairCharacteristicTitle
                         ){
-                            this.$store.commit('changeRepairElement', {prop: 'Characteristic', index: RepairElementIndex, value: CharacteristicArt});
+                            this.$store.commit('changeRepairElement', {PropName: 'Characteristic', ElementIndex: RepairElementIndex, PropValue: CharacteristicArt});
                         }
                     }
                 }

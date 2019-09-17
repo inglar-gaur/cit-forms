@@ -1,94 +1,6 @@
 
 import Constants from './../../Constants';
-
-/**
- * Описание используемых объектов
- *
- *      Объект контейнера
- * @typedef WebContainer
- * @property {Number}   Id
- * @property {Number}   Number
- * @property {Number}   Size
- * @property {String}   State
- * @property {String}   StatePrism
- * @property {String}   CustomsStatus
- * @property {Boolean}  Seal
- * @property {Boolean}  DangerSign
- * @property {Boolean}  SecurityService
- * @property {Boolean}  InsuranceService
- * @property {Number}   WeightGross
- * @property {Number}   VGM
- *
- *      Объект списка контейнеров
- * @typedef WebContainerList
- * @property {Number}                   Id
- * @property {String}                   BidType
- * @property {Number}                   BidId
- * @property {Array.<WebContainer>}     ContainerList
- *
- *      Объект заявки приёма/получения
- * @typedef WebGate
- * @property {Number}                   Id
- * @property {Number}                   WebBidId
- * @property {String}                   State
- * @property {Number}                   Size
- * @property {Date}                     DatePlan
- * @property {Boolean}                  DangerousGoods
- * @property {WebContainerList|null}    Containers
- * @property {Object}                   Documents
- * @property {Object}                   Cargo
- *
- *      Объект автоперевозки
- * @typedef {Object}        WebInlandTransportation
- * @property {Number} Id
- * @property {String} Comment
- * @property {Number} TimeIdle
- * @property {String} Phone
- * @property {String} Contacts
- * @property {String} Address
- * @property {Date} ServiceDatePlan
- * @property {Boolean} DanderousGoods
- * @property {Boolean} CustomsSchedule
- * @property {String} DoubleOperationType
- * @property {Boolean} GateOutOperation
- * @property {Boolean} GateInOperation
- * @property {Number} WebBidId
- * @property {WebContainerList|null} Containers
- * @property  Documents
- * @property {Boolean} ReturnContainer
- * @property {String} street
- * @property {String} houseNumber
- *
- *      Объект списка услуг по ремонту контейнера
- * @typedef {Object} WebRepairContainer
- * @property {Number} Id
- * @property {Array} list
- *
- *      Данные по основной заявке
- * @typedef {Object}        WebBidState
- * @property {Number}       Id
- * @property {String}       gId
- * @property {Date}         ApplicationDate
- * @property {String}       Account
- * @property {String}       Status
- * @property {Boolean}      DangerousGoods
- * @property Documents
- * @property {WebGate|null}  wGateOut
- * @property {WebGate|null}  wGateIn
- * @property wShipping
- * @property wStaffingStripping
- * @property {WebInlandTransportation|null} wInlandTransportation
- * @property {WebRepairContainer|null} wCustomsRelease
- */
-
-function getDefaultCargo(){
-    return  {
-        Id: 0,
-        BidType: 0,
-        BidId: 0,
-        Elements: []
-    }
-}
+import DefaultValues from './../../DefaultValues.js';
 
 function copyObject(oldObject) {
     let newObject = {};
@@ -107,198 +19,108 @@ export default {
      * @type WebBidState
      */
     state: {
-        Id: 0,
-        gId: "00000000-0000-0000-0000-000000000000",
-        ApplicationDate: null,
-        Account: '',
-        Status: '',
-        DangerousGoods: false,
-        Documents: null,
-        wGateOut: null,
-        wGateIn: null,
-        wShipping: null,
-        wStaffingStripping: null,
-        wInlandTransportationIn: null,
-        wInlandTransportationOut: null,
-        wCustomsRelease: null,
-        wRepairContainer: null,
+        Id: DefaultValues.getProperty('Id'),
+        gId: DefaultValues.getProperty('gId'),
+        ApplicationDate: DefaultValues.getProperty(),
+        Account: DefaultValues.getProperty('Account'),
+        Status: DefaultValues.getProperty('Status'),
+        DangerousGoods: DefaultValues.getProperty(),
+        Documents: DefaultValues.getProperty(),
+        wGateOut: DefaultValues.getProperty(),
+        wGateIn: DefaultValues.getProperty(),
+        wShipping: DefaultValues.getProperty(),
+        wStaffingStripping: DefaultValues.getProperty(),
+        wInlandTransportationIn: DefaultValues.getProperty(),
+        wInlandTransportationOut: DefaultValues.getProperty(),
+        wCustomsRelease: DefaultValues.getProperty(),
+        wRepairContainer: DefaultValues.getProperty(),
     },
 
     mutations: {
-        setDefaultWebObject(state, type = '') {
+        /**
+         * Установка в свойство основной заявки объекта по умолчанию
+         * @param state
+         * @param {String} PropertyObjectName
+         */
+        setDefaultWebObject(state, PropertyObjectName) {
 
-            /**
-             * @type WebGate
-             */
-            const WebGate = {
-                Id: 0,
-                WebBidId: 0,
-                State: '',
-                Size: 0,
-                DangerousGoods: false,
-                DatePlan: null,
-                Containers: null,
-            };
-
-            /**
-             * @type WebInlandTransportation
-             */
-            const WebInlandTransportation = {
-                Id: 0,
-                Comment: '',
-                TimeIdle: 0,
-                Phone: '',
-                Contacts: '',
-                ServiceDatePlan: null,
-                DanderousGoods: false,
-                CustomsSchedule: false,
-                DoubleOperationType: '',
-                GateOutOperation: false,
-                GateInOperation: false,
-                WebBidId: 0,
-                Containers: null,
-                Documents: null,
-                ReturnContainer: null,
-                street: '',
-                houseNumber: '',
-            };
-
-            Object.defineProperty(WebInlandTransportation, 'Address', {
-                get: function () {
-                    return this.street + (this.street && this.houseNumber ? ', ' + this.houseNumber : '');
-                }
-            });
-
-            switch (type) {
-                case 'wGateIn':
-                    WebGate.Cargo = null;
-                    state.wGateIn = WebGate;
-                    break;
-                case 'wGateOut':
-                    WebGate.Documents = null;
-                    state.wGateOut = WebGate;
-                    break;
-                case 'wInlandTransportationIn':
-                    state.wInlandTransportationIn = WebInlandTransportation;
-                    break;
-                case 'wInlandTransportationOut':
-                    state.wInlandTransportationOut = WebInlandTransportation;
-                    break;
-                case 'wStaffingStripping':
-                    state.wStaffingStripping = {
-                        Id: 0,
-                        WebBidId: 0,
-                        ExecutePeriodStart: null,
-                        ExecutePeriodEnd: null,
-                        Source: '',
-                        Receiver: '',
-                        SourceDescription: '',
-                        ReceiverDescription: '',
-                        Containers: null,
-                        Documents: null,
-                        Cargo: getDefaultCargo(),
-                    };
-                    break;
-                case 'wCustomsRelease':
-                    state.wCustomsRelease = {
-                        Id: 0,
-                        WebBidId: 0,
-                        Containers: null,
-                        Documents: null,
-                    };
-                    break;
-                case 'wRepairContainer':
-                    state.wRepairContainer = {
-                        Id: 0,
-                        list: [],
-                    };
-                    break;
+            if(state.hasOwnProperty(PropertyObjectName)){
+                state[PropertyObjectName] = DefaultValues.getObject(PropertyObjectName);
             }
         },
 
+        /**
+         * Добавление контейнера в список заявки получения или выдачи
+         * @param state
+         * @param {String} type - Тип заявки (получение или выдача)
+         */
         addDefaultContainer(state, type = '') {
 
             let WebGate = this.getters.getWebBidOperation(type);
 
             if (WebGate) {
                 if (!WebGate.Containers || !Array.isArray(WebGate.Containers.ContainerList)) {
-                    /**
-                     * @type WebContainerList
-                     */
-                    WebGate.Containers = {
-                        Id: 0,
-                        BidType: '',
-                        BidId: 0,
-                        ContainerList: [],
-                    };
+                    WebGate.Containers = DefaultValues.getObject('WebContainerList');
                 }
 
-                WebGate.Containers.ContainerList.push(
-                    /**
-                     * @type WebContainer
-                     */
-                    {
-                        Id: 0,
-                        Number: null,
-                        Size: 0,
-                        State: '',
-                        StatePrism: '',
-                        CustomsStatus: '',
-                        Seal: false,
-                        DangerSign: false,
-                        SecurityService: false,
-                        InsuranceService: false,
-                        WeightGross: 0,
-                        VGM: 0,
-                    }
-                );
+                WebGate.Containers.ContainerList.push(DefaultValues.getObject('WebContainer'));
             }
         },
 
         /**
-         *
-         * @param state
-         * @param {Object} inputData
-         * @param {String} inputData.WebObjectType
-         * @param {String} inputData.prop
-         * @param {*} inputData.value
+         * Полезная нагрузка для передачи в мутации
+         * @typedef {Object} PayLoad
+         * @property {String} WebObjectType - Имя объекта как свойство другого объекта (опционально)
+         * @property {String} ElementIndex  - Индекс элемента (если в массиве) (опционально)
+         * @property {String} PropName      - Имя изменяемого свойства
+         * @property {*} PropValue          - Значение изменяемого свойства
          */
-        setWebObjectValue(state, inputData) {
-            if (inputData && inputData.WebObjectType) {
-                let WebGate = this.getters.getWebBidOperation(inputData.WebObjectType);
 
-                if (WebGate && inputData.prop && inputData.prop in WebGate && inputData.value !== undefined) {
-                    WebGate[inputData.prop] = inputData.value;
+        /**
+         * Изменение свойства объекта (который является свойством другого объекта, например какая-то более конкретная заявка)
+         * @param state
+         * @param {PayLoad} PayLoad
+         */
+        setWebObjectValue(state, PayLoad) {
+            if (PayLoad && PayLoad.WebObjectType) {
+                let WebGate = this.getters.getWebBidOperation(PayLoad.WebObjectType);
+
+                if (WebGate && PayLoad.PropName && PayLoad.PropName in WebGate && PayLoad.PropValue !== undefined) {
+                    WebGate[PayLoad.PropName] = PayLoad.PropValue;
                 }
             }
         },
 
         /**
-         *
+         * Изменение свойства контейнера
          * @param state
-         * @param {Object} inputData
-         * @param {String} inputData.WebGateType
-         * @param {String} inputData.prop
-         * @param {Number} inputData.index
-         * @param {*} inputData.value
+         * @param {PayLoad} PayLoad
          */
-        setContainerValue(state, inputData) {
-            if (state && inputData && inputData.WebGateType) {
-                let WebGate = this.getters.getWebBidOperation(inputData.WebGateType);
+        setContainerValue(state, PayLoad) {
+            if (state && PayLoad && PayLoad.WebObjectType) {
+                let WebGate = this.getters.getWebBidOperation(PayLoad.WebObjectType);
 
                 if (
                     WebGate &&
                     WebGate.Containers &&
                     Array.isArray(WebGate.Containers.ContainerList) &&
-                    WebGate.Containers.ContainerList[inputData.index] &&
-                    inputData.prop in WebGate.Containers.ContainerList[inputData.index] &&
-                    inputData.value !== undefined
+                    WebGate.Containers.ContainerList[PayLoad.ElementIndex] &&
+                    PayLoad.PropName in WebGate.Containers.ContainerList[PayLoad.ElementIndex] &&
+                    PayLoad.PropValue !== undefined
                 ) {
-                    WebGate.Containers.ContainerList[inputData.index][inputData.prop] = inputData.value;
+                    WebGate.Containers.ContainerList[PayLoad.ElementIndex][PayLoad.PropName] = PayLoad.PropValue;
                 }
             }
         },
 
+        /**
+         * Установка даты операции для завок
+         *
+         * Пока она одна на все виды заявок и хранится в свойстве для даты создания. Перемещение этой даты в остальные заявки и замена на дату создания
+         * происходит перед отправкой на сервер.
+         * @param state
+         * @param date
+         */
         setBidDate(state, date) {
             if (date && date.setMilliseconds) {
                 state.ApplicationDate = new Date();
@@ -306,6 +128,14 @@ export default {
                 state.ApplicationDate.setHours(0, 0, 0, 0);
             }
         },
+
+        /**
+         * Установка времени операции для заявок
+         * @param state
+         * @param {Object} time
+         * @param {Number} time.hours       - часы
+         * @param {Number} time.minutes     - минуты
+         */
         setBidTime(state, time) {
             if (state.ApplicationDate && state.ApplicationDate.setHours && time && (time.hours || time.minutes)) {
                 let newDate = new Date();
@@ -316,54 +146,51 @@ export default {
             }
         },
 
+        /**
+         * Добавление списка грузов в заявку приёма контейнера
+         * Если выбрана погрузка при приёме порожнего контейнера или обратная достака груженого контейнера
+         * @param state
+         */
         setCargoToWebGateIn(state) {
             if (state.wGateIn) {
-                state.wGateIn.Cargo = getDefaultCargo();
+                state.wGateIn.Cargo = DefaultValues.getObject('CargoList');
             }
         },
 
+        /**
+         * Добавления элемента по умалчанию в список грузов
+         * @param state
+         * @param WebObjectType
+         */
         addDefaultCargoElement(state, WebObjectType) {
 
+            /**
+             * В случае обратной доставки груженого контейнера заявка получения как таковая не должна быть создана.
+             * Мы создаём объект заявки получения контейнера, чтоб в нём передать список грузов и золняем только свойство с этим списком.
+             * Сторона сервера должна быть в курсе: их предложение.
+             */
             if (
-                this.getters.WebGateOutContainer &&
-                this.getters.WebGateOutContainer.Empty &&
-                state.wInlandTransportationOut &&
-                state.wInlandTransportationOut.ReturnContainer &&
-                !state.wGateIn
+                this.getters.WebGateOutContainer &&                     // Есть контейнер в заявке выдачи
+                this.getters.WebGateOutContainer.Empty &&               // Контейнер в заявке выдачи пуст
+                state.wInlandTransportationOut &&                       // Выбрана автоперевозка контейнера
+                state.wInlandTransportationOut.ReturnContainer &&       // Выбрана обратная доставка
+                !state.wGateIn                                          // Заявка получения контейнера еще не существует
             ) {
-                this.commit('setDefaultWebObject', 'wGateIn');
-                this.commit('setCargoToWebGateIn');
+                this.commit('setDefaultWebObject', 'wGateIn');          // Создание заявки получения контейнера
+                this.commit('setCargoToWebGateIn');                     // Создание списка с грузами
             }
 
             let WebObject = this.getters.getWebBidOperation(WebObjectType);
 
             if (WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements)) {
-                WebObject.Cargo.Elements.push(
-                    {
-                        Id: 0,
-                        Name: '',
-                        CodeETSNG: '',
-                        UnitCount: 0,
-                        UnitWeight: 0,
-                        UnitSize: '',
-                        PackageDescription: '',
-                        DangerousClassification: '',
-                    }
-                );
+                WebObject.Cargo.Elements.push(DefaultValues.getObject('CargoElement'));
             }
         },
 
-        addDefaultRepairElement(state) {
-
-            state.wRepairContainer.list.push(
-                {
-                    ServiceIndex: -1,
-                    Characteristic: '',
-                    SpecialRequirements: '',
-                    ImageFiles: [],
-                }
-            );
-        },
+        /**
+         * Добавление услуги по ремонту в список
+         */
+        addDefaultRepairElement: state => state.wRepairContainer.list.push(DefaultValues.getObject('RepairElement')),
 
         delRepairElement(state, index){
             if(Array.isArray(state.wRepairContainer.list) && state.wRepairContainer.list[index]){
@@ -374,23 +201,19 @@ export default {
         /**
          * Изменение элемента списка товаров
          * @param state
-         * @param {Object} inputData
-         * @param {String} inputData.WebObjectType
-         * @param {String} inputData.prop
-         * @param {Number} inputData.index
-         * @param {*} inputData.value
+         * @param {PayLoad} PayLoad
          */
-        changeCargoElement(state, inputData) {
-            if (state && inputData && inputData.WebObjectType && ~inputData.index) {
-                let WebObject = this.getters.getWebBidOperation(inputData.WebObjectType);
-                let CargoElement = WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements) ? WebObject.Cargo.Elements[inputData.index] : false;
+        changeCargoElement(state, PayLoad) {
+            if (state && PayLoad && PayLoad.WebObjectType && ~PayLoad.ElementIndex) {
+                let WebObject = this.getters.getWebBidOperation(PayLoad.WebObjectType);
+                let CargoElement = WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements) ? WebObject.Cargo.Elements[PayLoad.ElementIndex] : false;
 
                 if (
                     CargoElement &&
-                    inputData.prop in CargoElement &&
-                    inputData.value !== undefined
+                    PayLoad.PropName in CargoElement &&
+                    PayLoad.PropValue !== undefined
                 ) {
-                    CargoElement[inputData.prop] = inputData.value;
+                    CargoElement[PayLoad.PropName] = PayLoad.PropValue;
                 }
             }
         },
@@ -398,83 +221,58 @@ export default {
         /**
          * Изменение элемента списка услуг по ремонту
          * @param state
-         * @param {Object}  inputData
-         * @param {Number}  inputData.index     индекс изменяемого элемента
-         * @param {String}  inputData.prop      название изменяемого свойства
-         * @param {*}       inputData.value     значение изменяемого свойства
+         * @param {PayLoad} PayLoad
          */
-        changeRepairElement(state, inputData) {
+        changeRepairElement(state, PayLoad) {
 
             if (
                 state && state.wRepairContainer && Array.isArray(state.wRepairContainer.list) && // Проверка наличия объекта ремонта и массива услуг в нём
-                inputData && ~inputData.index && state.wRepairContainer.list[inputData.index]    // Проверка входящего индекса и наличия соответствующего элемента
+                PayLoad && ~PayLoad.ElementIndex && state.wRepairContainer.list[PayLoad.ElementIndex]    // Проверка входящего индекса и наличия соответствующего элемента
             ) {
 
                 // Если изменилось название, сбрасываем выбранную ранее характеристику
-                if(inputData.prop === 'ServiceIndex'){
-                    state.wRepairContainer.list[inputData.index].ServiceIndex = inputData.value;
-                    state.wRepairContainer.list[inputData.index].Characteristic = null;
-                    state.wRepairContainer.list[inputData.index].RepairCategory = null;
-                    state.wRepairContainer.list[inputData.index].RepairCategoryText = null;
+                if(PayLoad.PropName === 'ServiceIndex'){
+                    state.wRepairContainer.list[PayLoad.ElementIndex].ServiceIndex = PayLoad.PropValue;
+                    state.wRepairContainer.list[PayLoad.ElementIndex].Characteristic = null;
+                    state.wRepairContainer.list[PayLoad.ElementIndex].RepairCategory = null;
+                    state.wRepairContainer.list[PayLoad.ElementIndex].RepairCategoryText = null;
                 }
                 // Иначе если изменилась характеристика, устанавливаем её и вычисляем и устанавливаем категорию
                 else if (
-                    inputData.prop === 'Characteristic' &&
-                    state.wRepairContainer.list[inputData.index] &&
-                    ~state.wRepairContainer.list[inputData.index].ServiceIndex
+                    PayLoad.PropName === 'Characteristic' &&
+                    state.wRepairContainer.list[PayLoad.ElementIndex] &&
+                    ~state.wRepairContainer.list[PayLoad.ElementIndex].ServiceIndex
                 ) {
 
-                    let RepairService = this.getters.getRepairServices[state.wRepairContainer.list[inputData.index].ServiceIndex];
+                    let RepairService = this.getters.getRepairServices[state.wRepairContainer.list[PayLoad.ElementIndex].ServiceIndex];
 
-                    if(RepairService && RepairService.Characteristics && RepairService.Characteristics[inputData.value]){
-                        state.wRepairContainer.list[inputData.index].Characteristic = inputData.value;
+                    if(RepairService && RepairService.Characteristics && RepairService.Characteristics[PayLoad.PropValue]){
+                        state.wRepairContainer.list[PayLoad.ElementIndex].Characteristic = PayLoad.PropValue;
 
                         // Если найдена соответствующая характеристика то присваиваем категорию
-                        this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: RepairService.Characteristics[inputData.value].Category});
+                        this.commit('changeRepairElement', {PropName: 'RepairCategory', ElementIndex: PayLoad.ElementIndex, PropValue: RepairService.Characteristics[PayLoad.PropValue].Category});
                         if(this.getters.getSelectedServices.TotalRepairCategory >= 4){
                             this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
                         }
                     }
 
-                    // console.log(state.wRepairContainer.list[inputData.index].Characteristic);
-                    // console.log(this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory]);
-                    // /**
-                    //  * Ищем индекс данной услуги в общем списке услуг по ремонту
-                    //  * @type {number}
-                    //  */
-                    // let repairVariantIndex = this.getters.getRepairVariants.findIndex(repairVariant => repairVariant.title === state.wRepairContainer.list[inputData.index].Name);
-                    //
-                    // /**
-                    //  * Если найдена услуга, имеет характеристики, перебираем их ищем соответсвующую выбранной
-                    //  * (repairCategory не индекс массива, а имя св-ва потому что есть услуги без первой категории)
-                    //  */
-                    // if (~repairVariantIndex && this.getters.getRepairVariants[repairVariantIndex].characteristics) {
-                    //     for (let repairCategory in this.getters.getRepairVariants[repairVariantIndex].characteristics) {
-                    //         if (this.getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(repairCategory) &&
-                    //             this.getters.getRepairVariants[repairVariantIndex].characteristics[repairCategory] === inputData.value) {
-                    //
-                    //             state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
-                    //             // Если найдена соответствующая характеристика то присваиваем категорию и её текстовое отображение
-                    //             this.commit('changeRepairElement', {prop: 'RepairCategory', index: inputData.index, value: +repairCategory});
-                    //             if(this.getters.getSelectedPriceElements.TotalRepairCategory >= 4){
-                    //                 this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
-                    //             }
-                    //         }
-                    //     }
-                    // }
-                    // Если есть такое свойство, устанавливаем его
-                }else if (state.wRepairContainer.list[inputData.index].hasOwnProperty(inputData.prop) && inputData.value !== undefined) {
-                    state.wRepairContainer.list[inputData.index][inputData.prop] = inputData.value;
+                }else if (state.wRepairContainer.list[PayLoad.ElementIndex].hasOwnProperty(PayLoad.PropName) && PayLoad.PropValue !== undefined) {
+                    state.wRepairContainer.list[PayLoad.ElementIndex][PayLoad.PropName] = PayLoad.PropValue;
                 }
 
                 state.wRepairContainer = copyObject(state.wRepairContainer);
             }
         },
 
+        /**
+         * Очистка формы
+         * @param state
+         */
         clearForm(state) {
+            // Возвращаем свойствам основной заявки значений по умолчанию
             for (let stateProp in state) {
                 if (state.hasOwnProperty(stateProp)) {
-                    state[stateProp] = null;
+                    state[stateProp] = DefaultValues.getProperty(stateProp);
                 }
             }
             window.scrollTo({
@@ -528,60 +326,48 @@ export default {
             return container;
         },
 
-
-        isDangerousGoods(state) {
-            return (state.wGateIn && state.wGateIn.DangerousGoods) || (state.wGateOut && state.wGateOut.DangerousGoods);
-        },
         /**
-         * @param state
-         * @return {WebGate|WebInlandTransportation|null}
+         * Выбран опасный груз  в заявке получения или выдачи
+         * @return {Boolean}
          */
-        getWebBidOperation(state) {
-            return (WebGateType) => {
-                if (WebGateType in state) {
-                    return state[WebGateType];
+        isDangerousGoods: state => (state.wGateIn && state.wGateIn.DangerousGoods) || (state.wGateOut && state.wGateOut.DangerousGoods),
+
+        /**
+         * Функция получения свойства основной заявки по его имени
+         * @param state
+         * @returns {Function}
+         */
+        getWebBidOperation: state =>
+
+            /**
+             * @param {String} WebBidPropName
+             * @return {WebGate|WebInlandTransportation|null}
+             */
+                WebBidPropName => {
+                if (WebBidPropName in state) {
+                    return state[WebBidPropName];
                 }
                 return null;
-            }
-        },
+            },
 
-        getCharacteristicsFromVariantName(state, getters) {
-            return repairElementName => {
-                if (state && state.wRepairContainer && Array.isArray(state.wRepairContainer.list)) {
-                    if (repairElementName) {
-                        let repairVariantIndex = getters.getRepairVariants.findIndex(repairVariant => repairVariant.title === repairElementName);
-                        if (~repairVariantIndex && getters.getRepairVariants[repairVariantIndex].characteristics) {
-                            let characteristics = [];
-                            for (let characteristic in getters.getRepairVariants[repairVariantIndex].characteristics) {
-                                if (getters.getRepairVariants[repairVariantIndex].characteristics.hasOwnProperty(characteristic)) {
-                                    characteristics.push(getters.getRepairVariants[repairVariantIndex].characteristics[characteristic].Title);
-                                }
-                            }
-                            return characteristics;
-                        }
-                    }
-                    return null;
-                }
-
-                return false;
-            }
-        },
-
-        canSubmitBid(state, getters){
-            if(state.ApplicationDate){
+        /**
+         * Возможность отправить форму на сервер
+         * @param state
+         * @param getters
+         * @returns {boolean}
+         */
+        canSubmitBid(state, getters) {
+            if (state.ApplicationDate) {
                 let container;
-                if(getters.isWebGateIn){
+                if (getters.isWebGateIn) {
                     container = getters.WebGateInContainer;
-                }else if(getters.isWebGateOut){
+                } else if (getters.isWebGateOut) {
                     container = getters.WebGateOutContainer;
                 }
 
                 return !!(container && container.Size && container.Number);
             }
             return false;
-        },
-
-        getSelectedRepairServices: (state) =>
-            state.wRepairContainer && Array.isArray(state.wRepairContainer.list) ?
-                state.wRepairContainer.list.filter(service => ~service.Barcode).map(service => service.Barcode) : []},
+        }
+    }
 };

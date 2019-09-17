@@ -3,7 +3,7 @@
 
         <Messages></Messages>
 
-        <form v-if="$store.getters.isWebGateIn || $store.getters.isWebGateOut" class="cit_form receiving_form" @submit.prevent="sendBid">
+        <form v-if="isWebGateIn || isWebGateOut" class="cit_form receiving_form" @submit.prevent="sendBid">
             <div class="application_wrap">
                 <div class="application">
                     <h2>Заявка на {{ mainOperationTextType }} контейнера <span class="application_number">№{{ 1 }}</span>
@@ -20,12 +20,12 @@
                     <BidDateAndFiles></BidDateAndFiles>
 
                     <WebGate
-                            v-if="$store.getters.isWebGateIn"
+                            v-if="isWebGateIn"
                             WebGateTypePostfix="In"
                     ></WebGate>
 
                     <WebGate
-                            v-if="$store.getters.isWebGateOut"
+                            v-if="isWebGateOut"
                             WebGateTypePostfix="Out"
                     ></WebGate>
 
@@ -89,6 +89,7 @@
     import Messages from "../popups/Messages";
     import WebGate from "./WebGate";
     import PriceServices from "../forms/PriceServices";
+    import { mapGetters } from 'vuex'
 
     export default {
         name: "receiving-main",
@@ -127,6 +128,11 @@
                 }
                 return "";
             },
+
+            ...mapGetters([
+                'isWebGateIn',
+                'isWebGateOut',
+            ])
         },
 
         created(){
@@ -339,15 +345,6 @@
                 this.webGate = null;
             }
         },
-        // mounted: function() {
-        //    let fileInputs = document.querySelectorAll('.cit__form_attachment');
-        //    console.log(fileInputs);
-        //
-        //    for(let i=0; i<fileInputs.length; i++){
-        //        console.log(fileInputs[i].querySelector('input'));
-        //        fileInputs[i].querySelector('input').addEventListener('change', e => console.log(e, i));
-        //    }
-        // }
     }
 </script>
 

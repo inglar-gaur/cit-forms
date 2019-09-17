@@ -8,7 +8,11 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+
+  mounted() {
+    this.$store.dispatch('getCustomsReleasePrices');
+  }
 }
 </script>
 

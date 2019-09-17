@@ -7,14 +7,14 @@
                     <EmulateSelect
                             :placeholder="WebInlandTransportationObject.street ? WebInlandTransportationObject.street : 'Улица'"
                             :elementsList="$store.getters.getStreetsList"
-                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'street', value: $event})"
+                            @selectElement="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, PropName: 'street', PropValue: $event})"
                     ></EmulateSelect>
                 </div>
                 <div style="width: 30%;position: absolute;bottom: 0;right: 0;">
                     <input
                             type="text"
                             :placeholder="WebInlandTransportationObject.house ? WebInlandTransportationObject.house : 'Дом'"
-                            @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'houseNumber', value: $event.target.value})"
+                            @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, PropName: 'houseNumber', PropValue: $event.target.value})"
                     >
                 </div>
             </div>
@@ -23,7 +23,7 @@
                 <input
                         :value="WebInlandTransportationObject.Contacts"
                         type="text"
-                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Contacts', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, PropName: 'Contacts', PropValue: $event.target.value})"
                 >
             </label>
             <label class="phone_number">
@@ -34,7 +34,7 @@
                         pattern="\+7[0-9]{10}"
                         :value="WebInlandTransportationObject.Phone"
                         type="text"
-                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, prop: 'Phone', value: $event.target.value})"
+                        @input="$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportationType, PropName: 'Phone', PropValue: $event.target.value})"
                 >
             </label>
             <label v-if="Container.Full" style="width: 150px">
@@ -42,7 +42,7 @@
                 <input
                         :value="Container.WeightGross"
                         type="text"
-                        @input="$store.commit('setContainerValue', {WebGateType: 'wGate'+WebGateTypePostfix, index: 0, prop: 'WeightGross', value: +$event.target.value})"
+                        @input="$store.commit('setContainerValue', {WebObjectType: 'wGate'+WebGateTypePostfix, ElementIndex: 0, PropName: 'WeightGross', PropValue: +$event.target.value})"
                 >
             </label>
             <label class="waiting_time">
@@ -65,7 +65,7 @@
                     (WebGateTypePostfix === 'In' && $store.getters.isWebGateIn && $store.getters.isWebGateOut && Container && Container.Full && WebInlandTransportationObject)
                 "
                 :elements="$store.state.WebBid.wGateIn ? $store.state.WebBid.wGateIn.Cargo.Elements : []"
-                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', index:$event.index,  prop:$event.prop,  value:$event.value})"
+                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wGateIn', ElementIndex:$event.index,  PropName:$event.prop,  PropValue:$event.value})"
                 @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wGateIn')"
         ></CargoDetails>
     </div>

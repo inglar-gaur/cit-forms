@@ -33,15 +33,30 @@ export default {
             },
             {
                 Title: 'Повреждение уплотнителя', Characteristics: {
-                    '13.5': {Title: 'Ремонт при повреждении до (длина), мм: 500 включительно. Исправление без замены элемента', Category: 1},
-                    '13.6': {Title: 'Восстановление при отсутствии или разрыве элемента, ремонт при повреждении более (длина), мм 500. Исправление с заменой элемента (включает стоимость элемента)', Category: 2},
-                    '13.7': {Title: 'Восстановление при отсутствии или разрыве элемента (включает стоимость элемента)', Category: 2},
+                    '13.5': {
+                        Title: 'Ремонт при повреждении до (длина), мм: 500 включительно. Исправление без замены элемента',
+                        Category: 1
+                    },
+                    '13.6': {
+                        Title: 'Восстановление при отсутствии или разрыве элемента, ремонт при повреждении более (длина), мм 500. Исправление с заменой элемента (включает стоимость элемента)',
+                        Category: 2
+                    },
+                    '13.7': {
+                        Title: 'Восстановление при отсутствии или разрыве элемента (включает стоимость элемента)',
+                        Category: 2
+                    },
                 }
             },
             {
                 Title: 'Деформация угловой стойки', Characteristics: {
-                    '13.25': {Title: 'Ремонт при деформации элемента не более (д/г), мм: 1000х50 включительно', Category: 2},
-                    '13.26': {Title: 'Ремонт при деформации элемента от (д/г), мм: 1001х50 до (д/г), мм: 1500х80 включительно', Category: 3},
+                    '13.25': {
+                        Title: 'Ремонт при деформации элемента не более (д/г), мм: 1000х50 включительно',
+                        Category: 2
+                    },
+                    '13.26': {
+                        Title: 'Ремонт при деформации элемента от (д/г), мм: 1001х50 до (д/г), мм: 1500х80 включительно',
+                        Category: 3
+                    },
                     '13.27': {Title: 'Ремонт при превышении характеристик по III категории', Category: 4}
                 }
             },
@@ -51,11 +66,16 @@ export default {
          * Список базовых услуг
          */
         BasicServices: {
-            '10.5':     {Title: 'Прием контейнера на терминал',                     Unit: 0, Cost: '1500,00', Art: '10.5'},
-            '10.6':     {Title: 'Выдача контейнера с терминала',                    Unit: 0, Cost: '1500,00', Art: '10.6'},
-            '10.30':    {Title: 'Помещение контейнера на СВХ/ЗТК/Таможенный склад', Unit: 0, Cost: '1500,00', Art: '10.30'},
-            '10.31':    {Title: 'Выдача контейнера с СВХ/ЗТК/Таможенного склада',   Unit: 0, Cost: '1500,00', Art: '10.31'},
-            '10.78':    {Title: 'Дефектовка повреждений контейнера',                Unit: 0, Cost: '2000,00', Art: '10.78'},
+            '10.5': {Title: 'Прием контейнера на терминал', Unit: 0, Cost: '1500,00', Art: '10.5'},
+            '10.6': {Title: 'Выдача контейнера с терминала', Unit: 0, Cost: '1500,00', Art: '10.6'},
+            '10.30': {
+                Title: 'Помещение контейнера на СВХ/ЗТК/Таможенный склад',
+                Unit: 0,
+                Cost: '1500,00',
+                Art: '10.30'
+            },
+            '10.31': {Title: 'Выдача контейнера с СВХ/ЗТК/Таможенного склада', Unit: 0, Cost: '1500,00', Art: '10.31'},
+            '10.78': {Title: 'Дефектовка повреждений контейнера', Unit: 0, Cost: '2000,00', Art: '10.78'},
         },
 
         /**
@@ -73,28 +93,68 @@ export default {
         /**
          * Список услуг по прайсу
          */
-        PriceServices:{
-            Types:[
-                'Терминальные услуги',
-                'Склад временного хранения',
+        PriceServices: {
+            Types: [
+            //     'Терминальные услуги',
+            //     'Склад временного хранения',
             ],
             Categories: [
-                {Title: 'терминальное обслуживание рефрижераторного контейнера', Type: 0},
-                {Title: 'экспедирование и логистические услуги', Type: 0},
-                {Title: 'технологические операции по заявке Заказчика', Type: 1},
+            //     {Title: 'терминальное обслуживание рефрижераторного контейнера', Type: 0},
+            //     {Title: 'экспедирование и логистические услуги', Type: 0},
+            //     {Title: 'технологические операции по заявке Заказчика', Type: 1},
             ],
-            Services:{
-                '10.13': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Size: 20, Cost: 1500, Unit: 2, Category: 0},
-                '10.14': {Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению', Size: 40, Cost: 2000, Unit: 2, Category: 0},
-                '10.15': {Title: 'Хранение рефрижераторного контейнера с навесным дизель генератором под нагрузкой', Cost: 1000, Unit: 2, Category: 0},
-                '10.19': {Title: 'Снятие навесного дизель-генератора с контейнера', Cost: 500, Unit: 3, Category: 0},
-                '10.59': {Title: 'Оформление переадресации, оформление телеграммы', Cost: 500, Unit: 0, Category: 1},
-                '10.60': {Title: 'Организация услуг по поиску и оформлению предоставления места на ж/д платформе', Cost: 5000, Unit: 0, Category: 1},
-                '10.61': {Title: 'Организация услуг по поиску и оформлению пользования контейнером', Cost: 5000, Unit: 0, Category: 1},
-                '11.21': {Title: 'Предоставление товара для досмотра/осмотра отбора проб/образцов', Cost: 600, Unit: 5, Category: 2},
-                '11.22': {Title: 'Распаллетирование грузового места', Cost: 400, Unit: 5, Category: 2},
-            }
+            Services: {
+            //     '10.13': {
+            //         Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению',
+            //         Size: 20,
+            //         Cost: 1500,
+            //         Unit: 2,
+            //         Category: 0
+            //     },
+            //     '10.14': {
+            //         Title: 'Хранение рефрижераторного контейнера с подключением к электроснабжению',
+            //         Size: 40,
+            //         Cost: 2000,
+            //         Unit: 2,
+            //         Category: 0
+            //     },
+            //     '10.15': {
+            //         Title: 'Хранение рефрижераторного контейнера с навесным дизель генератором под нагрузкой',
+            //         Cost: 1000,
+            //         Unit: 2,
+            //         Category: 0
+            //     },
+            //     '10.19': {Title: 'Снятие навесного дизель-генератора с контейнера', Cost: 500, Unit: 3, Category: 0},
+            //     '10.59': {Title: 'Оформление переадресации, оформление телеграммы', Cost: 500, Unit: 0, Category: 1},
+            //     '10.60': {
+            //         Title: 'Организация услуг по поиску и оформлению предоставления места на ж/д платформе',
+            //         Cost: 5000,
+            //         Unit: 0,
+            //         Category: 1
+            //     },
+            //     '10.61': {
+            //         Title: 'Организация услуг по поиску и оформлению пользования контейнером',
+            //         Cost: 5000,
+            //         Unit: 0,
+            //         Category: 1
+            //     },
+            //     '11.21': {
+            //         Title: 'Предоставление товара для досмотра/осмотра отбора проб/образцов',
+            //         Cost: 600,
+            //         Unit: 5,
+            //         Category: 2
+            //     },
+            //     '11.22': {Title: 'Распаллетирование грузового места', Cost: 400, Unit: 5, Category: 2},
+            },
         },
+
+        PackTypes: [
+            'штучный',
+            'паллетированный',
+            'увязанный',
+            'упакованный',
+            'неделимый',
+        ]
     },
 
     getters: {
@@ -111,8 +171,8 @@ export default {
         getStreetsList: state => {
             let StreetsList = [];
 
-            for(let StreetArt in state.Streets){
-                if(state.Streets.hasOwnProperty(StreetArt) && state.Streets[StreetArt].Title){
+            for (let StreetArt in state.Streets) {
+                if (state.Streets.hasOwnProperty(StreetArt) && state.Streets[StreetArt].Title) {
                     StreetsList.push(state.Streets[StreetArt].Title);
                 }
             }
@@ -139,8 +199,62 @@ export default {
          * @param obj
          */
         setDataElement: (state, obj) => {
-            if(state && obj && obj.Prop && state.hasOwnProperty(obj.Prop) && obj.Value !== undefined){
+            if (state && obj && obj.Prop && state.hasOwnProperty(obj.Prop) && obj.Value !== undefined) {
                 state[obj.Prop] = obj.Value;
+            }
+        },
+
+        /**
+         * Добавление типа прайса
+         * @param state
+         * @param {Object} PayLoad
+         * @param {Number} PayLoad.Index    - Индекс типа (важен для сохранения порядка перебора при формировании таблицы выбора)
+         * @param {String} PayLoad.Title    - Название прайса
+         */
+        addPriceType: (state, PayLoad) => {
+            if (~PayLoad.Index && PayLoad.Title) {
+                state.PriceServices.Types[PayLoad.Index] = PayLoad.Title;
+            }
+        },
+
+        /**
+         * @typedef {Object} InputPriceService Объект услуги, получаемый от сервера
+         * @property {String} Title     - Наименование
+         * @property {String} Artic     - Артикул
+         * @property {String} Price     - Стоимость
+         * @property {String} Measure   - Ед. изм.
+         *
+         * @typedef {Object} InputPriceCategory Объект категории услуги, получаемый от сервера
+         * @property {string}                       Title
+         * @property {Array.<InputPriceService>}    ListSubNomenkl
+         *
+         *  Добавление услуг и категорий прайса
+         * @param state
+         * @param {Object}                      PayLoad
+         * @param {number}                      PayLoad.Type            - Массив с категориями
+         * @param {Array.<InputPriceService>}   PayLoad.Categories      - Массив объектов услуг
+         */
+        addPrices: (state, PayLoad) => {
+            if(~PayLoad.Type && Array.isArray(PayLoad.Categories)){
+                PayLoad.Categories.forEach(PriceCategory => {
+
+                    // Добавление категории в список
+                    let CategoryIndex = state.PriceServices.Categories.push({Title: PriceCategory.Title, Type: PayLoad.Type});
+
+                    // Перебор объектов услуг и их добавление в список по артикулу
+                    if(~CategoryIndex && Array.isArray(PriceCategory.ListSubNomenkl)){
+                        PriceCategory.ListSubNomenkl.forEach(Price => {
+                            if(Price.Artic && Price.Title && +Price.Price > 0 && Price.Measure){
+                                state.PriceServices.Services[Price.Artic] = {
+                                    Title: Price.Title,
+                                    Cost: +Price.Price,
+                                    Unit: Price.Measure,
+                                    Category: CategoryIndex
+                                };
+                            }
+                        });
+                    }
+                });
             }
         }
     },
@@ -150,18 +264,25 @@ export default {
             fetch('http://api.cit-ekb.ru/GetNomenklOfAutoship')
                 .then(GetNomenklOfAutoship => {
                     GetNomenklOfAutoship.json().then(resp => {
-                        if(resp){
+                        if (resp) {
                             context.commit('setDataElement', {Prop: 'Streets', Value: resp});
                         }
                     })
                 });
-            // axios({
-            //     url: 'http://api.cit-ekb.ru/GetNomenklOfAutoship'
-            // }).then(resp => {
-            //     if(resp && resp.data){
-            //         context.commit('setDataElement', {Prop: 'Streets', Value: JSON.parse(resp.data)});
-            //     }
-            // });
+        },
+
+        getCustomsReleasePrices: context => {
+            fetch('http://api.cit-ekb.ru/GetNomenklOfSVH')
+                .then(GetNomenklOfSVH => {
+                    GetNomenklOfSVH.json().then(ReleasePricesArr => {
+                        // console.log(ReleasePricesArr);
+                        if (Array.isArray(ReleasePricesArr)) {
+
+                            context.commit('addPriceType', {Index: 1, Title: 'Склад временного хранения'});
+                            context.commit('addPrices', {Type: 1, Categories: ReleasePricesArr});
+                        }
+                    })
+                });
         }
     }
 

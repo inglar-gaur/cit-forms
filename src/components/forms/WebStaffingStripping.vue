@@ -1,12 +1,6 @@
 <template>
     <div v-if="$store.state.WebBid.wStaffingStripping">
 
-        <CargoDetails
-                :elements="$store.state.WebBid.wStaffingStripping.Cargo.Elements"
-                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wStaffingStripping', index:$event.index,  prop:$event.prop,  value:$event.value})"
-                @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wStaffingStripping')"
-        ></CargoDetails>
-
         <div class="form_row" v-if="$store.getters.isWebGateIn">
 
             <table class="load_unload_table">
@@ -38,6 +32,12 @@
             </table>
 
         </div>
+
+        <CargoDetails
+                :elements="$store.state.WebBid.wStaffingStripping.Cargo.Elements"
+                @changeCargoElement="$store.commit('changeCargoElement', {WebObjectType: 'wStaffingStripping', ElementIndex:$event.index,  PropName:$event.prop,  PropValue:$event.value})"
+                @addDefaultCargoElement="$store.commit('addDefaultCargoElement', 'wStaffingStripping')"
+        ></CargoDetails>
     </div>
 </template>
 
@@ -50,8 +50,8 @@
           return {
               goodsPlace: -1,
               goodsPlaces: [
-                  {title: 'Открытая площадка', sign: '№ места на площадке'},
-                  {title: 'Склад', sign: '№ склада'},
+                  {title: 'Открытая площадка', sign: '№ Акта приема-передачи товара'},
+                  {title: 'Склад', sign: '№ склада, № акта приема-передачи товара'},
                   {title: 'Автотранспорт', sign: '№ автотренспортного средства'},
                   {title: 'Контейнер', sign: '№ контейнер'},
                   {title: 'Вагон', sign: '№ вагона'},

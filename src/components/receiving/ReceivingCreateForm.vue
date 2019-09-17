@@ -300,19 +300,19 @@
                         if(this.webGate === WebGateType || this.webGate === 'WebGateInOut'){
                             this.$store.commit('setDefaultWebObject', wGateType);
                             this.$store.commit('addDefaultContainer', wGateType);
-                            this.$store.commit('setContainerValue', {WebGateType: wGateType, index: 0, prop: 'State', value: fullEmptyContainer});
-                            this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'State', value: fullEmptyContainer});
+                            this.$store.commit('setContainerValue', {WebObjectType: wGateType, ElementIndex: 0, PropName: 'State', PropValue: fullEmptyContainer});
+                            this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, PropName: 'State', PropValue: fullEmptyContainer});
                             if(
                                 (this.DangerousGoods.includes('DangerousGoods') && this.webGate === WebGateType) ||
                                 (this.DangerousGoods.includes('DangerousGoods'+WebGateTypePostfix) && this.webGate === 'WebGateInOut')
                             ){
-                                this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, prop: 'DangerousGoods', value: true});
+                                this.$store.commit('setWebObjectValue', {WebObjectType: wGateType, PropName: 'DangerousGoods', PropValue: true});
                             }
 
                             if(this.WebInlandTransportation){
                                 this.$store.commit('setDefaultWebObject', wInlandTransportation);
                                 if(this.ReturnContainer){
-                                    this.$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportation, prop: 'ReturnContainer', value: true});
+                                    this.$store.commit('setWebObjectValue', {WebObjectType: wInlandTransportation, PropName: 'ReturnContainer', PropValue: true});
                                 }
                             }
                         }

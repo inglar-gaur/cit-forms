@@ -7,7 +7,7 @@
                         :name="'receiving_form__truck_parameters_size_'+WebGateType"
                         :checked="containerSize === 20"
                         type="radio"
-                        @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 20})">
+                        @input="$store.commit('setContainerValue', {WebObjectType: WebGateType, ElementIndex: 0, PropName: 'Size', PropValue: 20})">
                 <span class="pseudo_checkbox"></span>
                 <span class="title">20 фут</span>
             </label>
@@ -17,7 +17,7 @@
                         :name="'receiving_form__truck_parameters_size_'+WebGateType"
                         :checked="containerSize === 40"
                         type="radio"
-                        @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Size', value: 40})"
+                        @input="$store.commit('setContainerValue', {WebObjectType: WebGateType, ElementIndex: 0, PropName: 'Size', PropValue: 40})"
                 >
                 <span class="pseudo_checkbox"></span>
                 <span class="title">40 фут</span>
@@ -30,7 +30,7 @@
                     placeholder="AAAA9999999"
                     type="text"
                     :value="containerNumber"
-                    @input="$store.commit('setContainerValue', {WebGateType: WebGateType, index: 0, prop: 'Number', value: $event.target.value})"
+                    @input="$store.commit('setContainerValue', {WebObjectType: WebGateType, ElementIndex: 0, PropName: 'Number', PropValue: $event.target.value})"
                     pattern="[A-Z]{4}[0-9]{7}"
                     required
             >
