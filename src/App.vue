@@ -13,6 +13,7 @@ export default {
   mounted() {
     this.$store.dispatch('getCustomsReleasePrices');
     this.$store.dispatch('getTerminalPrices');
+    this.$store.dispatch('getPRR');
   }
 }
 </script>

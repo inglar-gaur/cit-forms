@@ -148,12 +148,36 @@ export default {
             },
         },
 
+        packRequirements: [
+            [
+                'грузить навалом',
+                'паллетировать',
+                'увязать',
+                'упаковать в короб',
+                'упаковать в биг-бэк',
+                'упаковать в мешок'
+            ],
+            [
+                'переупаковать в биг-бэк',
+                'переупаковать в мешок',
+                'переупаковать в короб',
+                'паллетировать',
+                'увязать',
+                'без переупаковки'
+            ],
+            [
+                'паллетировать',
+                'упаковать',
+                'без переупаковки'
+            ]
+        ],
+
         PackTypes: [
-            'штучный',
-            'паллетированный',
-            'увязанный',
-            'упакованный',
-            'неделимый',
+            {Title: 'штучный', RequirementsIndex: 0},
+            {Title: 'паллетированный', RequirementsIndex: 1},
+            {Title: 'увязанный', RequirementsIndex: 1},
+            {Title: 'упакованный', RequirementsIndex: 1},
+            {Title: 'неделимый', RequirementsIndex: 2}
         ]
     },
 
@@ -163,6 +187,21 @@ export default {
 
         getBasicServices: state => state.BasicServices,
         getPriceServices: state => state.PriceServices,
+
+        getPackRequirementByType: state => typeTitle =>{
+            let Requirements = [];
+            state.PackTypes.find(type => {
+                if(
+                    type.Title === typeTitle &&
+                    ~type.RequirementsIndex &&
+                    Array.isArray(state.packRequirements[type.RequirementsIndex])
+                ){
+                    Requirements = state.packRequirements[type.RequirementsIndex];
+                    return true;
+                }
+            });
+            return Requirements;
+        },
 
         /**
          * @param state
@@ -303,6 +342,19 @@ export default {
                         if (Array.isArray(GetTerminalPricesArr)) {
                             context.commit('addPriceType', {Index: 0, Title: 'Терминальные услуги'});
                             context.commit('addPrices', {Type: 0, Categories: GetTerminalPricesArr});
+                        }
+                    })
+                });
+        },
+
+        getPRR: context => {
+            fetch('http://api.cit-ekb.ru/GetNomenklOfPRR')
+                .then(GetPRR => {
+                    GetPRR.json().then(GetPRRArr => {
+                        console.log(GetPRRArr);
+                        if (Array.isArray(GetPRRArr)) {
+                            // context.commit('addPriceType', {Index: 0, Title: 'Терминальные услуги'});
+                            // context.commit('addPrices', {Type: 0, Categories: GetTerminalPricesArr});
                         }
                     })
                 });

@@ -223,6 +223,10 @@ export default {
                     PayLoad.PropValue !== undefined
                 ) {
                     CargoElement[PayLoad.PropName] = PayLoad.PropValue;
+
+                    if(PayLoad.PropName === 'PackageType'){
+                        CargoElement.PackageRequirement = '';
+                    }
                 }
             }
         },

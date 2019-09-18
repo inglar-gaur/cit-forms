@@ -222,9 +222,11 @@ export default {
                     Id: 0,
                     Name: '',
                     CodeETSNG: '',
-                    UnitCount: 0,
+                    UnitCount: 1,
                     UnitWeight: 0,
                     UnitSize: '',
+                    PackageType: '',
+                    PackageRequirement: '',
                     PackageDescription: '',
                     DangerousClassification: '',
                 };
