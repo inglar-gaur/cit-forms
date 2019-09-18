@@ -26,7 +26,7 @@
                         <td>
                             <input
                                 v-if="PriceServicesList[LocalService] && ~PriceServicesList[LocalService].Unit"
-                                :value="getUnitTitle(PriceServicesList[LocalService].Unit)"
+                                :value="PriceServicesList[LocalService].Unit"
                                 type="text" disabled
                             >
                         </td>

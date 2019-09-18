@@ -26,13 +26,14 @@ export default {
         Status: DefaultValues.getProperty('Status'),
         DangerousGoods: DefaultValues.getProperty(),
         Documents: DefaultValues.getProperty(),
+        DefectCheck: DefaultValues.getProperty('DefectCheck'),
         wGateOut: DefaultValues.getProperty(),
         wGateIn: DefaultValues.getProperty(),
         wShipping: DefaultValues.getProperty(),
         wStaffingStripping: DefaultValues.getProperty(),
         wInlandTransportationIn: DefaultValues.getProperty(),
         wInlandTransportationOut: DefaultValues.getProperty(),
-        wCustomsRelease: DefaultValues.getProperty(),
+        wCustomsRelease: DefaultValues.getProperty('wCustomsRelease'),
         wRepairContainer: DefaultValues.getProperty(),
     },
 
@@ -77,13 +78,19 @@ export default {
          */
 
         /**
-         * Изменение свойства объекта (который является свойством другого объекта, например какая-то более конкретная заявка)
+         * Изменение свойства объекта (который может являться свойством другого объекта, например какая-то более конкретная заявка)
+         * Если PayLoad.WebObjectType не будет передан будет попытка установить свойство объекта state
          * @param state
          * @param {PayLoad} PayLoad
          */
         setWebObjectValue(state, PayLoad) {
-            if (PayLoad && PayLoad.WebObjectType) {
-                let WebGate = this.getters.getWebBidOperation(PayLoad.WebObjectType);
+            if (PayLoad) {
+                let WebGate;
+                if(PayLoad && PayLoad.WebObjectType){
+                    WebGate = this.getters.getWebBidOperation(PayLoad.WebObjectType);
+                }else{
+                    WebGate = state;
+                }
 
                 if (WebGate && PayLoad.PropName && PayLoad.PropName in WebGate && PayLoad.PropValue !== undefined) {
                     WebGate[PayLoad.PropName] = PayLoad.PropValue;
@@ -181,6 +188,8 @@ export default {
             }
 
             let WebObject = this.getters.getWebBidOperation(WebObjectType);
+
+            console.log(WebObject);
 
             if (WebObject && WebObject.Cargo && Array.isArray(WebObject.Cargo.Elements)) {
                 WebObject.Cargo.Elements.push(DefaultValues.getObject('CargoElement'));
@@ -284,8 +293,8 @@ export default {
 
     getters: {
         // State может быть не заполнен для случая, когда выдача порожнего и обратная доставка груженого (тогда этот объект только для списка товаров)
-        isWebGateIn: state => !!state.wGateIn && state.wGateIn.State,
-        isWebGateOut: state => !!state.wGateOut && state.wGateOut.State,
+        isWebGateIn: state => !!(state.wGateIn && state.wGateIn.State),
+        isWebGateOut: state => !!(state.wGateOut && state.wGateOut.State),
 
         /**
          * Кэшированные данные о первом в списке контейнере входящей и исходящей заявок

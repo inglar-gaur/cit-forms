@@ -85,10 +85,16 @@
 
                         <div class="labels">
 
-                            <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebCustomsRelease" :disabled="notCanSelectCustomsRelease">
+                            <label class="label_width_outside_input" v-if="!webGate || webGate === 'WebGateInOut' || webGate === 'WebGateIn'">
+                                <input type="checkbox" value="To" v-model="WebCustomsRelease" :disabled="notSelectedMainParams">
                                 <span class="pseudo_checkbox"></span>
-                                <span class="title">заказать перемещение <span v-show="notSelectOut">на</span><span v-show="notSelectIn && notSelectOut">/</span><span v-show="notSelectIn">с</span> СВХ</span>
+                                <span class="title">заказать перемещение на СВХ</span>
+                            </label>
+
+                            <label class="label_width_outside_input" v-if="!webGate || webGate === 'WebGateInOut' || webGate === 'WebGateOut'">
+                                <input type="checkbox" value="From" v-model="WebCustomsRelease" :disabled="notSelectedMainParams">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать перемещение с СВХ</span>
                             </label>
 
                             <label class="label_width_outside_input">
@@ -97,19 +103,25 @@
                                 <span class="title">заказать автоперевозку <span v-show="notSelectOut">до</span><span v-show="notSelectIn && notSelectOut">/</span><span v-show="notSelectIn">с</span> терминала</span>
                             </label>
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="WebStaffingStripping" :disabled="notCanSelectWebStaffingStripping">
+                                <input type="checkbox" v-model="WebStaffingStripping" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать <span v-show="bidEmpty !== 'full'">погрузку</span><span v-show="bidEmpty !== 'full' && bidEmpty !== 'empty'">/</span><span v-show="bidEmpty !== 'empty'">разгрузку</span> контейнера</span>
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="RepairContainer" :disabled="notCanSelectRepair">
+                                <input type="checkbox" v-model="RepairContainer" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать ремонт контейнера</span>
                             </label>
 
                             <label class="label_width_outside_input">
-                                <input type="checkbox" v-model="ReturnContainer" :disabled="notCanSelectReturnContainer">
+                                <input type="checkbox" v-model="DefectCheck" :disabled="notSelectedMainParams || webGate === 'WebGateInOut'">
+                                <span class="pseudo_checkbox"></span>
+                                <span class="title">заказать дефектовку</span>
+                            </label>
+
+                            <label class="label_width_outside_input">
+                                <input type="checkbox" v-model="ReturnContainer" :disabled="notCanSelectReturnContainer || webGate === 'WebGateInOut'">
                                 <span class="pseudo_checkbox"></span>
                                 <span class="title">заказать обратную доставку контейнера</span>
                             </label>
@@ -160,10 +172,11 @@
                 bidEmpty: null,                     // Опция порожний контейнер
                 DangerousGoods: [],                 // Опция опасный груз
                 WebInlandTransportation: false,     // Доставка автотранспортом
-                WebCustomsRelease: false,           // Перемещение из зоны СВХ
+                WebCustomsRelease: [],              // Перемещение из зоны СВХ
                 WebStaffingStripping: false,        // Погрузочно-разгрузочные работы
                 ReturnContainer: false,             // Возврат контейнера
                 RepairContainer: false,             // Ремонт контейнера
+                DefectCheck: false,                 // Дефектовка контейнера
                 Prices: []                          // Выбранные прайсы
             }
         },
@@ -218,7 +231,7 @@
              */
             notCanSelectWebStaffingStripping: function () {
                 return this.notSelectedMainParams || this.webGate === "WebGateInOut" || this.webGate === "WebGateOut" ||
-                    (this.webGate === "WebGateIn" && (this.WebCustomsRelease || (this.bidEmpty === "empty" && this.RepairContainer)));
+                    (this.webGate === "WebGateIn" && (this.WebCustomsRelease.length > 0 || (this.bidEmpty === "empty" && this.RepairContainer)));
             },
 
             /**
@@ -227,7 +240,7 @@
              */
             notCanSelectRepair: function () {
                 return this.notSelectedMainParams || this.webGate === "WebGateInOut" || this.webGate === "WebGateOut" ||
-                (this.webGate === "WebGateIn" && (this.WebCustomsRelease || (this.bidEmpty === "empty" && this.WebStaffingStripping)));
+                (this.webGate === "WebGateIn" && (this.WebCustomsRelease.length > 0 || (this.bidEmpty === "empty" && this.WebStaffingStripping)));
             },
 
             /**
@@ -235,7 +248,7 @@
              * @returns {boolean}
              */
             notCanSelectReturnContainer: function () {
-                return this.notSelectedMainParams || this.webGate !== "WebGateOut" || !this.WebInlandTransportation;
+                return this.notSelectedMainParams || !this.WebInlandTransportation;
             },
         },
 
@@ -263,7 +276,7 @@
              * Вызоы проверок полей правой стороны на disabled
              */
             WebInlandTransportation: 'checkDisabledRightHalf',
-            WebCustomsRelease: 'checkDisabledRightHalf',
+            // WebCustomsRelease: 'checkDisabledRightHalf',
             WebStaffingStripping: 'checkDisabledRightHalf',
             RepairContainer: 'checkDisabledRightHalf',
         },
@@ -322,14 +335,20 @@
                         this.$store.commit('setCargoToWebGateIn', 'wGateIn');
                     }
 
-                    if(this.WebCustomsRelease){
-                        this.$store.commit('setDefaultWebObject', 'wCustomsRelease');
+                    if(this.WebCustomsRelease.length > 0){
+                        this.$store.commit('setWebObjectValue', {PropName: 'wCustomsRelease', PropValue: this.WebCustomsRelease});
                     }
+
                     if(this.WebStaffingStripping){
                         this.$store.commit('setDefaultWebObject', 'wStaffingStripping');
                     }
+
                     if(this.RepairContainer){
                         this.$store.commit('setDefaultWebObject', 'wRepairContainer');
+                    }
+
+                    if(this.DefectCheck){
+                        this.$store.commit('setWebObjectValue', {PropName: 'DefectCheck', PropValue: true});
                     }
 
                     if(this.Prices.length > 0){
@@ -343,10 +362,11 @@
              */
             clearRightHalf: function () {
                 this.WebInlandTransportation = false;
-                this.WebCustomsRelease = false;
+                this.WebCustomsRelease = [];
                 this.WebStaffingStripping = false;
                 this.ReturnContainer = false;
                 this.RepairContainer = false;
+                this.DefectCheck = false;
                 this.Prices = [];
             },
 
@@ -355,13 +375,13 @@
              */
             checkDisabledRightHalf: function () {
 
-                if(this.notCanSelectCustomsRelease){
-                    this.WebCustomsRelease = false;
+                if(this.notSelectedMainParams || this.webGate === "WebGateInOut"){
+                    this.WebCustomsRelease = [];
                 }
-                if(this.notCanSelectWebStaffingStripping){
+                if(this.notSelectedMainParams || this.webGate === "WebGateInOut"){
                     this.WebStaffingStripping = false;
                 }
-                if(this.notCanSelectRepair){
+                if(this.notSelectedMainParams || this.webGate === "WebGateInOut"){
                     this.RepairContainer = false;
                 }
                 if(this.notCanSelectReturnContainer){

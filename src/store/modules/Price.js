@@ -81,6 +81,7 @@ export default {
                 InlandTransportations: [],
                 InlandReturnTransportations: [],
                 RepairServices: [],
+                DefectCheck:[],
                 PriceServices: [],
                 TotalCost: '',
                 TotalRepairCategory: null,
@@ -91,14 +92,14 @@ export default {
             if(getters.isWebGateIn){
                 SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
 
-                if(rootState.WebBid.wCustomsRelease){
+                if(rootState.WebBid.wCustomsRelease.includes('To')){
                     SelectedPriceList.Basic.push(getters.getBasicServices['10.30']);
                 }
             }
             if(getters.isWebGateOut){
                 SelectedPriceList.Basic.push(getters.getBasicServices['10.6']);
 
-                if(rootState.WebBid.wCustomsRelease){
+                if(rootState.WebBid.wCustomsRelease.includes('From')){
                     SelectedPriceList.Basic.push(getters.getBasicServices['10.31']);
                 }
             }
@@ -111,6 +112,12 @@ export default {
                  */
                 let WebInlandTransportation = getters.getWebBidOperation('wInlandTransportation' + wInlandTransportationPostfix);
 
+                /**
+                 * Объект с контейнером заявки
+                 * @type {CachedContainerParams|null}
+                 */
+                let Container = getters['WebGate' + wInlandTransportationPostfix + 'Container'];
+
                 // Если есть объект, улица и дом, выбираем цену и формируем объект для таблицы
                 if (WebInlandTransportation && WebInlandTransportation.street && WebInlandTransportation.houseNumber) {
 
@@ -122,12 +129,6 @@ export default {
                     }
 
                     if (StreetObject) {
-
-                        /**
-                         * Объект с контейнером заявки
-                         * @type {CachedContainerParams|null}
-                         */
-                        let Container = getters['WebGate' + wInlandTransportationPostfix + 'Container'];
                         /**
                          * Цена перевозки и вес контейнера
                          * @type {string}
@@ -161,21 +162,28 @@ export default {
                                     Art: StreetObject.Art,
                                     Size: Container.Size + ' фут',
                                     Weight: WeightText,
-                                    Unit: getters.getUnitTitle(0),
+                                    Unit: 'контейнер',
                                     Cost: Cost === "Договорная" ? Cost : Cost + ',00'
                                 });
-                                // При заказе обратной доставке формируем объект и для неё
-                                if (WebInlandTransportation.ReturnContainer) {
-                                    SelectedPriceList.InlandReturnTransportations.push({
-                                        Title: 'Обратная доставка'+(Container.Full ? ' порожнего' : '')+(Container.Empty ? ' груженого' : '')+' контейнера',
-                                        Address: 'Бахчиванджи, д2',
-                                        Cost: 1500,
-                                        Unit: getters.getUnitTitle(0),
-                                        Art: '18.1'
-                                    });
-                                }
                             }
                         }
+                    }
+                }
+
+                // При заказе обратной доставке формируем объект и для неё
+                if (WebInlandTransportation && WebInlandTransportation.ReturnContainer) {
+                    SelectedPriceList.InlandReturnTransportations.push({
+                        Title: 'Обратная доставка'+(Container && Container.Full ? ' порожнего' : '')+(Container && Container.Empty ? ' груженого' : '')+' контейнера',
+                        Address: 'Бахчиванджи, д2',
+                        Cost: 1500,
+                        Unit: 'контейнер',
+                        Art: '18.1'
+                    });
+
+                    if(getters.isWebGateIn){
+                        SelectedPriceList.Basic.push(getters.getBasicServices['10.6']);
+                    }else if(getters.isWebGateOut){
+                        SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
                     }
                 }
             });
@@ -280,6 +288,10 @@ export default {
 
             // todo Учесть дефектовку контейнера
 
+            if(rootState.WebBid.DefectCheck){
+                SelectedPriceList.DefectCheck.push(getters.getBasicServices['10.78']);
+            }
+
             if(state.SelectedPriceServices.length > 0){
 
                 for(let ServiceArt in getters.getPriceServices.Services){
@@ -330,7 +342,12 @@ export default {
              * Итоговый массив выбранных услуг
              * @type {Array}
              */
-            let totalArray = SelectedPriceList.Basic.concat(SelectedPriceList.InlandTransportations, SelectedPriceList.RepairServices, SelectedPriceList.PriceServices);
+            let totalArray = SelectedPriceList.Basic.concat(
+                SelectedPriceList.InlandTransportations,
+                SelectedPriceList.RepairServices,
+                SelectedPriceList.PriceServices,
+                SelectedPriceList.DefectCheck,
+                );
             if(totalArray.length > 0){
                 for(let i = 0; i < totalArray.length; i++){
                     if(totalArray[i].Cost === 'Договорная'){

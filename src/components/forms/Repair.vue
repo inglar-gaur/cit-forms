@@ -65,7 +65,7 @@
                 <tr v-if="$store.getters.getSelectedServices.TotalRepairCategory >= 4">
                     <td colspan="8" style="padding: 10px">
                         <label class="label_width_outside_input">
-                            <input type="checkbox" required>
+                            <input :checked="DefectCheck" type="checkbox" @input="SelectDefectCheck" required>
                             <span class="pseudo_checkbox"></span>
                             <span class="title">заказать дефектовку повреждений контейнера</span>
                         </label>
@@ -93,7 +93,6 @@
              */
             CanAddNewRepairService(){
 
-                console.log(this.RepairContainerList.every(service => service.RepairCategory));
                 return !!(
                     Array.isArray(this.RepairContainerList) &&                                  // Список услуг ремонта - массив (надо ли?)
                     this.TotalRepairCategory < 4 &&                                             // Итоговая категория ремонта меньше четырёх
@@ -116,6 +115,7 @@
 
             ...mapState({
                 RepairContainerList: state => state.WebBid.wRepairContainer.list,
+                DefectCheck: state => state.WebBid.DefectCheck,
             })
         },
 
@@ -199,6 +199,10 @@
                         }
                     }
                 }
+            },
+
+            SelectDefectCheck(e){
+                this.$store.commit('setWebObjectValue', {PropName: 'DefectCheck', PropValue: e.target.checked});
             }
         },
     }

@@ -80,11 +80,17 @@
                     switch (this.WebGateTypePostfix) {
                         case 'In':
                             operationList.push('принять на терминал');
-                            subTitles = {stf: 'погрузку', transportation: 'до', custom: 'на'};
+                            if(this.$store.state.WebBid.wCustomsRelease.includes('To')){
+                                operationList.push('заказать перемещение на СВХ');
+                            }
+                            subTitles = {stf: 'погрузку', transportation: 'до'};
                             break;
                         case 'Out':
                             operationList.push('выдать с терминала');
-                            subTitles = {stf: 'разгрузку', transportation: 'от', custom: 'из'};
+                            if(this.$store.state.WebBid.wCustomsRelease.includes('From')){
+                                operationList.push('заказать перемещение из СВХ');
+                            }
+                            subTitles = {stf: 'разгрузку', transportation: 'от'};
                             break;
                     }
                     // Пустой или порожний контейнер
@@ -107,9 +113,6 @@
                             if (this.WebInlandTransportationObject.ReturnContainer && this.Container) {
                                 operationList.push('заказать обратную доставку' + (this.Container.Empty ? ' груженого' : '') + (this.Container.Full ? ' порожнего' : '') + ' контейнера');
                             }
-                        }
-                        if (this.$store.state.WebBid.wCustomsRelease) {
-                            operationList.push('заказать перемещение ' + subTitles.custom + ' СВХ');
                         }
                         if (this.$store.state.WebBid.wRepairContainer) {
                             operationList.push('заказать ремонт контейнера');

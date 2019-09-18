@@ -249,6 +249,10 @@ export default {
                 return '';
             case 'gId':
                 return "00000000-0000-0000-0000-000000000000";
+            case 'DefectCheck':
+                return false;
+            case 'wCustomsRelease':
+                return [];
             default:
                 return null;
         }

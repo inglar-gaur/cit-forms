@@ -15,7 +15,7 @@
                 </tr>
                 <tr v-for="service in $store.getters.getSelectedServices.Basic" :key="service.Art">
                     <td>{{service.Title}}</td>
-                    <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
+                    <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
                     <td>{{service.Art}}</td>
                 </tr>
@@ -65,6 +65,27 @@
 <!--                </tr>-->
             </table>
         </template>
+        <template v-if="$store.getters.getSelectedServices.DefectCheck.length">
+            <h4>Услуги по ремонту</h4>
+            <table>
+                <tr>
+                    <th>наименование услуги</th>
+                    <th>единица измерения</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
+                <tr v-for="service in $store.getters.getSelectedServices.DefectCheck" :key="service.Art">
+                    <td>{{service.Title}}</td>
+                    <td>{{service.Unit}}</td>
+                    <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
+                </tr>
+                <!--                <tr v-if="totalRepairCost">-->
+                <!--                    <td colspan="5"><span>Итого стоимость</span></td>-->
+                <!--                    <td><div style="float:right;">{{totalRepairCost}}</div></td>-->
+                <!--                </tr>-->
+            </table>
+        </template>
         <template v-if="$store.getters.getSelectedServices.InlandReturnTransportations.length">
             <h4>автоперевозка контейнера</h4>
             <table>
@@ -102,7 +123,7 @@
                     </tr>
                     <tr :key="service.Art">
                         <td>{{service.Title}}</td>
-                        <td>{{$store.getters.getUnitTitle(service.Unit)}}</td>
+                        <td>{{service.Unit}}</td>
                         <td>{{service.Number}}</td>
                         <td>{{service.CostForUnit}}</td>
                         <td>{{service.Cost}}</td>
