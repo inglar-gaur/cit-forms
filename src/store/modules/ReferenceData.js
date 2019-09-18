@@ -243,14 +243,25 @@ export default {
 
                     // Перебор объектов услуг и их добавление в список по артикулу
                     if(~CategoryIndex && Array.isArray(PriceCategory.ListSubNomenkl)){
+                        let feet20regExp = new RegExp(/20\sфут\./),
+                            feet40regExp = new RegExp(/40\sфут\./),
+                            spaceRegExp = new RegExp(/\s/, 'g');
+                        let formattedPrice;
                         PriceCategory.ListSubNomenkl.forEach(Price => {
-                            if(Price.Artic && Price.Title && +Price.Price > 0 && Price.Measure){
-                                state.PriceServices.Services[Price.Artic] = {
+                            formattedPrice = +(Price.Price.replace(spaceRegExp, ''));
+                            if(Price.Artic && Price.Title && Price.Price && Price.Measure){
+                                let NewPriceObject = {
                                     Title: Price.Title,
-                                    Cost: +Price.Price,
+                                    Cost: formattedPrice > 0 ? formattedPrice : Price.Price,
                                     Unit: Price.Measure,
                                     Category: CategoryIndex
                                 };
+                                if(feet20regExp.test(Price.Title)){
+                                    NewPriceObject.Size = 20;
+                                }else if(feet40regExp.test(Price.Title)){
+                                    NewPriceObject.Size = 40;
+                                }
+                                state.PriceServices.Services[Price.Artic] = NewPriceObject;
                             }
                         });
                     }
@@ -280,6 +291,18 @@ export default {
 
                             context.commit('addPriceType', {Index: 1, Title: 'Склад временного хранения'});
                             context.commit('addPrices', {Type: 1, Categories: ReleasePricesArr});
+                        }
+                    })
+                });
+        },
+
+        getTerminalPrices: context => {
+            fetch('http://api.cit-ekb.ru/GetNomenklOfTerminal')
+                .then(GetTerminalPrices => {
+                    GetTerminalPrices.json().then(GetTerminalPricesArr => {
+                        if (Array.isArray(GetTerminalPricesArr)) {
+                            context.commit('addPriceType', {Index: 0, Title: 'Терминальные услуги'});
+                            context.commit('addPrices', {Type: 0, Categories: GetTerminalPricesArr});
                         }
                     })
                 });
