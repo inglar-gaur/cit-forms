@@ -51,7 +51,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.RepairServices" :key="service.Art">
+                <tr v-for="(service, RepairIndex) in $store.getters.getSelectedServices.RepairServices" :key="RepairIndex">
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
                     <td>{{service.RepairCategory}}</td>
@@ -100,6 +100,33 @@
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
                     <td>{{service.Art}}</td>
+                </tr>
+            </table>
+        </template>
+        <template v-if="$store.getters.getSelectedServices.Staffing.length">
+            <h4>погрузо-разгрузочные работы</h4>
+            <table>
+                <tr>
+                    <th colspan="3"></th>
+                    <th>ед. изм.</th>
+                    <th>кол-во</th>
+                    <th>расценка</th>
+                    <th>стоимость в т.ч. НДС 20%</th>
+                    <th>артикул</th>
+                </tr>
+                <tr v-for="service in $store.getters.getSelectedServices.Staffing" :key="service.Art">
+                    <td>{{service.PackageType}}</td>
+                    <td>{{service.PackageRequirement}}</td>
+                    <td>{{service.Title}}</td>
+                    <td>{{service.Unit}}</td>
+                    <td>{{service.Number}}</td>
+                    <td>{{service.UnitCost}}</td>
+                    <td>{{service.Cost}}</td>
+                    <td>{{service.Art}}</td>
+                </tr>
+                <tr v-if="$store.getters.getSelectedServices.TotalWeight">
+                    <td colspan="6">Итоговый вес</td>
+                    <td colspan="2">{{$store.getters.getSelectedServices.TotalWeight}} кг</td>
                 </tr>
             </table>
         </template>

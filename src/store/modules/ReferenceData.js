@@ -15,6 +15,8 @@ export default {
         // },
         Streets: {},
 
+        Staffing: {},
+
         /**
          * Список услуг ремонта
          */
@@ -306,6 +308,26 @@ export default {
                     }
                 });
             }
+        },
+
+        addStaffingServices: (state, inputStaffingServices) => {
+            for(let i = 0; i < 6; i++){
+                let inputStaffingServicesArr = inputStaffingServices['listNomenkl'+(i+1)];
+                let spaceRegExp = new RegExp(/\s/, 'g');
+                let formattedPrice;
+                state.Staffing[i] = [];
+                if(Array.isArray(inputStaffingServicesArr)){
+                    inputStaffingServicesArr.forEach(inputStaffingService => {
+                        formattedPrice = +(inputStaffingService.Price.replace(spaceRegExp, ''));
+                        state.Staffing[i].push({
+                            Title: inputStaffingService.Title,
+                            Cost: formattedPrice > 0 ? formattedPrice : inputStaffingService.Price,
+                            Unit: inputStaffingService.Measure,
+                            Art: inputStaffingService.Artic
+                        });
+                    });
+                }
+            }
         }
     },
 
@@ -351,11 +373,23 @@ export default {
             fetch('http://api.cit-ekb.ru/GetNomenklOfPRR')
                 .then(GetPRR => {
                     GetPRR.json().then(GetPRRArr => {
-                        console.log(GetPRRArr);
-                        if (Array.isArray(GetPRRArr)) {
-                            // context.commit('addPriceType', {Index: 0, Title: 'Терминальные услуги'});
-                            // context.commit('addPrices', {Type: 0, Categories: GetTerminalPricesArr});
-                        }
+                        GetPRRArr['listNomenkl6'].push({
+                            Title: 'Предоставление паллета',
+                            Measure: 'штука',
+                            Price: '250',
+                            Artic: '17.53'
+                        });
+                        context.commit('addStaffingServices', GetPRRArr);
+
+                    })
+                });
+        },
+
+        getBasicServices: context => {
+            fetch('http://api.cit-ekb.ru/GetNomenklOfAutomatically')
+                .then(getBasicServices => {
+                    getBasicServices.json().then(BasicServicesArr => {
+                        // console.log(BasicServicesArr);
                     })
                 });
         }
