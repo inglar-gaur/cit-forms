@@ -66,6 +66,9 @@ export default {
             }
         },
 
+        /**
+         * Удаление выбранных услуг при сбросе формы
+         */
         clearForm(state){
             state.SelectedPriceServices = [];
             state.SelectedPrices = [];
@@ -74,39 +77,75 @@ export default {
     },
 
     getters: {
-        getSelectedServices: function (state, getters, rootState) {
 
-            const SelectedPriceList = {
-                Basic: [],
-                InlandTransportations: [],
-                InlandReturnTransportations: [],
-                RepairServices: [],
-                Staffing: [],
-                DefectCheck:[],
-                PriceServices: [],
-                TotalCost: '',
-                TotalWeight: 0,
-                TotalRepairCategory: null,
-            };
+        /**
+         * @typedef SelectedPriceObject - Объект с выбранной услугой
+         * @property {string} Title
+         * @property {string} Address
+         * @property {string} Art
+         * @property {string} Size
+         * @property {string} Unit
+         * @property {string} Cost
+         * @property {number} WeightText
+         */
 
-            // SelectedPriceList.Basic = state.SelectedPriceServices.map(SelectedBasicService => getters.getBasicServices[SelectedBasicService]).filter(elem => elem);
+        /**
+         * Список выбранных базовых услуг
+         * @param state     - Состояние настоящего модуля
+         * @param getters   - Геттеры
+         * @param rootState - Состояние хранилища
+         *
+         * @return Array.<SelectedPriceObject>
+         */
+        SelectedBasicServices: (state, getters, rootState) => {
 
+            let SelectedPriceList = [];
+
+            /**
+             * Добавление базовых услуг 10.5 - приём, 10.6 - выдача контейнера
+             * Добавление услуг СВХ при необходимости (10.30, 10.31)
+             * Добавление услуг приёма/выдачи при обратной автоперевозке (10.30, 10.31), сама заявка при этом не создаётся
+             */
             if(getters.isWebGateIn){
-                SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
+                SelectedPriceList.push(getters.getBasicServices['10.5']);
 
                 if(rootState.WebBid.wCustomsRelease.includes('To')){
-                    SelectedPriceList.Basic.push(getters.getBasicServices['10.30']);
+                    SelectedPriceList.push(getters.getBasicServices['10.30']);
+                }
+
+                if(rootState.WebBid.wInlandTransportationIn && rootState.WebBid.wInlandTransportationIn.ReturnContainer){
+                    SelectedPriceList.push(getters.getBasicServices['10.6']);
                 }
             }
             if(getters.isWebGateOut){
-                SelectedPriceList.Basic.push(getters.getBasicServices['10.6']);
+                SelectedPriceList.push(getters.getBasicServices['10.6']);
 
                 if(rootState.WebBid.wCustomsRelease.includes('From')){
-                    SelectedPriceList.Basic.push(getters.getBasicServices['10.31']);
+                    SelectedPriceList.push(getters.getBasicServices['10.31']);
+                }
+
+                if(rootState.WebBid.wInlandTransportationOut && rootState.WebBid.wInlandTransportationOut.ReturnContainer){
+                    SelectedPriceList.push(getters.getBasicServices['10.5']);
                 }
             }
 
-            // Список выбранных услуг автоперевозки
+            return SelectedPriceList;
+        },
+
+        /**
+         * Список выбранных услуг автоперевозки
+         * @param state     - Состояние настоящего модуля
+         * @param getters   - Геттеры
+         *
+         * @return Array.<SelectedPriceObject>
+         */
+        SelectedInlandTransportationServices: (state, getters) => {
+
+            let SelectedPriceList = [];
+
+            /**
+             * Перебор постфиксов для обработки заявок автоперевозки
+             */
             ['In', 'Out'].forEach(wInlandTransportationPostfix => {
                 /**
                  * Объект автоперевозки входящей или исходящей заявки
@@ -123,6 +162,9 @@ export default {
                 // Если есть объект, улица и дом, выбираем цену и формируем объект для таблицы
                 if (WebInlandTransportation && WebInlandTransportation.street && WebInlandTransportation.houseNumber) {
 
+                    /**
+                     * Получаем объект улицы по названию из заявки
+                     */
                     let StreetObject;
                     for(let StreetArt in getters.getStreets){
                         if(getters.getStreets.hasOwnProperty(StreetArt) && getters.getStreets[StreetArt].Title === WebInlandTransportation.street){
@@ -132,22 +174,26 @@ export default {
 
                     if (StreetObject) {
                         /**
-                         * Цена перевозки и вес контейнера
+                         * Стоимость перевозки и вес контейнера
                          * @type {string}
                          */
                         let Cost = '',
                             WeightText = '';
 
+                        /**
+                         * Если контейнер есть и имеет нужную футовость
+                         * по весу берём цену из объекта улицы
+                         */
                         if (Container && (Container.Size === 20 || Container.Size === 40)) {
                             // Если контейнер пуст
                             if (Container.Empty) {
                                 Cost = StreetObject['_'+Container.Size];
                                 WeightText = 'до 24 тн';
-                            // Если контейнер груженый и сверхтяжелый
+                                // Если контейнер груженый и сверхтяжелый
                             } else if (Container.Full && Container.WeightGross && Container.WeightGross > 30) {
-                                Cost = "Рассчетная";
+                                Cost = "Расчетная";
                                 WeightText = 'свыше 30 тн';
-                            // Если контейнер просто груженый
+                                // Если контейнер просто груженый
                             } else if (Container.Full && Container.WeightGross) {
                                 if(Container.WeightGross >= 24){
                                     Cost = StreetObject['_'+Container.Size+'h'];
@@ -159,39 +205,34 @@ export default {
                             }
 
                             if (Cost) {
-                                SelectedPriceList.InlandTransportations.push({
+                                SelectedPriceList.push({
                                     Address: WebInlandTransportation.street + (WebInlandTransportation.houseNumber ? WebInlandTransportation.houseNumber : ''),
                                     Art: StreetObject.Art,
                                     Size: Container.Size + ' фут',
                                     Weight: WeightText,
                                     Unit: 'контейнер',
-                                    Cost: Cost === "Рассчетная" ? Cost : Cost + ',00'
+                                    Cost: Cost === "Расчетная" ? Cost : Cost + '.00'
                                 });
                             }
                         }
                     }
                 }
-
-                // При заказе обратной доставке формируем объект и для неё
-                if (WebInlandTransportation && WebInlandTransportation.ReturnContainer) {
-                    SelectedPriceList.InlandReturnTransportations.push({
-                        Title: 'Обратная доставка'+(Container && Container.Full ? ' порожнего' : '')+(Container && Container.Empty ? ' груженого' : '')+' контейнера',
-                        Address: 'Бахчиванджи, д2',
-                        Cost: 1500,
-                        Unit: 'контейнер',
-                        Art: '18.1'
-                    });
-
-                    if(getters.isWebGateIn){
-                        SelectedPriceList.Basic.push(getters.getBasicServices['10.6']);
-                    }else if(getters.isWebGateOut){
-                        SelectedPriceList.Basic.push(getters.getBasicServices['10.5']);
-                    }
-                }
             });
 
+            return SelectedPriceList;
+        },
+
+        /**
+         * Список выбранных услуг ремонта
+         * @param state     - Состояние настоящего модуля
+         * @param getters   - Геттеры
+         *
+         * @return Array.<SelectedPriceObject>
+         */
+        SelectedRepairServices: (state, getters) => {
+
             /**
-             * Объект с данными по ремонту
+             * получаем объект с данными по ремонту
              * @type {WebRepairContainer|null}
              */
             let RepairObject = getters.getWebBidOperation('wRepairContainer');
@@ -200,112 +241,128 @@ export default {
             if (RepairObject && Array.isArray(RepairObject.list) && RepairObject.list.length > 0) {
 
                 // Формируем итоговый массив из таблицы в форме
-                SelectedPriceList.RepairServices = RepairObject.list.map(repairService => {
+                let RepairPriceList = RepairObject.list
+                    // Фильтруем только по тем, где выбраны и услуга ремонта и характеристика
+                    .filter(RepairService => ~RepairService.ServiceIndex && RepairService.Characteristic)
+                    // Формируем массив объектов для таблицы выбранных услуг
+                    .map(RepairService => {
 
-                    let Obj = {};
-                    if(
-                        ~repairService.ServiceIndex
+                        /**
+                         * Объекты услуги ремонта и характеристики ремонта из модуля ReferenceData
+                         * @type {Object|null}
+                         */
+                        let Service = getters.getRepairServices[RepairService.ServiceIndex] ? getters.getRepairServices[RepairService.ServiceIndex] : {};
+                        let Characteristic =
+                                Service.Characteristics &&
+                                Service.Characteristics[RepairService.Characteristic] ?
+                                Service.Characteristics[RepairService.Characteristic] : {};
 
-                    ){
-                        Obj.Title =
-                            getters.getRepairServices[repairService.ServiceIndex] &&
-                            getters.getRepairServices[repairService.ServiceIndex].Title
-                            ? getters.getRepairServices[repairService.ServiceIndex].Title : '';
-
-                        Obj.Characteristic =
-                            repairService.Characteristic &&
-                            getters.getRepairServices[repairService.ServiceIndex] &&
-                            getters.getRepairServices[repairService.ServiceIndex].Characteristics &&
-                            getters.getRepairServices[repairService.ServiceIndex].Characteristics[repairService.Characteristic]
-                                ? getters.getRepairServices[repairService.ServiceIndex].Characteristics[repairService.Characteristic].Title : '';
-
-                        // console.log(Obj);
-                        if(Obj.Title && Obj.Characteristic){
-                            Obj.RepairCategory = repairService.RepairCategory;
-                            Obj.Art = repairService.Characteristic;
-                        }
-                    }
-                    return Obj;
-
-                })
-                // Фильтруем (проверка на наличие и названия и характеристики услуги)
-                //     .filter(RepairService => RepairService && RepairService.Title && RepairService.Characteristic)
+                        return {
+                            Title: Service.Title ? Service.Title : '',
+                            Characteristic: Characteristic.Title ? Characteristic.Title : '',
+                            RepairCategory: Characteristic.Category ? Characteristic.Category : '',
+                            Art: RepairService.Characteristic ? RepairService.Characteristic : '',
+                        };
+                    })
                     // Сортируем по возрастанию категории (для подсчета итоговой категории)
                     .sort((predRepairService, nextRepairService) => nextRepairService.RepairCategory < predRepairService.RepairCategory ? 1 : -1);
 
-
-                let totalCategories = {1: 0, 2: 0, 3: 0, 4: 0};
-                for (let i = 0; i < SelectedPriceList.RepairServices.length; i++) {
-                    if (0 < +SelectedPriceList.RepairServices[i].RepairCategory < 5) {
-                        ++totalCategories[+SelectedPriceList.RepairServices[i].RepairCategory];
-                    }
-
-                    if (totalCategories[1] >= 4) {
-                        ++totalCategories[2];
-                        totalCategories[1] = 0
-                    }
-                    if (totalCategories[2] >= 4) {
-                        ++totalCategories[3];
-                        totalCategories[2] = 0
-                    }
-                    if (totalCategories[3] >= 4) {
-                        ++totalCategories[4];
-                        totalCategories[3] = 0
-                    }
-
-                    if(totalCategories[4]){
-                        SelectedPriceList.RepairServices[i].Cost = 'Рассчетная';
-                        SelectedPriceList.RepairServices[i].TotalRepairCategory = 4;
-                        SelectedPriceList.TotalRepairCategory = 4;
-                        break;
-                    }else{
-                        if (totalCategories[3]) {
-                            SelectedPriceList.RepairServices[i].TotalRepairCategory = 3;
-                        } else if (totalCategories[2]) {
-                            SelectedPriceList.RepairServices[i].TotalRepairCategory = 2;
+                if(RepairPriceList.length > 0){
+                    let totalCategories = {1: 0, 2: 0, 3: 0, 4: 0};
+                    for (let i = 0; i < RepairPriceList.length; i++) {
+                        if (0 < +RepairPriceList[i].RepairCategory < 5) {
+                            ++totalCategories[+RepairPriceList[i].RepairCategory];
                         }
-                    }
 
-                    if(SelectedPriceList.RepairServices[i].TotalRepairCategory){
-                        SelectedPriceList.TotalRepairCategory = SelectedPriceList.RepairServices[i].TotalRepairCategory;
-                    }
+                        if (totalCategories[1] >= 4) {
+                            ++totalCategories[2];
+                            totalCategories[1] = 0
+                        }
+                        if (totalCategories[2] >= 4) {
+                            ++totalCategories[3];
+                            totalCategories[2] = 0
+                        }
+                        if (totalCategories[3] >= 4) {
+                            ++totalCategories[4];
+                            totalCategories[3] = 0
+                        }
 
-                    if (i >= SelectedPriceList.RepairServices.length - 1) {
-                        if (totalCategories[4]) {
-                            SelectedPriceList.RepairServices[i].Cost = 'Рассчетная';
+                        if(totalCategories[4]){
+                            RepairPriceList[i].Cost = 'Расчетная';
+                            RepairPriceList[i].TotalRepairCategory = 4;
+                            // SelectedPriceList.TotalRepairCategory = 4;
                             break;
-                        } else if (totalCategories[3]) {
-                            SelectedPriceList.RepairServices[i].Cost = '7000,00';
-                        } else if (totalCategories[2]) {
-                            SelectedPriceList.RepairServices[i].Cost = '5000,00';
-                        } else if (totalCategories[1]) {
-                            SelectedPriceList.RepairServices[i].Cost = '3000,00';
+                        }else{
+                            if (totalCategories[3]) {
+                                RepairPriceList[i].TotalRepairCategory = 3;
+                            } else if (totalCategories[2]) {
+                                RepairPriceList[i].TotalRepairCategory = 2;
+                            }
+                        }
+
+                        // if(SelectedPriceList[i].TotalRepairCategory){
+                        //     SelectedPriceList.TotalRepairCategory = SelectedPriceList[i].TotalRepairCategory;
+                        // }
+
+                        if (i >= RepairPriceList.length - 1) {
+                            if (totalCategories[4]) {
+                                RepairPriceList[i].Cost = 'Расчетная';
+                                break;
+                            } else if (totalCategories[3]) {
+                                RepairPriceList[i].Cost = '7000.00';
+                            } else if (totalCategories[2]) {
+                                RepairPriceList[i].Cost = '5000.00';
+                            } else if (totalCategories[1]) {
+                                RepairPriceList[i].Cost = '3000.00';
+                            }
                         }
                     }
 
-                    SelectedPriceList.RepairServices[i].RepairCategory = getTextRepairCategory(SelectedPriceList.RepairServices[i].RepairCategory);
-                    SelectedPriceList.RepairServices[i].TotalRepairCategory = getTextRepairCategory(SelectedPriceList.RepairServices[i].TotalRepairCategory);
+                    return RepairPriceList;
                 }
             }
 
-            if(rootState.WebBid.DefectCheck){
-                SelectedPriceList.DefectCheck.push(getters.getBasicServices['10.78']);
-            }
+            return [];
+        },
 
+        /**
+         * Итоговая категория ремонта
+         * @param state     - Состояние настоящего модуля
+         * @param getters   - Геттеры
+         * @returns {number}
+         */
+        TotalRepairCategory: (state, getters) =>
+            getters.SelectedRepairServices.length > 0 ?
+                getters.SelectedRepairServices[getters.SelectedRepairServices.length-1].TotalRepairCategory : 0,
+
+        /**
+         * Список выбранных погрузочно-разгрузочных работ
+         * @param state     - Состояние настоящего модуля
+         * @param getters   - Геттеры
+         * @param rootState - Состояние хранилища
+         *
+         * @return Array.<SelectedPriceObject>
+         */
+        SelectedStaffingServices: (state, getters, rootState) => {
+
+            let SelectedStaffingServices = [];
             let Staffing;
+
+            // Пробуем получить объект погрузочно-разгрузочных работ
             if(rootState.WebBid.wStaffingStripping && rootState.WebBid.wStaffingStripping.Cargo && Array.isArray(rootState.WebBid.wStaffingStripping.Cargo.Elements)){
                 Staffing = rootState.WebBid.wStaffingStripping.Cargo.Elements;
             }
 
             if(Staffing && Staffing.length > 0){
 
-
-
                 Staffing.forEach(CargoElement => {
 
-                    let PackageTypeIndex;
+                    /**
+                     * Индекс типа груза
+                     */
+                    let CargoTypeIndex;
                     let ServiceTitle;
-                    let UnitWeight;
+                    let RowWeight;
                     let Volume;
                     let Service;
                     let PackagingService;
@@ -313,55 +370,43 @@ export default {
                     let Packaging = -1;
                     let Repackaging;
 
-                    UnitWeight = CargoElement.UnitWeight * CargoElement.UnitCount;
+                    RowWeight = CargoElement.UnitWeight * CargoElement.UnitCount;
                     Volume = (CargoElement.UnitLength * CargoElement.UnitWidth * CargoElement.UnitHeight / 1e+9) * CargoElement.UnitCount;
 
-                    SelectedPriceList.TotalWeight += UnitWeight;
-
-                    PackageTypeIndex = rootState.ReferenceData.PackTypes.findIndex(Type => Type.Title === CargoElement.PackageType);
+                    CargoTypeIndex = rootState.ReferenceData.PackTypes.findIndex(Type => Type.Title === CargoElement.PackageType);
 
                     // Для штучного товара
-                    if(PackageTypeIndex === 0){
-                        // Если место больше 50 кг - неделимый
-                        // if(CargoElement.UnitWeight > 50){
-                        //     GoodsTypeIndex = 4;
-                        // // Иначе соответственно упаковке
-                        // }else if(-1 < PackageTypeIndex < 5){
-                            let packRequirementIndex = rootState.ReferenceData.packRequirements[0].findIndex(Requirement => Requirement === CargoElement.PackageRequirement);
-                            // if(-1 < packRequirementIndex < 3){
-                            //     GoodsTypeIndex = packRequirementIndex;
-                            //
-                            // }else if(2 < packRequirementIndex < 6){
-                            //     GoodsTypeIndex = 3;
-                            // }
+                    if(CargoTypeIndex === 0){
 
-                            switch (packRequirementIndex) {
-                                case 0:
-                                    GoodsTypeIndex = 0;
-                                    break;
-                                case 1:
-                                    GoodsTypeIndex = 1;
-                                    Packaging = 0;
-                                    break;
-                                case 2:
-                                    GoodsTypeIndex = 2;
-                                    Packaging = 1;
-                                    break;
-                                case 3:
-                                case 4:
-                                case 5:
-                                    GoodsTypeIndex = 3;
-                                    Packaging = 2;
-                                    break;
-                            }
+                        let packRequirementIndex = rootState.ReferenceData.packRequirements[0].findIndex(Requirement => Requirement === CargoElement.PackageRequirement);
 
-                            if(CargoElement.UnitWeight > 50){
-                                GoodsTypeIndex = 4;
-                            }
-                        // }
-                    // Для ПАЛЛЕТИРОВАННЫЙ, УВЯЗАННЫЙ, УПАКОВАННЫЙ
-                    }else if(0 < PackageTypeIndex && PackageTypeIndex < 4){
-                        GoodsTypeIndex = PackageTypeIndex;
+                        switch (packRequirementIndex) {
+                            case 0:
+                                GoodsTypeIndex = 0;
+                                break;
+                            case 1:
+                                GoodsTypeIndex = 1;
+                                Packaging = 0;
+                                break;
+                            case 2:
+                                GoodsTypeIndex = 2;
+                                Packaging = 1;
+                                break;
+                            case 3:
+                            case 4:
+                            case 5:
+                                GoodsTypeIndex = 3;
+                                Packaging = 2;
+                                break;
+                        }
+
+                        if(CargoElement.UnitWeight > 50 && packRequirementIndex !== 0){
+                            GoodsTypeIndex = 4;
+                        }
+
+                        // Для ПАЛЛЕТИРОВАННЫЙ, УВЯЗАННЫЙ, УПАКОВАННЫЙ
+                    }else if(0 < CargoTypeIndex && CargoTypeIndex < 4){
+                        GoodsTypeIndex = CargoTypeIndex;
                         let packRequirementIndex = rootState.ReferenceData.packRequirements[1].findIndex(Requirement => Requirement === CargoElement.PackageRequirement);
                         switch (packRequirementIndex) {
                             case 0:
@@ -376,8 +421,8 @@ export default {
                                 Packaging = 1;
                                 break;
                         }
-                    }else if(PackageTypeIndex === 4){
-                        GoodsTypeIndex = PackageTypeIndex;
+                    }else if(CargoTypeIndex === 4){
+                        GoodsTypeIndex = CargoTypeIndex;
 
                         let packRequirementIndex = rootState.ReferenceData.packRequirements[2].findIndex(Requirement => Requirement === CargoElement.PackageRequirement);
 
@@ -391,13 +436,12 @@ export default {
                         }
                     }
 
-                    console.log(Packaging);
                     if(Packaging === 1){
-                        Packaging = UnitWeight > 1500 ? Packaging : -1;
+                        Packaging = RowWeight > 1500 ? Packaging : -1;
                     }
 
 
-                    if(Array.isArray(rootState.ReferenceData.Staffing[GoodsTypeIndex]) && UnitWeight > 0 && Volume > 0){
+                    if(Array.isArray(rootState.ReferenceData.Staffing[GoodsTypeIndex]) && CargoElement.UnitWeight > 0 && Volume > 0){
 
                         ServiceTitle = '';
                         if(CargoElement.UnitLength > 2000 || CargoElement.UnitWidth > 2000 || CargoElement.UnitHeight > 2000){
@@ -408,13 +452,13 @@ export default {
 
                         // Штучный навалом не зависит от веса
                         if(GoodsTypeIndex > 0 || CargoElement.PackageRequirement > 0){
-                            if((Volume / (UnitWeight / 1000)) > 2){
+                            if(((CargoElement.UnitLength * CargoElement.UnitWidth * CargoElement.UnitHeight / 1e+9) / (CargoElement.UnitWeight / 1000)) > 2){
                                 ServiceTitle += ' легковесный';
-                            }else if(UnitWeight >= 10000){
+                            }else if(CargoElement.UnitWeight >= 10000){
                                 ServiceTitle += ' сверхтяжелый';
-                            }else if(UnitWeight >= 5000){
+                            }else if(CargoElement.UnitWeight >= 5000){
                                 ServiceTitle += ' тяжелый';
-                            }else if(UnitWeight >= 1500){
+                            }else if(CargoElement.UnitWeight >= 1500){
                                 ServiceTitle += ' утяжеленный';
                             }
                         }
@@ -425,13 +469,13 @@ export default {
                         // Неделимый генеральный груз зависит от веса
                         if(GoodsTypeIndex === 4 && ServiceTitle === 'Генеральный груз'){
                             if(CargoElement.UnitWeight > 1000){
-                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][0];
-                            }else if(CargoElement.UnitWeight > 500){
-                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][1];
-                            }else if(CargoElement.UnitWeight > 100){
-                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][2];
-                            }else{
                                 Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][3];
+                            }else if(CargoElement.UnitWeight > 500){
+                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][2];
+                            }else if(CargoElement.UnitWeight > 100){
+                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][1];
+                            }else{
+                                Service = rootState.ReferenceData.Staffing[GoodsTypeIndex][0];
                             }
                         }else{
                             Service = rootState.ReferenceData.Staffing[GoodsTypeIndex].find(S => S.Title === ServiceTitle);
@@ -442,73 +486,151 @@ export default {
 
                         if(Service){
 
-                            if(UnitWeight > 0 && Service.Cost > 0){
-                                TotalCost = String(UnitWeight / 1000 * Service.Cost);
-                                if(TotalCost.indexOf('.') === -1){
-                                    TotalCost += '.00';
+                            // Если товар не штучный, то каждому месту отдельная строка
+                            if(0 < CargoTypeIndex && CargoTypeIndex < 5){
+                                for(let i = 0; i < CargoElement.UnitCount; i++){
+
+                                    // Вычисление стоимости (может быть дробной), перевод в строку и добавление нулей при необходимости
+                                    if(CargoElement.UnitWeight > 0 && Service.Cost > 0){
+                                        TotalCost = String(CargoElement.UnitWeight / 1000 * Service.Cost);
+                                        if(TotalCost.indexOf('.') === -1){
+                                            TotalCost += '.00';
+                                        }
+                                    }else if(Service.Cost === '0' || Service.Cost === 'Расчетная'){
+                                        TotalCost = 'Расчетная';
+                                    }else{
+                                        TotalCost = '';
+                                    }
+
+                                    let StaffingService = {
+                                        Title: Service.Title,
+                                        PackageType: CargoElement.PackageType,
+                                        PackageRequirement: CargoElement.PackageRequirement,
+                                        Number: CargoElement.UnitWeight > 0 ? (CargoElement.UnitWeight/1000) : 0,
+                                        UnitCost: Service.Cost+'.00',
+                                        Cost: TotalCost,
+                                        Unit: Service.Unit,
+                                        Art: Service.Art
+                                    };
+                                    SelectedStaffingServices.push(StaffingService);
                                 }
-                            }else if(Service.Cost === '0' || Service.Cost === 'Рассчетная'){
-                                TotalCost = 'Рассчетная';
                             }else{
-                                TotalCost = '';
+
+                                // Вычисление стоимости (может быть дробной), перевод в строку и добавление нулей при необходимости
+                                if(RowWeight > 0 && Service.Cost > 0){
+                                    TotalCost = String(RowWeight / 1000 * Service.Cost);
+                                    if(TotalCost.indexOf('.') === -1){
+                                        TotalCost += '.00';
+                                    }
+                                }else if(Service.Cost === '0' || Service.Cost === 'Расчетная'){
+                                    TotalCost = 'Расчетная';
+                                }else{
+                                    TotalCost = '';
+                                }
+
+                                let StaffingService = {
+                                    Title: Service.Title,
+                                    PackageType: CargoElement.PackageType,
+                                    PackageRequirement: CargoElement.PackageRequirement,
+                                    Number: RowWeight > 0 ? (RowWeight/1000) : 0,
+                                    UnitCost: Service.Cost+'.00',
+                                    Cost: TotalCost,
+                                    Unit: Service.Unit,
+                                    Art: Service.Art
+                                };
+                                SelectedStaffingServices.push(StaffingService);
                             }
 
-                            let StaffingService = {
-                                Title: Service.Title,
-                                PackageType: CargoElement.PackageType,
-                                PackageRequirement: CargoElement.PackageRequirement,
-                                Number: UnitWeight > 0 ? (UnitWeight/1000) : 0,
-                                UnitCost: Service.Cost+'.00',
-                                Cost: TotalCost,
-                                Unit: Service.Unit,
-                                Art: Service.Art
-                            };
-                            SelectedPriceList.Staffing.push(StaffingService);
-                        }
 
-                        console.log(Packaging);
+                        }
 
                         // Упаковка и переупаковка (в т.ч. паллетирование и увязка)
                         if(~Packaging && rootState.ReferenceData.Staffing[5][Packaging]){
                             PackagingService = rootState.ReferenceData.Staffing[5][Packaging];
-                            if(UnitWeight > 0 && PackagingService.Cost > 0){
-                                TotalCost = String(UnitWeight / 1000 * PackagingService.Cost);
+
+                            // Вес за минусом увязанного груза
+                            let PallWeight = RowWeight;
+
+                            // Минусование веса увязанного груза при необходимости
+                            if(Packaging === 0){
+                                let CeilVolume = Math.ceil(Volume);
+                                let CeilWeight = Math.ceil(RowWeight / 1500);
+                                if(CeilWeight > CeilVolume && RowWeight % 1500 > 0){
+                                    PallWeight -= RowWeight % 1500;
+                                }
+                            }
+
+                            // Вычисление стоимости (может быть дробной), перевод в строку и добавление нулей при необходимости
+                            if(PallWeight > 0 && PackagingService.Cost > 0){
+                                TotalCost = String(PallWeight / 1000 * PackagingService.Cost);
                                 if(TotalCost.indexOf('.') === -1){
                                     TotalCost += '.00';
                                 }
-                            }else if(PackagingService.Cost === '0' || PackagingService.Cost === 'Рассчетная'){
-                                TotalCost = 'Рассчетная';
+                            }else if(PackagingService.Cost === '0' || PackagingService.Cost === 'Расчетная'){
+                                TotalCost = 'Расчетная';
                             }else{
                                 TotalCost = '';
                             }
-                            SelectedPriceList.Staffing.push({
+                            SelectedStaffingServices.push({
                                 PackageType: PackagingService.Title,
-                                Number: UnitWeight > 0 ? (UnitWeight/1000) : 0,
-                                UnitCost: PackagingService.Cost > 0 ? PackagingService.Cost+'.00' : 'Рассчетная',
+                                Number: PallWeight > 0 ? (PallWeight/1000) : 0,
+                                UnitCost: PackagingService.Cost > 0 ? PackagingService.Cost+'.00' : 'Расчетная',
                                 Cost: TotalCost,
                                 Unit: PackagingService.Unit,
                                 Art: PackagingService.Art
                             });
                         }
 
+                        // Предоставление паллета
                         if(Packaging === 0 && Volume > 0){
+                            // Услуга предоставления паллета
                             PackagingService = rootState.ReferenceData.Staffing[5][6];
-                            SelectedPriceList.Staffing.push({
+
+                            // Округленный вверх объём в кубометрах
+                            let CeilVolume = Math.ceil(Volume);
+                            // Округленный вверх вес в полутора тоннах
+                            let CeilWeight = Math.ceil(RowWeight / 1500);
+
+                            SelectedStaffingServices.push({
                                 PackageType: PackagingService.Title,
-                                Number: Math.ceil(Volume),
+                                Number: (CeilVolume > CeilWeight ? CeilVolume : CeilWeight - 1),
                                 UnitCost: PackagingService.Cost+'.00',
-                                Cost: (PackagingService.Cost * Math.ceil(Volume))+'.00',
+                                Cost: (PackagingService.Cost * (CeilVolume > CeilWeight ? CeilVolume : CeilWeight))+'.00',
                                 Unit: PackagingService.Unit,
                                 Art: PackagingService.Art
                             });
+
+                            // Если паллет по весу выходит больше и остаток по весу (кратно 1500 кг) не нулевой добавляем увязку на остаток
+                            if(CeilWeight > CeilVolume && RowWeight % 1500 > 0){
+                                // Услуга увязки
+                                PackagingService = rootState.ReferenceData.Staffing[5][1];
+
+                                // Вычисление стоимости (может быть дробной), перевод в строку и добавление нулей при необходимости
+                                let TotalCost = String((RowWeight % 1500) / 1000 * PackagingService.Cost);
+                                if(TotalCost.indexOf('.') === -1){
+                                    TotalCost += '.00';
+                                }
+                                SelectedStaffingServices.push({
+                                    PackageType: PackagingService.Title,
+                                    Number: (RowWeight % 1500) / 1000,     // Остаток в тоннах
+                                    UnitCost: PackagingService.Cost+'.00',
+                                    Cost: TotalCost,
+                                    Unit: PackagingService.Unit,
+                                    Art: PackagingService.Art
+                                });
+                            }
                         }
-                        if((Packaging === 2 || Packaging === 3) && (Volume > 0 || UnitWeight > 0)){
-                            let boxNumber = Math.ceil(Volume) > Math.ceil(UnitWeight / 1500) ? Math.ceil(Volume) : Math.ceil(UnitWeight / 1500);
-                            SelectedPriceList.Staffing.push({
+
+                        // Добавление пункта упаковка при упаковке и переупаковке
+                        if((Packaging === 2 || Packaging === 3) && (Volume > 0 || RowWeight > 0)){
+                            // Количство упаковки (не более куба или 1500 кг на упаковку)
+                            let boxNumber = Math.ceil(Volume) > Math.ceil(RowWeight / 1500) ? Math.ceil(Volume) : Math.ceil(RowWeight / 1500);
+
+                            SelectedStaffingServices.push({
                                 PackageType: 'Упаковка',
                                 Number: boxNumber,
-                                UnitCost: '*(Стоимость услуги расчетная)',
-                                Cost: '*(Стоимость услуги расчетная)',
+                                UnitCost: 'Расчетная',
+                                Cost: 'Расчетная',
                                 Unit: 'штука',
                                 Art: ''
                             });
@@ -517,6 +639,44 @@ export default {
 
                 });
             }
+
+            return SelectedStaffingServices;
+        },
+
+        /**
+         * Объект с одиночными услугами
+         * @param state
+         * @param getters
+         * @param rootState
+         */
+        SelectedSingleServices: (state, getters, rootState) => {
+
+            let ReturnContainer;
+
+            if(
+                rootState.WebBid.wInlandTransportationIn && rootState.WebBid.wInlandTransportationIn.ReturnContainer ||
+                rootState.WebBid.wInlandTransportationOut && rootState.WebBid.wInlandTransportationOut.ReturnContainer
+            ){
+                let Container = getters['WebGate' + (getters.isWebGateIn ? 'In' : 'Out') + 'Container'];
+                if(Container){
+                    ReturnContainer = {
+                        Title: 'Обратная доставка'+(Container && Container.Full ? ' порожнего' : '')+(Container && Container.Empty ? ' груженого' : '')+' контейнера',
+                        Address: 'Бахчиванджи, д2',
+                        Cost: '1500.00',
+                        Unit: 'контейнер',
+                        Art: '18.1'
+                    }
+                }
+            }
+
+            return {
+                DefectCheck: rootState.WebBid.DefectCheck && getters.getBasicServices['10.78'] ? [getters.getBasicServices['10.78']] : [],
+                InlandReturnTransportations: ReturnContainer ? [ReturnContainer] : []
+            };
+        },
+
+        SelectedPriceServices: (state, getters) => {
+            let SelectedPriceServices = [];
 
             if(state.SelectedPriceServices.length > 0){
 
@@ -536,31 +696,37 @@ export default {
                             Number: state.SelectedPricesNumbers[ServiceArt],
                             CostForUnit: getters.getPriceServices.Services[ServiceArt].Cost
                         };
-                        SelectedPriceList.PriceServices.push(Service);
+                        SelectedPriceServices.push(Service);
                     }
 
-                    SelectedPriceList.PriceServices.filter(Service => Service.Title && Service.Art && ~Service.Category && ~Service.Type)
+                    SelectedPriceServices.filter(Service => Service.Title && Service.Art && ~Service.Category && ~Service.Type)
                         .sort((PredService, NextService) => PredService.Type > NextService.Type && PredService.Category > NextService.Category ? 1 : -1);
 
                     let lastType, lastCategory;
 
-                    SelectedPriceList.PriceServices.forEach((Service, Index) => {
+                    SelectedPriceServices.forEach((Service, Index) => {
                         if(Service.Type !== lastType){
-                            SelectedPriceList.PriceServices[Index].TypeTitle = getters.getPriceServices.Types[Service.Type];
+                            SelectedPriceServices[Index].TypeTitle = getters.getPriceServices.Types[Service.Type];
                             lastType = Service.Type;
                         }
                         if(Service.Category !== lastCategory){
-                            SelectedPriceList.PriceServices[Index].CategoryTitle = getters.getPriceServices.Categories[Service.Category].Title;
+                            SelectedPriceServices[Index].CategoryTitle = getters.getPriceServices.Categories[Service.Category].Title;
                             lastCategory = Service.Category;
                         }
                     });
                 }
             }
 
+            return SelectedPriceServices;
+        },
+
+        /**
+         * Итоговая стоимость услуг
+         * @returns string
+         */
+        ServicesTotalCost(state, getters){
             /**
              * Переменные для вычисления общей стоимости
-             *
-             * Промежуточная переменная итоговой стоимости
              * @type {Number}
              */
             let totalCost = 0;
@@ -568,29 +734,66 @@ export default {
              * Итоговый массив выбранных услуг
              * @type {Array}
              */
-            let totalArray = SelectedPriceList.Basic.concat(
-                SelectedPriceList.InlandTransportations,
-                SelectedPriceList.RepairServices,
-                SelectedPriceList.PriceServices,
-                SelectedPriceList.DefectCheck,
-                SelectedPriceList.Staffing
-                );
+            let totalArray = getters.SelectedBasicServices.concat(
+                getters.SelectedInlandTransportationServices,
+                getters.SelectedRepairServices,
+                getters.SelectedPriceServices,
+                getters.SelectedStaffingServices,
+                getters.SelectedSingleServices.DefectCheck,
+                getters.SelectedSingleServices.InlandReturnTransportations
+            );
+
             if(totalArray.length > 0){
                 for(let i = 0; i < totalArray.length; i++){
-                    if(totalArray[i].Cost === 'Рассчетная'){
-                        SelectedPriceList.TotalCost = 'Рассчетная';
-                        break;
-                    }else if(totalArray[i].Cost && +totalArray[i].Cost.slice(0, -3) > 0)
+                    if(totalArray[i].Cost === 'Расчетная'){
+                        return  'Расчетная';
+                    }else if(totalArray[i].Cost && +totalArray[i].Cost > 0)
                     {
-                        totalCost += +totalArray[i].Cost.slice(0, -3);
+                        totalCost += +totalArray[i].Cost;
                         if(i >= totalArray.length - 1 && totalCost > 0){
-                            SelectedPriceList.TotalCost = totalCost+'.00';
+                            return  (totalCost ^ 0) === totalCost ? totalCost+'.00' : totalCost;
                         }
                     }
                 }
             }
 
-            return SelectedPriceList;
+            return '';
         },
+
+        // getSelectedServices: function (state, getters) {
+        //
+        //     /**
+        //      * Переменные для вычисления общей стоимости
+        //      * @type {Number}
+        //      */
+        //     let totalCost = 0;
+        //     /**
+        //      * Итоговый массив выбранных услуг
+        //      * @type {Array}
+        //      */
+        //     let totalArray = getters.SelectedBasicServices.concat(
+        //         getters.SelectedInlandTransportationServices,
+        //         getters.SelectedRepairServices,
+        //         getters.SelectedPriceServices,
+        //         getters.SelectedSingleServices.DefectCheck,
+        //         getters.SelectedSingleServices.InlandReturnTransportations,
+        //         getters.SelectedStaffingServices
+        //         );
+        //     if(totalArray.length > 0){
+        //         for(let i = 0; i < totalArray.length; i++){
+        //             if(totalArray[i].Cost === 'Расчетная'){
+        //                 return  'Расчетная';
+        //             }else if(totalArray[i].Cost && +totalArray[i].Cost.slice(0, -3) > 0)
+        //             {
+        //                 totalCost += +totalArray[i].Cost.slice(0, -3);
+        //                 if(i >= totalArray.length - 1 && totalCost > 0){
+        //                     SelectedPriceList.TotalCost = totalCost+'.00';
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //     return totalCost;
+        // },
     }
 };

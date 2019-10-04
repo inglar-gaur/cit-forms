@@ -264,7 +264,7 @@ export default {
 
                         // Если найдена соответствующая характеристика то присваиваем категорию
                         this.commit('changeRepairElement', {PropName: 'RepairCategory', ElementIndex: PayLoad.ElementIndex, PropValue: RepairService.Characteristics[PayLoad.PropValue].Category});
-                        if(this.getters.getSelectedServices.TotalRepairCategory >= 4){
+                        if(this.getters.TotalRepairCategory >= 4){
                             this.commit('addMessage', 'Для данной категории ремонта цена расчетная. Предварительно требуется провести дефектовку контейнера');
                         }
                     }

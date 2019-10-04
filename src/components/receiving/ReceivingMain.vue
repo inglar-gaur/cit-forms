@@ -40,8 +40,8 @@
                     <div class="form_row flex-start">
                         <label>
                             <input style="border: 2px solid lightgray; margin-right: 10px; width: 300px" type="text"
-                                   :value="'Итого стоимость услуг: '+$store.getters.getSelectedServices.TotalCost" disabled>
-                            <span v-if="+$store.getters.getSelectedServices.TotalCost > 0">руб.</span>
+                                   :value="'Итого стоимость услуг: '+$store.getters.ServicesTotalCost" disabled>
+                            <span v-if="+$store.getters.ServicesTotalCost > 0">руб.</span>
                         </label>
                         <label @click="$store.commit('openPopup', 'PriceSelectedPopup')">
                             <input style="width: 270px; margin-left: 50px" type="text" value="Раскрыть список заказанных услуг" disabled>

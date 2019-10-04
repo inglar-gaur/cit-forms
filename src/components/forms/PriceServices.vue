@@ -126,7 +126,7 @@
 
         computed: {
             SelectedPriceServices(){
-                return this.$store.getters.getSelectedServices.PriceServices;
+                return this.$store.getters.SelectedPriceServices;
             },
 
             /**

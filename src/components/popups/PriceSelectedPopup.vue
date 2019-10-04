@@ -4,7 +4,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
         </span>
         <h3>Список заказанных услуг</h3>
-        <template v-if="$store.getters.getSelectedServices.Basic.length">
+        <template v-if="SelectedBasicServices.length">
             <h4>терминальное обслуживание универсального контейнера</h4>
             <table>
                 <tr>
@@ -13,7 +13,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.Basic" :key="service.Art">
+                <tr v-for="service in SelectedBasicServices" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
@@ -21,7 +21,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.InlandTransportations.length">
+        <template v-if="SelectedInlandTransportationServices.length">
             <h4>автоперевозка контейнера</h4>
             <table>
                 <tr>
@@ -30,7 +30,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.InlandTransportations" :key="service.Art">
+                <tr v-for="service in SelectedInlandTransportationServices" :key="service.Art">
                     <td>{{service.Address}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Size}}</td>
@@ -40,7 +40,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.RepairServices.length">
+        <template v-if="SelectedRepairServices.length">
             <h4>Услуги по ремонту</h4>
             <table>
                 <tr>
@@ -51,7 +51,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="(service, RepairIndex) in $store.getters.getSelectedServices.RepairServices" :key="RepairIndex">
+                <tr v-for="(service, RepairIndex) in SelectedRepairServices" :key="RepairIndex">
                     <td>{{service.Title}}</td>
                     <td>{{service.Characteristic}}</td>
                     <td>{{service.RepairCategory}}</td>
@@ -65,7 +65,7 @@
 <!--                </tr>-->
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.DefectCheck.length">
+        <template v-if="SelectedSingleServices.DefectCheck.length">
             <h4>Услуги по ремонту</h4>
             <table>
                 <tr>
@@ -74,7 +74,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.DefectCheck" :key="service.Art">
+                <tr v-for="service in SelectedSingleServices.DefectCheck" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
@@ -86,7 +86,7 @@
                 <!--                </tr>-->
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.InlandReturnTransportations.length">
+        <template v-if="SelectedSingleServices.InlandReturnTransportations.length">
             <h4>автоперевозка контейнера</h4>
             <table>
                 <tr>
@@ -95,7 +95,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.InlandReturnTransportations" :key="service.Art">
+                <tr v-for="service in SelectedSingleServices.InlandReturnTransportations" :key="service.Art">
                     <td>{{service.Title}}</td>
                     <td>{{service.Unit}}</td>
                     <td>{{service.Cost}}</td>
@@ -103,7 +103,7 @@
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.Staffing.length">
+        <template v-if="SelectedStaffingServices.length">
             <h4>погрузо-разгрузочные работы</h4>
             <table>
                 <tr>
@@ -114,7 +114,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <tr v-for="service in $store.getters.getSelectedServices.Staffing" :key="service.Art">
+                <tr v-for="service in SelectedStaffingServices" :key="service.Art">
                     <td>{{service.PackageType}}</td>
                     <td>{{service.PackageRequirement}}</td>
                     <td>{{service.Title}}</td>
@@ -124,13 +124,13 @@
                     <td>{{service.Cost}}</td>
                     <td>{{service.Art}}</td>
                 </tr>
-                <tr v-if="$store.getters.getSelectedServices.TotalWeight">
+                <tr v-if="totalWeight">
                     <td colspan="6">Итоговый вес</td>
-                    <td colspan="2">{{$store.getters.getSelectedServices.TotalWeight}} кг</td>
+                    <td colspan="2">{{totalWeight}}</td>
                 </tr>
             </table>
         </template>
-        <template v-if="$store.getters.getSelectedServices.PriceServices.length">
+        <template v-if="SelectedPriceServices.length">
             <h4>терминальное обслуживание универсального контейнера</h4>
             <table>
                 <tr>
@@ -141,7 +141,7 @@
                     <th>стоимость в т.ч. НДС 20%</th>
                     <th>артикул</th>
                 </tr>
-                <template v-for="service in $store.getters.getSelectedServices.PriceServices">
+                <template v-for="service in SelectedPriceServices">
                     <tr v-if="service.TypeTitle" :key="service.Art+'_type_title'">
                         <th colspan="6">{{service.TypeTitle}}</th>
                     </tr>
@@ -159,29 +159,53 @@
                 </template>
             </table>
         </template>
-        <table v-if="$store.getters.getSelectedServices.TotalCost">
+        <table v-if="$store.getters.ServicesTotalCost">
             <tr>
                 <td>Итого стоимость: </td>
-                <td>{{$store.getters.getSelectedServices.TotalCost}}</td>
+                <td>{{$store.getters.ServicesTotalCost}}</td>
             </tr>
         </table>
     </div>
 </template>
 
 <script>
+
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "PriceSelectedPopup",
 
         computed:{
-            totalRepairCost(){
-                if(
-                    this.$store.getters.getSelectedServices.RepairServices.length > 0 &&
-                    this.$store.getters.getSelectedServices.RepairServices[this.$store.getters.getSelectedServices.RepairServices.length - 1].Cost
-                ){
-                    return this.$store.getters.getSelectedServices.RepairServices[this.$store.getters.getSelectedServices.RepairServices.length - 1].Cost;
+
+            totalWeight(){
+                if(Array.isArray(this.SelectedStaffingServices) && this.SelectedStaffingServices.length > 0){
+                    let totalWeight = this.SelectedStaffingServices.reduce(
+                        (BetweenWeight, StaffingService) => BetweenWeight + (StaffingService.UnitWeight * StaffingService.UnitCount)
+                    );
+                    if(totalWeight > 0)
+                        return totalWeight + ' кг';
                 }
                 return '';
-            }
+            },
+
+            totalRepairCost(){
+                if(
+                    this.SelectedRepairServices.length > 0 &&
+                    this.SelectedRepairServices[this.SelectedRepairServices.length - 1].Cost
+                ){
+                    return this.SelectedRepairServices[this.SelectedRepairServices.length - 1].Cost;
+                }
+                return '';
+            },
+
+            ...mapGetters([
+                'SelectedBasicServices',
+                'SelectedInlandTransportationServices',
+                'SelectedRepairServices',
+                'SelectedStaffingServices',
+                'SelectedSingleServices',
+                'SelectedPriceServices',
+            ])
         },
     }
 </script>

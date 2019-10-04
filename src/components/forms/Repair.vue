@@ -59,10 +59,10 @@
                     <td style="width: 10%"></td>
                     <td class="sum" style="position: relative; text-align: right"><div style="width: 80%; position: absolute; right: 5px; top: 2px">Итог категория ремонта:</div></td>
                     <td>
-                        <input type="text" :value="getTextRepairCategory($store.getters.getSelectedServices.TotalRepairCategory)" disabled>
+                        <input type="text" :value="getTextRepairCategory($store.getters.TotalRepairCategory)" disabled>
                     </td>
                 </tr>
-                <tr v-if="$store.getters.getSelectedServices.TotalRepairCategory >= 4">
+                <tr v-if="$store.getters.TotalRepairCategory >= 4">
                     <td colspan="8" style="padding: 10px">
                         <label class="label_width_outside_input">
                             <input :checked="DefectCheck" type="checkbox" @input="SelectDefectCheck" required>
@@ -109,14 +109,12 @@
                 ).filter(RepairService => RepairService);
             },
 
-            TotalRepairCategory(){
-                return this.$store.getters.getSelectedServices.TotalRepairCategory;
-            },
-
             ...mapState({
                 RepairContainerList: state => state.WebBid.wRepairContainer.list,
                 DefectCheck: state => state.WebBid.DefectCheck,
-            })
+            }),
+
+            ...mapGetters(['TotalRepairCategory'])
         },
 
         methods:{
